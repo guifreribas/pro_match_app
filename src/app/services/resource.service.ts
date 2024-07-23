@@ -1,6 +1,8 @@
 import { inject, Injectable } from '@angular/core';
 import { config } from '../config/config';
 import { HttpClient } from '@angular/common/http';
+import { Resource, ResourceData } from '../models/resource';
+import { Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
@@ -11,20 +13,20 @@ export class ResourceService {
 
   constructor() {}
 
-  getResources(): any {
-    return this.http.get(this.apiUrl);
+  getResources(): Observable<Resource[]> {
+    return this.http.get<Resource[]>(this.apiUrl);
   }
 
-  getResource(id: string): any {
-    return this.http.get(`${this.apiUrl}/${id}`);
+  getResource(id: string): Observable<Resource> {
+    return this.http.get<Resource>(`${this.apiUrl}/${id}`);
   }
 
-  createResource(resource: any): any {
-    return this.http.post(this.apiUrl, resource);
+  createResource(resource: ResourceData): Observable<Resource> {
+    return this.http.post<Resource>(this.apiUrl, resource);
   }
 
-  updateResource(resource: any, id: string): any {
-    return this.http.put(`${this.apiUrl}/${id}`, resource);
+  updateResource(resource: Resource, id: string): Observable<Resource> {
+    return this.http.put<Resource>(`${this.apiUrl}/${id}`, resource);
   }
 
   deleteResource(id: number): any {
