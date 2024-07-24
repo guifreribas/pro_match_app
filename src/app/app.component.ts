@@ -10,7 +10,7 @@ import { initFlowbite } from 'flowbite';
   styleUrl: './app.component.scss',
 })
 export class AppComponent implements OnInit {
-  title = 'pro_match_app';
+  public title = 'pro_match_app';
 
   ngOnInit(): void {
     initFlowbite();
