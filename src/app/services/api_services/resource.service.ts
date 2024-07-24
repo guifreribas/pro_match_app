@@ -1,7 +1,7 @@
 import { inject, Injectable } from '@angular/core';
-import { config } from '../config/config';
+import { config } from '../../config/config';
 import { HttpClient } from '@angular/common/http';
-import { Resource, ResourceData } from '../models/resource';
+import { Resource, ResourceData } from '../../models/resource';
 import { Observable } from 'rxjs';
 
 @Injectable({

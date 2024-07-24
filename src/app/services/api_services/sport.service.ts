@@ -1,9 +1,9 @@
 import { inject, Injectable } from '@angular/core';
-import { config } from '../config/config';
+import { config } from '../../config/config';
 import { GenericApiService } from './generic-api.service';
 import { Observable } from 'rxjs';
-import { getAllResponse } from '../models/api';
-import { Sport } from '../models/sport';
+import { getAllResponse } from '../../models/api';
+import { Sport } from '../../models/sport';
 
 @Injectable({
   providedIn: 'root',

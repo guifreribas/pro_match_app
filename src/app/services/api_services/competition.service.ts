@@ -1,5 +1,5 @@
 import { inject, Injectable } from '@angular/core';
-import { config } from '../config/config';
+import { config } from '../../config/config';
 import { GenericApiService } from './generic-api.service';
 import { Observable } from 'rxjs';
 import {
@@ -8,8 +8,8 @@ import {
   getOneResponse,
   postOneResponse,
   putOneResponse,
-} from '../models/api';
-import { Competition } from '../models/competition';
+} from '../../models/api';
+import { Competition } from '../../models/competition';
 
 @Injectable({
   providedIn: 'root',

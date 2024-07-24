@@ -1,5 +1,5 @@
 import { inject, Injectable } from '@angular/core';
-import { config } from '../config/config';
+import { config } from '../../config/config';
 import { Observable } from 'rxjs';
 import {
   deleteOneResponse,
@@ -7,8 +7,8 @@ import {
   getOneResponse,
   postOneResponse,
   putOneResponse,
-} from '../models/api';
-import { Card } from '../models/card';
+} from '../../models/api';
+import { Card } from '../../models/card';
 import { GenericApiService } from './generic-api.service';
 
 @Injectable({
