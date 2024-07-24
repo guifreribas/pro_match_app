@@ -10,6 +10,7 @@ import {
 } from '../models/api';
 import { User } from '../models/user';
 import { GenericApiService } from './generic-api.service';
+import { HttpClient } from '@angular/common/http';
 
 @Injectable({
   providedIn: 'root',
@@ -17,8 +18,13 @@ import { GenericApiService } from './generic-api.service';
 export class UserService {
   private apiUrl = `${config.apiUrl}/users`;
   private genericService = inject(GenericApiService);
+  private http = inject(HttpClient);
 
   constructor() {}
+
+  getMe(): Observable<any> {
+    return this.http.get<any>(this.apiUrl + '/me');
+  }
 
   getUsers(): Observable<getAllResponse<User>> {
     return this.genericService.getAll<getAllResponse<User>>(this.apiUrl);
