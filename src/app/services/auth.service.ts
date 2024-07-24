@@ -20,7 +20,7 @@ export class AuthService {
   }
 
   logout() {
-    return this.http.delete(`${this.url}/auth/logout`);
+    return this.http.post(`${this.url}/auth/logout`, {});
   }
 
   setLoggedIn(isLoggedIn: boolean) {
