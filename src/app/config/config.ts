@@ -11,4 +11,5 @@ const apiUrl = ENV === Environment.dev ? environment.api_url : prod.api_url;
 
 export const config = {
   apiUrl,
+  IMG_URL: environment.bucket_images_url,
 };
