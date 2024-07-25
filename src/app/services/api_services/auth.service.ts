@@ -23,8 +23,16 @@ export class AuthService {
     });
   }
 
-  register(email: string, password: string): Observable<any> {
-    return this.http.post(`${this.url}/auth/register`, { email, password });
+  register(
+    email: string,
+    password: string,
+    role: string = 'ADMIN'
+  ): Observable<any> {
+    return this.http.post(`${this.url}/auth/register`, {
+      email,
+      password,
+      role,
+    });
   }
 
   logout() {
