@@ -30,7 +30,7 @@ export class LoginComponent implements OnInit {
     this.loginForm = new FormGroup({
       email: new FormControl('', [Validators.required, Validators.email]),
       password: new FormControl('', [Validators.required]),
-      remember: new FormControl(false),
+      remember: new FormControl(false, []),
     });
   }
 
@@ -38,7 +38,7 @@ export class LoginComponent implements OnInit {
     e.preventDefault();
     this.isSubmitted = true;
     this.emailTouched = true;
-    console.log(this.loginForm.value);
+    if (this.loginForm.invalid) return;
     this.authService
       .login(
         this.loginForm.value.email,
@@ -56,23 +56,14 @@ export class LoginComponent implements OnInit {
         error: (err) => {
           console.log(err);
           this.loginForm.get('email')?.setErrors({ notValid: true });
-          this.loginForm.get('password')?.setErrors({ notValid: true });
         },
       });
   }
 
   onEmailInput(e: Event) {
     this.emailTouched = false;
-    const email = this.loginForm.get('email')?.value;
-    if (email) this.loginForm.get('email')?.errors?.['notValid'].clear();
-    const password = this.loginForm.get('password')?.value;
-    if (password) this.loginForm.get('password')?.errors?.['notValid'].clear();
-  }
-  onPasswordInput(e: Event) {
-    this.passwordTouched = false;
-    const password = this.loginForm.get('password');
-    if (!password) return;
-    this.loginForm.get('email')?.errors?.['notValid'].clear();
-    this.loginForm.get('password')?.errors?.['notValid'].clear();
+    if (this.loginForm.get('email')?.errors?.['notValid']) {
+      this.loginForm.setErrors(null);
+    }
   }
 }
