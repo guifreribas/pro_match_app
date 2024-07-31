@@ -5,6 +5,7 @@ import { RegisterComponent } from './pages/register/register.component';
 import { MainLayoutComponent } from './layouts/main-layout/main-layout.component';
 import { authGuard } from './auth.guard';
 import { ProfileComponent } from './pages/profile/profile.component';
+import { PlayersComponent } from './pages/players/players.component';
 
 export const routes: Routes = [
   { path: 'login', component: LoginComponent },
@@ -18,6 +19,11 @@ export const routes: Routes = [
       {
         path: 'profile',
         component: ProfileComponent,
+        canActivate: [authGuard],
+      },
+      {
+        path: 'players',
+        component: PlayersComponent,
         canActivate: [authGuard],
       },
       { path: '**', redirectTo: '' },
