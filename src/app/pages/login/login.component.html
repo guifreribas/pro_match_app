@@ -1,6 +1,6 @@
 <section class="bg-gray-50 dark:bg-gray-900">
   <div class="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0">
-    <a href="#" class="flex items-center mb-6 text-2xl font-semibold text-gray-900 dark:text-white">
+    <a [routerLink]="['/']" class="flex items-center mb-6 text-2xl font-semibold text-gray-900 dark:text-white">
       <img class="w-4/12 h-auto m-auto drop-shadow-md animate-pulse" src="/assets/logos/pro_match_logo.png"
         alt="logo" />
     </a>
@@ -60,7 +60,8 @@
                   me</label>
               </div>
             </div>
-            <a href="#" class="text-sm font-medium text-primary-600 hover:underline dark:text-primary-500">Forgot
+            <a [routerLink]="['#']"
+              class="text-sm font-medium text-primary-600 hover:underline dark:text-primary-500">Forgot
               password?</a>
           </div>
           <button type="submit"
@@ -69,7 +70,8 @@
           </button>
           <p class="text-sm font-light text-gray-500 dark:text-gray-400">
             Don’t have an account yet?
-            <a href="/register" class="font-medium text-primary-600 hover:underline dark:text-primary-500">Sign up</a>
+            <a [routerLink]="['/register']"
+              class="font-medium text-primary-600 hover:underline dark:text-primary-500">Sign up</a>
           </p>
         </form>
       </div>

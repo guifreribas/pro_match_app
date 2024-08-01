@@ -1,10 +1,10 @@
 import { Component, inject, OnInit } from '@angular/core';
-import { NavbarComponent } from '../../components/navbar/navbar.component';
-import { AsideComponent } from '../../components/aside/aside.component';
-import { RouterOutlet } from '@angular/router';
-import { UserService } from '../../services/api_services/user.service';
-import { UserStateService } from '../../services/global_states/user-state.service';
+import { UserService } from '@services/api_services/user.service';
+import { UserStateService } from '@services/global_states/user-state.service';
 import { initFlowbite } from 'flowbite';
+import { RouterOutlet } from '@angular/router';
+import { NavbarComponent } from '@components/organism/navbar/navbar.component';
+import { AsideComponent } from '@components/organism/aside/aside.component';
 
 @Component({
   selector: 'app-main-layout',
