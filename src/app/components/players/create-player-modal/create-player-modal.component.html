@@ -22,13 +22,13 @@
         </button>
       </div>
       <!-- Modal body -->
-      <form action="#">
+      <form [formGroup]="playerForm" (submit)=" onSubmit($event)">
         <div class="grid gap-4 mb-4 sm:grid-cols-2">
           <div>
-            <label for="name" class="block mb-2 text-sm font-medium text-gray-900 ">
+            <label for="name" class="block mb-2 text-sm font-medium text-gray-900">
               Nombre
             </label>
-            <input type="text" name="name" id="name"
+            <input type="text" name="name" id="name" formControlName="name"
               class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 "
               placeholder="Añade el nombre" required="">
           </div>
@@ -36,7 +36,7 @@
             <label for="brand" class="block mb-2 text-sm font-medium text-gray-900 ">
               Apellidos
             </label>
-            <input type="text" name="brand" id="brand"
+            <input type="text" name="brand" id="brand" formControlName="lastName"
               class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 "
               placeholder="Añade los apellidos" required="">
           </div>
@@ -44,19 +44,20 @@
             <label for="price" class="block mb-2 text-sm font-medium text-gray-900 ">
               DNI
             </label>
-            <input type="number" name="price" id="price"
+            <input type="text" name="price" id="price" formControlName="dni"
               class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 "
               placeholder="Añade el DNI" required="">
           </div>
+
           <div>
             <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white" for="user_avatar">
               Sube una imagen
             </label>
-            <input
+            <input type="file" name="avatar" id="avatar" formControlName="avatar"
               class="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 focus:outline-none"
               aria-describedby="user_avatar_help" id="user_avatar" type="file">
-
           </div>
+
           <div>
             <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white" for="user_avatar">
               Fecha de nacimiento
@@ -69,8 +70,9 @@
                     d="M20 4a2 2 0 0 0-2-2h-2V1a1 1 0 0 0-2 0v1h-3V1a1 1 0 0 0-2 0v1H6V1a1 1 0 0 0-2 0v1H2a2 2 0 0 0-2 2v2h20V4ZM0 18a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8H0v10Zm5-8h10a1 1 0 0 1 0 2H5a1 1 0 0 1 0-2Z" />
                 </svg>
               </div>
-              <input datepicker id="default-datepicker" type="text"
-                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full ps-10 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+              <input datepicker datepicker-format="yyyy-mm-dd" id="birthdayDatepicker" #birthdayDatepicker type="text"
+                name="birthday" formControlName="birthday" (blur)="onBirthdayChange($event)"
+                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full ps-10 p-z2.5"
                 placeholder="Select date">
             </div>
 
