@@ -1,7 +1,12 @@
 import { inject, Injectable } from '@angular/core';
 import { config } from '../../config/config';
 import { HttpClient } from '@angular/common/http';
-import { Resource, ResourceData } from '../../models/resource';
+import {
+  CreateResourceData,
+  Resource,
+  ResourceCreateResponse,
+  ResourceData,
+} from '../../models/resource';
 import { Observable } from 'rxjs';
 
 @Injectable({
@@ -21,8 +26,8 @@ export class ResourceService {
     return this.http.get<Resource>(`${this.apiUrl}/${id}`);
   }
 
-  createResource(resource: ResourceData): Observable<Resource> {
-    return this.http.post<Resource>(this.apiUrl, resource);
+  createResource(resource: FormData): Observable<ResourceCreateResponse> {
+    return this.http.post<ResourceCreateResponse>(this.apiUrl, resource);
   }
 
   updateResource(resource: Resource, id: string): Observable<Resource> {
