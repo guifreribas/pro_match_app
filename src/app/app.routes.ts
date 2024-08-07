@@ -9,6 +9,10 @@ import { PlayersComponent } from './pages/players/players.component';
 import { PlayerCardComponent } from './components/player-card/player-card.component';
 import { CreatePlayerComponent } from './pages/create-player/create-player.component';
 import { PlayerComponent } from './pages/player/player.component';
+import { MatchesComponent } from './pages/matches/matches.component';
+import { LeaguesComponent } from './pages/leagues/leagues.component';
+import { TeamsComponent } from './pages/teams/teams.component';
+import { RefereesComponent } from './pages/referees/referees.component';
 
 export const routes: Routes = [
   { path: 'login', component: LoginComponent },
@@ -37,6 +41,26 @@ export const routes: Routes = [
       {
         path: 'players',
         component: PlayersComponent,
+        canActivate: [authGuard],
+      },
+      {
+        path: 'matches',
+        component: MatchesComponent,
+        canActivate: [authGuard],
+      },
+      {
+        path: 'leagues',
+        component: LeaguesComponent,
+        canActivate: [authGuard],
+      },
+      {
+        path: 'teams',
+        component: TeamsComponent,
+        canActivate: [authGuard],
+      },
+      {
+        path: 'referees',
+        component: RefereesComponent,
         canActivate: [authGuard],
       },
       { path: '**', redirectTo: '' },
