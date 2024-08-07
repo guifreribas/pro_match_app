@@ -14,8 +14,14 @@ import {
   Validators,
 } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
+import { postOneResponse } from '@app/models/api';
+import { Player, PlayerCreate, PlayerCreateResponse } from '@app/models/player';
+import { Resource, ResourceCreateResponse } from '@app/models/resource';
+import { GenericApiService } from '@app/services/api_services/generic-api.service';
 import { PlayerService } from '@app/services/api_services/player.service';
+import { ResourceService } from '@app/services/api_services/resource.service';
 import { initFlowbite, Datepicker, initDatepickers } from 'flowbite';
+import { catchError, firstValueFrom } from 'rxjs';
 
 @Component({
   selector: 'app-create-player-modal',
@@ -25,6 +31,9 @@ import { initFlowbite, Datepicker, initDatepickers } from 'flowbite';
   styleUrl: './create-player-modal.component.scss',
 })
 export class CreatePlayerModalComponent implements AfterViewInit {
+  @ViewChild('birthdayDatepicker', { static: true })
+  birthdayDatepicker!: ElementRef;
+
   public playerForm: FormGroup = new FormGroup({
     name: new FormControl('', [Validators.required]),
     lastName: new FormControl('', [Validators.required]),
@@ -35,9 +44,11 @@ export class CreatePlayerModalComponent implements AfterViewInit {
   public isSubmitted = false;
   public emailTouched = false;
   public datepicker!: Datepicker;
-  @ViewChild('birthdayDatepicker', { static: true })
-  birthdayDatepicker!: ElementRef;
-  private playerService = inject(PlayerService);
+
+  private _playerService = inject(PlayerService);
+  private _resourceService = inject(ResourceService);
+  private _genericService = inject(GenericApiService);
+  private _avatar: File | null = null;
 
   constructor() {}
 
@@ -58,28 +69,71 @@ export class CreatePlayerModalComponent implements AfterViewInit {
     console.log('Datepicker initialized:', this.datepicker);
   }
 
-  onSubmit(e: SubmitEvent) {
+  async onSubmit(e: SubmitEvent) {
     e.preventDefault();
-    console.log(this.playerForm.value);
-    console.log(this.datepicker);
-    console.log(this.datepicker.getDate());
-    const player = {
+
+    let player: Player = {
       ...this.playerForm.value,
       birthday: String(this.datepicker.getDate()),
     };
-    console.log(player);
-    this.playerService.createPlayer(player).subscribe({
-      next: (res) => {
-        console.log(res);
-      },
-      error: (err) => {
-        console.log(err);
-      },
+    // Afegeix la data de naixement
+    // formData.append('birthday', String(this.datepicker.getDate()));
+    let resource: ResourceCreateResponse | null = null;
+    if (this._avatar) {
+      resource = await this.createResource(this._avatar, this._avatar.name);
+      console.log(resource);
+      player.avatar = resource.data.name;
+    }
+
+    const playerCreateResponse = await this.createPlayer(player);
+    console.log(playerCreateResponse);
+  }
+
+  async createPlayer(
+    player: Player
+  ): Promise<postOneResponse<PlayerCreateResponse>> {
+    try {
+      return firstValueFrom(
+        this._genericService
+          .create<Player, postOneResponse<PlayerCreateResponse>>(
+            this._playerService.apiUrl,
+            player
+          )
+          .pipe(
+            catchError((err) => {
+              console.log(err);
+              throw err;
+            })
+          )
+      );
+    } catch (error) {
+      console.log(error);
+      throw error;
+    }
+  }
+
+  async createResource(
+    avatar: File,
+    avatarName: string
+  ): Promise<ResourceCreateResponse> {
+    return new Promise((resolve, reject) => {
+      const formData = new FormData();
+      formData.append('file', avatar, avatarName);
+      this._resourceService.createResource(formData).subscribe({
+        next: (res: ResourceCreateResponse) => resolve(res),
+        error: (err) => {
+          console.log(err);
+          reject(err);
+        },
+      });
     });
   }
 
-  onBirthdayChange(e: Event) {
-    console.log(e);
-    console.log(this.datepicker.getDate());
+  onAvatarChange(e: any) {
+    if (e?.target?.files) {
+      const file: File = e.target.files[0];
+      console.log(file);
+      this._avatar = file;
+    }
   }
 }

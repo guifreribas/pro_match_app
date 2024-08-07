@@ -53,7 +53,7 @@
             <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white" for="user_avatar">
               Sube una imagen
             </label>
-            <input type="file" name="avatar" id="avatar" formControlName="avatar"
+            <input type="file" name="avatar" id="avatar" formControlName="avatar" (change)="onAvatarChange($event)"
               class="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 focus:outline-none"
               aria-describedby="user_avatar_help" id="user_avatar" type="file">
           </div>
@@ -71,7 +71,7 @@
                 </svg>
               </div>
               <input datepicker datepicker-format="yyyy-mm-dd" id="birthdayDatepicker" #birthdayDatepicker type="text"
-                name="birthday" formControlName="birthday" (blur)="onBirthdayChange($event)"
+                name="birthday" formControlName="birthday"
                 class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full ps-10 p-z2.5"
                 placeholder="Select date">
             </div>
