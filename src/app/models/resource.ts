@@ -5,6 +5,10 @@ export interface ResourceData {
   type: ResourceType;
 }
 
+export interface CreateResourceData {
+  file: File;
+}
+
 export interface Resource extends ResourceData {
   id_resource: number;
   created_at?: Date;
