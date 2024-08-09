@@ -54,30 +54,39 @@
         <tbody>
 
           <!-- Lista de jugadores -->
+          @for(player of players; track player.id_player){
           <tr class="border-b dark:border-gray-700">
-            <td scope="row" class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap">Juan</td>
-            <td class="px-4 py-3">Gómez Pérez</td>
-            <td class="px-4 py-3">44327832-S</td>
-            <td class="px-4 py-3">38</td>
-            <td class="px-4 py-3 "><img class="w-10 h-10 rounded-lg"
-                src="https://images.pexels.com/photos/13554837/pexels-photo-13554837.png?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2"
-                alt="Juan Gómez Pérez"></td>
+            <td scope="row" class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap">{{player.name}}</td>
+            <td class="px-4 py-3">{{player.last_name}}</td>
+            <td class="px-4 py-3">{{player.dni}}</td>
+            <td class="px-4 py-3">{{player.birthday}}</td>
+            <td class="px-4 py-3 ">
+              @if(player.avatar){
+              <img class="w-10 h-10 rounded-lg" src="{{player.avatar}}" alt="{{player.name}} {{player.last_name}}">
+              }
+              @else {
+              <img class="w-10 h-10 rounded-full" src="/assets/icons/avatar.svg"
+                alt="{{player.name}} {{player.last_name}}">
+              }
+            </td>
+
             <td class="px-4 py-3 flex items-center justify-end">
-              <button id="apple-imac-27-dropdown-button" data-dropdown-toggle="apple-imac-27-dropdown"
+              <button [id]="'dropdown-button-' + player.id_player"
+                [attr.data-dropdown-toggle]="'dropdown-' + player.id_player"
                 class="inline-flex items-center p-0.5 text-sm font-medium text-center text-gray-500 hover:text-gray-800 rounded-lg focus:outline-none dark:text-gray-400 dark:hover:text-gray-100"
                 type="button">
-                <svg class="w-5 h-5" aria-hidden="true" fill="currentColor" viewbox="0 0 20 20"
+                <svg class="w-5 h-5" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20"
                   xmlns="http://www.w3.org/2000/svg">
                   <path
                     d="M6 10a2 2 0 11-4 0 2 2 0 014 0zM12 10a2 2 0 11-4 0 2 2 0 014 0zM16 12a2 2 0 100-4 2 2 0 000 4z" />
                 </svg>
               </button>
-              <div id="apple-imac-27-dropdown"
+              <div [id]="'dropdown-' + player.id_player"
                 class="hidden z-10 w-44 bg-white rounded divide-y divide-gray-100 shadow dark:bg-gray-700 dark:divide-gray-600">
                 <ul class="py-1 text-sm text-gray-700 dark:text-gray-200"
-                  aria-labelledby="apple-imac-27-dropdown-button">
+                  [attr.aria-labelledby]="'dropdown-button-' + player.id_player">
                   <li>
-                    <a [routerLink]="['/players/1']"
+                    <a [routerLink]="['/players', player.id_player]"
                       class="block py-2 px-4 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
                       Ver ficha
                     </a>
@@ -91,11 +100,16 @@
                 </ul>
                 <div class="py-1">
                   <a [routerLink]="['#']"
-                    class="block py-2 px-4 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white">Delete</a>
+                    class="block py-2 px-4 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white">
+                    Delete
+                  </a>
                 </div>
               </div>
             </td>
           </tr>
+          }
+
+
 
         </tbody>
       </table>
