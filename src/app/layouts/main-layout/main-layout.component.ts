@@ -18,7 +18,6 @@ export class MainLayoutComponent implements OnInit {
   private UserService = inject(UserService);
 
   ngOnInit(): void {
-    initFlowbite();
     if (!this.userState.me()) {
       this.UserService.getMe().subscribe({
         next: (res) => {
