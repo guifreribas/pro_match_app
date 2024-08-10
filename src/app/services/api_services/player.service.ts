@@ -2,7 +2,11 @@ import { inject, Injectable } from '@angular/core';
 import { config } from '../../config/config';
 import { GenericApiService } from './generic-api.service';
 import { Observable } from 'rxjs';
-import { getAllResponse, postOneResponse } from '../../models/api';
+import {
+  getAllResponse,
+  getOneResponse,
+  postOneResponse,
+} from '../../models/api';
 import { Player, PlayerCreateResponse } from '../../models/player';
 
 @Injectable({
@@ -18,8 +22,8 @@ export class PlayerService {
     return this.genericService.getAll<getAllResponse<Player>>(this.apiUrl);
   }
 
-  getPlayer(id: number): Observable<getAllResponse<Player>> {
-    return this.genericService.getOne<getAllResponse<Player>>(this.apiUrl, id);
+  getPlayer(id: number): Observable<getOneResponse<Player>> {
+    return this.genericService.getOne<getOneResponse<Player>>(this.apiUrl, id);
   }
 
   createPlayer(
