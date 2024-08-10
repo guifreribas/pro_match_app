@@ -1,6 +1,7 @@
 export interface Organization {
   id_organization: number;
   name: string;
+  address: string;
   logo: string;
   competition_id: number;
   sport_id: number;
