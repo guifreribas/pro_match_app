@@ -29,6 +29,9 @@ dependencies:
   '@angular/router':
     specifier: ^18.0.0
     version: 18.1.0(@angular/common@18.1.0)(@angular/core@18.1.0)(@angular/platform-browser@18.1.0)(rxjs@7.8.1)
+  dayjs:
+    specifier: ^1.11.12
+    version: 1.11.12
   flowbite:
     specifier: ^2.4.1
     version: 2.4.1
@@ -3954,6 +3957,10 @@ packages:
     resolution: {integrity: sha512-39BOQLs9ZjKh0/patS9nrT8wc3ioX3/eA/zgbKNopnF2wCqJEoxywwwElATYvRsXdnOxA/OQeQoFZ3rFjVajhg==}
     engines: {node: '>=4.0'}
     dev: true
+
+  /dayjs@1.11.12:
+    resolution: {integrity: sha512-Rt2g+nTbLlDWZTwwrIXjy9MeiZmSDI375FvZs72ngxx8PDC6YXOeR3q5LAuPzjZQxhiWdRKac7RKV+YyQYfYIg==}
+    dev: false
 
   /debug@2.6.9:
     resolution: {integrity: sha512-bC7ElrdJaJnPbAP+1EotYvqZsb3ecl5wi6Bfi6BJTUcNowp6cvspg0jXznRTKDjm/E7AdgFBVeAPVMNcKGsHMA==}
