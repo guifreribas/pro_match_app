@@ -1,6 +1,28 @@
 <app-dashboard-panel-layout>
-  <div class="bg-white dark:bg-gray-800 relative shadow-md sm:rounded-lg overflow-hidden">
+  <div class="p-4 lg:p-12 bg-white relative shadow-md sm:rounded-lg overflow-hidden flex flex-col gap-4 w-fit">
+    <div class="w-full flex flex-wrap gap-4">
+      @if(player?.avatar){
+      <img src="{{player?.avatar}}" alt="{{player?.name}} {{player?.last_name}}" class="w-40 h-40 rounded-lg border">
+      }
+      @else {
+      <img src="/assets/icons/avatar.svg" alt="{{player?.name}} {{player?.last_name}}"
+        class="w-40 h-40 rounded-lg border">
+      }
+      <section class="flex flex-col">
+        <h3 class="text-lg font-bold">{{player?.name}} {{player?.last_name}}</h3>
+        <p>DNI: {{player?.dni}}</p>
+        <p>Edad: {{playerYears}} años</p>
+        <p>Nacimiento: {{player?.birthday}}</p>
+      </section>
+    </div>
+    <section class="flex flex-col gap-2 p-2 w-full justify-center border">
 
-    <p>player works!</p>
+      <h5 class="text-lg font-bold">Equipos</h5>
+      <!-- <ul class="list-disc list-inside">
+        @for(team of playerTeams){
+        <li>{{team.name}}</li>
+        }
+      </ul> -->
+    </section>
   </div>
 </app-dashboard-panel-layout>
