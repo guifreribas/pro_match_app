@@ -24,3 +24,53 @@ export interface FieldUpdate {
   name: string;
   type: FieldType;
 }
+
+export interface FieldCreateResponse {
+  success: boolean;
+  message: string;
+  data: Field;
+  timestamp: string;
+}
+
+export interface FieldUpdateResponse {
+  success: boolean;
+  message: string;
+  data: Field;
+  timestamp: string;
+}
+
+export interface FieldDeleteResponse {
+  success: boolean;
+  message: string;
+  timestamp: string;
+}
+
+export interface FieldsGetResponse {
+  success: boolean;
+  message: string;
+  data: {
+    items: Field[];
+    itemCount: number;
+    totalItems: number;
+    currentPage: number;
+    pageSize: number;
+    totalPages: number;
+    hasNextPage: boolean;
+    hasPreviousPage: boolean;
+  };
+  links: {
+    self: string;
+    first: string;
+    last: string;
+    next: string;
+    previous: string;
+  };
+  timestamp: string;
+}
+
+export interface FieldGetResponse {
+  success: boolean;
+  message: string;
+  data: Field;
+  timestamp: string;
+}
