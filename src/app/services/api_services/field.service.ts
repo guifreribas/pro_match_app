@@ -3,7 +3,13 @@ import { config } from '@app/config/config';
 import { GenericApiService } from './generic-api.service';
 import { Observable } from 'rxjs';
 import { getAllResponse } from '@app/models/api';
-import { Field } from '@app/models/field';
+import {
+  Field,
+  FieldCreateResponse,
+  FieldDeleteResponse,
+  FieldGetResponse,
+  FieldsGetResponse,
+} from '@app/models/field';
 
 @Injectable({
   providedIn: 'root',
@@ -14,19 +20,24 @@ export class FieldService {
 
   constructor() {}
 
-  getFields(): Observable<getAllResponse<Field>> {
-    return this.genericService.getAll<getAllResponse<Field>>(this.apiUrl);
-  }
-
-  getField(id: number): Observable<getAllResponse<Field>> {
-    return this.genericService.getOne<getAllResponse<Field>>(this.apiUrl, id);
-  }
-
-  createField(field: Field): Observable<getAllResponse<Field>> {
-    return this.genericService.create<Field, getAllResponse<Field>>(
-      this.apiUrl,
-      field
+  getFields(): Observable<getAllResponse<FieldsGetResponse>> {
+    return this.genericService.getAll<getAllResponse<FieldsGetResponse>>(
+      this.apiUrl
     );
+  }
+
+  getField(id: number): Observable<getAllResponse<FieldGetResponse>> {
+    return this.genericService.getOne<getAllResponse<FieldGetResponse>>(
+      this.apiUrl,
+      id
+    );
+  }
+
+  createField(field: Field): Observable<getAllResponse<FieldCreateResponse>> {
+    return this.genericService.create<
+      Field,
+      getAllResponse<FieldCreateResponse>
+    >(this.apiUrl, field);
   }
 
   updateField(field: Field, id: number): Observable<getAllResponse<Field>> {
@@ -37,7 +48,10 @@ export class FieldService {
     );
   }
 
-  deleteField(id: number): Observable<getAllResponse<Field>> {
-    return this.genericService.delete<getAllResponse<Field>>(this.apiUrl, id);
+  deleteField(id: number): Observable<getAllResponse<FieldDeleteResponse>> {
+    return this.genericService.delete<getAllResponse<FieldDeleteResponse>>(
+      this.apiUrl,
+      id
+    );
   }
 }
