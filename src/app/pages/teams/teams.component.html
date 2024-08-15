@@ -31,7 +31,7 @@
               clip-rule="evenodd">
             </path>
           </svg>
-          Añadir jugador
+          Añadir Equipo
         </button>
       </div>
     </div>
@@ -53,13 +53,13 @@
           @for(team of teams; track team.id_team){
           <tr class="border-b dark:border-gray-700">
             <td scope="row" class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap">{{team.name}}</td>
-            <td class="px-4 py-3">{{team.created_at}}</td>
+            <td class="px-4 py-3">{{dayjs(team.created_at).format('DD/MM/YYYY')}}</td>
             <td class="px-4 py-3 ">
               @if(team.avatar){
-              <img class="w-10 h-10 rounded-lg" src="{{team.avatar}}" alt="{{team.name}}">
+              <img class="w-10 h-10 rounded-lg" src="{{IMG_URL + team.avatar}}" alt="{{team.name}}">
               }
               @else {
-              <img class="w-10 h-10 rounded-full" src="/assets/icons/avatar.svg" alt="{{team.name}}">
+              <img class="w-10 h-10 rounded-lg" src="/assets/icons/avatar.svg" alt="{{team.name}}">
               }
             </td>
 
@@ -160,3 +160,5 @@
     </nav>
   </div>
 </app-dashboard-panel-layout>
+
+<app-create-team-modal></app-create-team-modal>
