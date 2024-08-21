@@ -24,6 +24,7 @@ import { UserStateService } from '@app/services/global_states/user-state.service
 import { Datepicker, initDatepickers } from 'flowbite';
 import { catchError, firstValueFrom } from 'rxjs';
 import { signal } from '@angular/core';
+import { validateDni, validatePlayerIsOlderThan } from '@app/utils/utils';
 
 @Component({
   selector: 'app-create-player-modal',
@@ -39,7 +40,7 @@ export class CreatePlayerModalComponent implements OnInit, AfterViewInit {
   public playerForm: FormGroup = new FormGroup({
     name: new FormControl('', [Validators.required]),
     lastName: new FormControl('', [Validators.required]),
-    dni: new FormControl('', [Validators.required]),
+    dni: new FormControl('', [Validators.required, validateDni]),
     avatar: new FormControl('', []),
     birthday: new FormControl('', [Validators.required]),
   });
@@ -81,14 +82,15 @@ export class CreatePlayerModalComponent implements OnInit, AfterViewInit {
 
   async onSubmit(e: SubmitEvent) {
     e.preventDefault();
+    this.isSubmitted = true;
+    if (this.playerForm.invalid) return;
+
     this.isCreatingPlayer.set(true);
-    let player: Player = {
+    const player: Player = {
       ...this.playerForm.value,
       birthday: String(this.datepicker.getDate()),
       user_id: this._userState.me()?.id_user,
     };
-    // Afegeix la data de naixement
-    // formData.append('birthday', String(this.datepicker.getDate()));
     let resource: ResourceCreateResponse | null = null;
     if (this._avatar) {
       resource = await this.createResource(this._avatar, this._avatar.name);
@@ -147,8 +149,26 @@ export class CreatePlayerModalComponent implements OnInit, AfterViewInit {
   onAvatarChange(e: any) {
     if (e?.target?.files) {
       const file: File = e.target.files[0];
-      console.log(file);
       this._avatar = file;
+    }
+  }
+
+  onBirthdayInput(e: Event) {
+    if (
+      this.datepicker.getDate() &&
+      this.playerForm.get?.('birthday')?.errors
+    ) {
+      this.playerForm.get('birthday')!.errors!['required'] = false;
+    }
+
+    const isPlayerOlder = validatePlayerIsOlderThan({
+      birthday: this.datepicker.getDate(),
+      age: 16,
+    });
+    if (!isPlayerOlder) {
+      this.playerForm.get('birthday')?.setErrors({ birthday: true });
+    } else {
+      this.playerForm.get('birthday')!.errors!['birthday'] = false;
     }
   }
 }
