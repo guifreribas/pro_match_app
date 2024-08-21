@@ -7,7 +7,7 @@
     <div class="flex flex-col md:flex-row items-center justify-between space-y-3 md:space-y-0 md:space-x-4 p-4">
       <div class="w-full md:w-1/2">
         <form class="flex items-center">
-          <label for="simple-search" class="sr-only">Search</label>
+          <label for="simple-search" class="sr-only">Buscar</label>
           <div class="relative w-full">
             <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
               <svg aria-hidden="true" class="w-5 h-5 text-gray-500 dark:text-gray-400" fill="currentColor"
@@ -44,10 +44,10 @@
             <th scope="col" class="px-4 py-3">Nombre</th>
             <th scope="col" class="px-4 py-3">Apellidos</th>
             <th scope="col" class="px-4 py-3">DNI</th>
-            <th scope="col" class="px-4 py-3">Edad</th>
+            <th scope="col" class="px-4 py-3">Fecha de nacimiento</th>
             <th scope="col" class="px-4 py-3">Foto</th>
             <th scope="col" class="px-4 py-3">
-              <span class="sr-only">Actions</span>
+              <span class="sr-only">Acciones</span>
             </th>
           </tr>
         </thead>
@@ -62,7 +62,8 @@
             <td class="px-4 py-3">{{player.birthday}}</td>
             <td class="px-4 py-3 ">
               @if(player.avatar){
-              <img class="w-10 h-10 rounded-lg" src="{{player.avatar}}" alt="{{player.name}} {{player.last_name}}">
+              <img class="w-10 h-10 rounded-lg" src="{{imgUrl + player.avatar}}"
+                alt="{{player.name}} {{player.last_name}}">
               }
               @else {
               <img class="w-10 h-10 rounded-lg" src="/assets/icons/avatar.svg"
@@ -101,7 +102,7 @@
                 <div class="py-1">
                   <a [routerLink]="['#']"
                     class="block py-2 px-4 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white">
-                    Delete
+                    Eliminar
                   </a>
                 </div>
               </div>
@@ -117,48 +118,60 @@
     <nav class="flex flex-col md:flex-row justify-between items-start md:items-center space-y-3 md:space-y-0 p-4"
       aria-label="Table navigation">
       <span class="text-sm font-normal text-gray-500 dark:text-gray-400">
-        Showing
+        Mostrando
         <span class="font-semibold text-gray-900 dark:text-white">1-10</span>
-        of
-        <span class="font-semibold text-gray-900 dark:text-white">1000</span>
+        de
+        <span class="font-semibold text-gray-900 dark:text-white">{{playersResponse()?.data?.totalItems}}</span>
       </span>
       <ul class="inline-flex items-stretch -space-x-px">
+        @if(playersResponse()?.data?.hasPreviousPage){
         <li>
-          <a [routerLink]="['#']"
+          <button #prevPageArrow
             class="flex items-center justify-center h-full py-1.5 px-3 ml-0 text-gray-500 bg-white rounded-l-lg border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">
-            <span class="sr-only">Previous</span>
+            <span class="sr-only">Anterior</span>
             <svg class="w-5 h-5" aria-hidden="true" fill="currentColor" viewbox="0 0 20 20"
               xmlns="http://www.w3.org/2000/svg">
               <path fill-rule="evenodd"
                 d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z"
                 clip-rule="evenodd" />
             </svg>
-          </a>
+          </button>
         </li>
-        <li>
+        }
+        <!-- <li>
           <a [routerLink]="['#']"
             class="flex items-center justify-center text-sm py-2 px-3 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">1</a>
-        </li>
+        </li> -->
+        @if(playersResponse()?.data?.hasPreviousPage){
         <li>
-          <a [routerLink]="['#']"
-            class="flex items-center justify-center text-sm py-2 px-3 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">2</a>
+          <button #prevPage
+            class="flex items-center justify-center text-sm py-2 px-3 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">
+            {{(playersResponse()?.data?.currentPage ?? 0) - 1}}
+          </button>
         </li>
+        }
         <li>
-          <a [routerLink]="['#']" aria-current="page"
-            class="flex items-center justify-center text-sm z-10 py-2 px-3 leading-tight text-primary-600 bg-primary-50 border border-primary-300 hover:bg-primary-100 hover:text-primary-700 dark:border-gray-700 dark:bg-gray-700 dark:text-white">3</a>
+          <button #page aria-current="page"
+            class="flex items-center justify-center text-sm z-10 py-2 px-3 leading-tight text-primary-600 bg-primary-50 border border-primary-300 hover:bg-primary-100 hover:text-primary-700"
+            [ngClass]="{'rounded-l-lg': playersResponse()?.data?.hasPreviousPage, 'rounded-r.lg': playersResponse()?.data?.hasNextPage}">{{playersResponse()?.data?.currentPage}}</button>
         </li>
+        @if(playersResponse()?.data?.hasNextPage){
         <li>
-          <a [routerLink]="['#']"
-            class="flex items-center justify-center text-sm py-2 px-3 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">...</a>
+          <button #nextPage
+            class="flex items-center justify-center text-sm py-2 px-3 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">
+            {{(playersResponse()?.data?.currentPage ?? 0) + 1}}</button>
         </li>
-        <li>
+        }
+        <!-- <li>
           <a [routerLink]="['#']"
             class="flex items-center justify-center text-sm py-2 px-3 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">100</a>
-        </li>
+        </li> -->
+
+        @if(playersResponse()?.data?.hasNextPage){
         <li>
-          <a [routerLink]="['#']"
+          <a #nextPageArrow
             class="flex items-center justify-center h-full py-1.5 px-3 leading-tight text-gray-500 bg-white rounded-r-lg border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">
-            <span class="sr-only">Next</span>
+            <span class="sr-only">Siguiente</span>
             <svg class="w-5 h-5" aria-hidden="true" fill="currentColor" viewbox="0 0 20 20"
               xmlns="http://www.w3.org/2000/svg">
               <path fill-rule="evenodd"
@@ -167,6 +180,7 @@
             </svg>
           </a>
         </li>
+        }
       </ul>
     </nav>
   </div>
@@ -175,14 +189,6 @@
 </app-dashboard-panel-layout>
 
 
-
-
-<!-- Modal toggle -->
-<!-- <div class="flex justify-center m-5">
-    <button id="defaultModalButton" data-modal-target="defaultModal" data-modal-toggle="defaultModal" class="block text-white bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800" type="button">
-    Create product
-    </button>
-</div> -->
 
 
 <app-create-player-modal></app-create-player-modal>
