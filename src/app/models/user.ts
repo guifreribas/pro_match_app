@@ -1,7 +1,7 @@
 export type UserRole = 'SUPER_ADMIN' | 'ADMIN' | 'USER' | 'REFEREE';
 
 export interface User {
-  id: number;
+  id_user: number;
   name: string;
   last_name: string;
   email: string;
