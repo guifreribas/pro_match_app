@@ -5,6 +5,7 @@ export interface Player {
   dni: string;
   avatar?: string;
   birthday: Date;
+  user_id?: number;
   created_at?: Date;
   updated_at?: Date;
 }
