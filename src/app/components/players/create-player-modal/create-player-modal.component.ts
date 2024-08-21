@@ -1,4 +1,4 @@
-import { CommonModule, FormatWidth } from '@angular/common';
+import { CommonModule } from '@angular/common';
 import {
   AfterViewInit,
   Component,
@@ -13,15 +13,17 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { Router, RouterModule } from '@angular/router';
+import { RouterModule } from '@angular/router';
 import { postOneResponse } from '@app/models/api';
-import { Player, PlayerCreate, PlayerCreateResponse } from '@app/models/player';
-import { Resource, ResourceCreateResponse } from '@app/models/resource';
+import { Player, PlayerCreateResponse } from '@app/models/player';
+import { ResourceCreateResponse } from '@app/models/resource';
 import { GenericApiService } from '@app/services/api_services/generic-api.service';
 import { PlayerService } from '@app/services/api_services/player.service';
 import { ResourceService } from '@app/services/api_services/resource.service';
-import { initFlowbite, Datepicker, initDatepickers } from 'flowbite';
+import { UserStateService } from '@app/services/global_states/user-state.service';
+import { Datepicker, initDatepickers } from 'flowbite';
 import { catchError, firstValueFrom } from 'rxjs';
+import { signal } from '@angular/core';
 
 @Component({
   selector: 'app-create-player-modal',
@@ -30,7 +32,7 @@ import { catchError, firstValueFrom } from 'rxjs';
   templateUrl: './create-player-modal.component.html',
   styleUrl: './create-player-modal.component.scss',
 })
-export class CreatePlayerModalComponent implements AfterViewInit {
+export class CreatePlayerModalComponent implements OnInit, AfterViewInit {
   @ViewChild('birthdayDatepicker', { static: true })
   birthdayDatepicker!: ElementRef;
 
@@ -44,26 +46,34 @@ export class CreatePlayerModalComponent implements AfterViewInit {
   public isSubmitted = false;
   public emailTouched = false;
   public datepicker!: Datepicker;
+  public isCreatingPlayer = signal(false);
 
   private _playerService = inject(PlayerService);
   private _resourceService = inject(ResourceService);
   private _genericService = inject(GenericApiService);
+  private _userState = inject(UserStateService);
   private _avatar: File | null = null;
 
   constructor() {}
 
+  ngOnInit(): void {
+    initDatepickers();
+  }
+
   ngAfterViewInit(): void {
-    this.initDatePicker();
+    setTimeout(() => {
+      this.initDatePicker();
+    }, 100);
   }
 
   initDatePicker() {
     const datepickerEl = this.birthdayDatepicker.nativeElement;
     if (datepickerEl) {
       this.datepicker = new Datepicker(datepickerEl, {
+        // format: 'dd-mm-yyyy',
         format: 'yyyy-mm-dd',
         autohide: true,
         maxDate: String(new Date()),
-        buttons: true,
       });
     }
     console.log('Datepicker initialized:', this.datepicker);
@@ -71,10 +81,11 @@ export class CreatePlayerModalComponent implements AfterViewInit {
 
   async onSubmit(e: SubmitEvent) {
     e.preventDefault();
-
+    this.isCreatingPlayer.set(true);
     let player: Player = {
       ...this.playerForm.value,
       birthday: String(this.datepicker.getDate()),
+      user_id: this._userState.me()?.id_user,
     };
     // Afegeix la data de naixement
     // formData.append('birthday', String(this.datepicker.getDate()));
@@ -84,9 +95,9 @@ export class CreatePlayerModalComponent implements AfterViewInit {
       console.log(resource);
       player.avatar = resource.data.name;
     }
-
     const playerCreateResponse = await this.createPlayer(player);
     console.log(playerCreateResponse);
+    this.playerForm.reset();
   }
 
   async createPlayer(
@@ -120,9 +131,13 @@ export class CreatePlayerModalComponent implements AfterViewInit {
       const formData = new FormData();
       formData.append('file', avatar, avatarName);
       this._resourceService.createResource(formData).subscribe({
-        next: (res: ResourceCreateResponse) => resolve(res),
+        next: (res: ResourceCreateResponse) => {
+          resolve(res);
+          this.isCreatingPlayer.set(false);
+        },
         error: (err) => {
           console.log(err);
+          this.isCreatingPlayer.set(false);
           reject(err);
         },
       });
