@@ -54,6 +54,8 @@ export class PlayersComponent implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit(): void {
-    initFlowbite();
+    setTimeout(() => {
+      initFlowbite();
+    }, 100);
   }
 }
