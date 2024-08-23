@@ -62,11 +62,11 @@
             <td class="px-4 py-3">{{player.birthday}}</td>
             <td class="px-4 py-3 ">
               @if(player.avatar){
-              <img class="w-10 h-10 rounded-lg" src="{{imgUrl + player.avatar}}"
+              <img class="w-10 h-10 rounded-lg object-cover" src="{{imgUrl + player.avatar}}"
                 alt="{{player.name}} {{player.last_name}}">
               }
               @else {
-              <img class="w-10 h-10 rounded-lg" src="/assets/icons/avatar.svg"
+              <img class="w-10 h-10 rounded-lg object-cover" src="/assets/icons/avatar.svg"
                 alt="{{player.name}} {{player.last_name}}">
               }
             </td>
@@ -93,7 +93,7 @@
                     </a>
                   </li>
                   <li>
-                    <a [routerLink]="['#']"
+                    <a [routerLink]="['/players', player.id_player]" [queryParams]="{ edit: true }"
                       class="block py-2 px-4 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
                       Editar
                     </a>
