@@ -1,6 +1,7 @@
-import { CommonModule } from '@angular/common';
+import { CommonModule, DatePipe } from '@angular/common';
 import {
   AfterViewInit,
+  ChangeDetectorRef,
   Component,
   ElementRef,
   inject,
@@ -8,9 +9,12 @@ import {
   ViewChild,
 } from '@angular/core';
 import {
+  AbstractControl,
+  FormBuilder,
   FormControl,
   FormGroup,
   ReactiveFormsModule,
+  ValidationErrors,
   Validators,
 } from '@angular/forms';
 import { RouterModule } from '@angular/router';
@@ -21,33 +25,33 @@ import { GenericApiService } from '@app/services/api_services/generic-api.servic
 import { PlayerService } from '@app/services/api_services/player.service';
 import { ResourceService } from '@app/services/api_services/resource.service';
 import { UserStateService } from '@app/services/global_states/user-state.service';
-import { Datepicker, initDatepickers } from 'flowbite';
+import { Datepicker } from 'flowbite';
 import { catchError, firstValueFrom } from 'rxjs';
 import { signal } from '@angular/core';
-import { validateDni, validatePlayerIsOlderThan } from '@app/utils/utils';
+import { validateDni } from '@app/utils/utils';
+import { DatepickerComponent } from '@app/components/atom/datepicker/datepicker.component';
 
 @Component({
   selector: 'app-create-player-modal',
   standalone: true,
-  imports: [ReactiveFormsModule, CommonModule, RouterModule],
+  imports: [
+    ReactiveFormsModule,
+    CommonModule,
+    RouterModule,
+    DatepickerComponent,
+  ],
   templateUrl: './create-player-modal.component.html',
   styleUrl: './create-player-modal.component.scss',
 })
-export class CreatePlayerModalComponent implements OnInit, AfterViewInit {
-  @ViewChild('birthdayDatepicker', { static: true })
-  birthdayDatepicker!: ElementRef;
+export class CreatePlayerModalComponent implements OnInit {
+  @ViewChild('birthdayDatepicker') birthdayDatepicker!: ElementRef;
 
-  public playerForm: FormGroup = new FormGroup({
-    name: new FormControl('', [Validators.required]),
-    lastName: new FormControl('', [Validators.required]),
-    dni: new FormControl('', [Validators.required, validateDni]),
-    avatar: new FormControl('', []),
-    birthday: new FormControl('', [Validators.required]),
-  });
+  public playerForm!: FormGroup;
   public isSubmitted = false;
   public emailTouched = false;
   public datepicker!: Datepicker;
   public isCreatingPlayer = signal(false);
+  public dynamicClasses: { [key: string]: boolean } = {};
 
   private _playerService = inject(PlayerService);
   private _resourceService = inject(ResourceService);
@@ -55,36 +59,45 @@ export class CreatePlayerModalComponent implements OnInit, AfterViewInit {
   private _userState = inject(UserStateService);
   private _avatar: File | null = null;
 
-  constructor() {}
+  constructor(private fb: FormBuilder, private cdr: ChangeDetectorRef) {
+    this.playerForm = this.fb.group({
+      name: new FormControl('', [Validators.required]),
+      lastName: new FormControl('', [Validators.required]),
+      dni: new FormControl('', [Validators.required, validateDni]),
+      avatar: new FormControl('', []),
+      birthday: new FormControl('', [
+        Validators.required,
+        this.validatePlayerIsOlderThan16,
+      ]),
+    });
+  }
 
   ngOnInit(): void {
-    initDatepickers();
+    this.updateBirthdayClasses();
+    this.playerForm.get('birthday')?.valueChanges.subscribe(() => {
+      this.updateBirthdayClasses();
+      this.cdr.detectChanges();
+    });
   }
 
-  ngAfterViewInit(): void {
-    setTimeout(() => {
-      this.initDatePicker();
-    }, 100);
-  }
+  updateBirthdayClasses() {
+    const birthdayControl = this.playerForm.get('birthday');
+    const isInvalid = birthdayControl?.invalid ?? false;
+    const isTouchedOrSubmitted =
+      (birthdayControl?.touched ?? false) || this.isSubmitted;
 
-  initDatePicker() {
-    const datepickerEl = this.birthdayDatepicker.nativeElement;
-    if (datepickerEl) {
-      this.datepicker = new Datepicker(datepickerEl, {
-        // format: 'dd-mm-yyyy',
-        format: 'yyyy-mm-dd',
-        autohide: true,
-        maxDate: String(new Date()),
-      });
-    }
-    console.log('Datepicker initialized:', this.datepicker);
+    this.dynamicClasses = {
+      'border-red-500': isInvalid && isTouchedOrSubmitted,
+      'border-2': isInvalid && isTouchedOrSubmitted,
+    };
+    console.log('Birthday classes updated:', this.dynamicClasses);
   }
 
   async onSubmit(e: SubmitEvent) {
     e.preventDefault();
     this.isSubmitted = true;
     if (this.playerForm.invalid) return;
-
+    console.log('No hi ha errors');
     this.isCreatingPlayer.set(true);
     const player: Player = {
       ...this.playerForm.value,
@@ -153,22 +166,27 @@ export class CreatePlayerModalComponent implements OnInit, AfterViewInit {
     }
   }
 
-  onBirthdayInput(e: Event) {
-    if (
-      this.datepicker.getDate() &&
-      this.playerForm.get?.('birthday')?.errors
-    ) {
-      this.playerForm.get('birthday')!.errors!['required'] = false;
+  onDateChange(event: any) {
+    const birthdayControl = this.playerForm.get('birthday');
+    if (birthdayControl) {
+      birthdayControl.markAsTouched();
+      birthdayControl.setValue(event.value);
+      this.updateBirthdayClasses();
+      this.cdr.detectChanges();
     }
+  }
 
-    const isPlayerOlder = validatePlayerIsOlderThan({
-      birthday: this.datepicker.getDate(),
-      age: 16,
-    });
-    if (!isPlayerOlder) {
-      this.playerForm.get('birthday')?.setErrors({ birthday: true });
-    } else {
-      this.playerForm.get('birthday')!.errors!['birthday'] = false;
-    }
+  validatePlayerIsOlderThan16(
+    control: AbstractControl
+  ): ValidationErrors | null {
+    const selectedDate = new Date(control.value);
+    const today = new Date();
+    const minAgeDate = new Date(
+      today.getFullYear() - 16,
+      today.getMonth(),
+      today.getDate()
+    );
+
+    return selectedDate <= minAgeDate ? null : { underage: true };
   }
 }
