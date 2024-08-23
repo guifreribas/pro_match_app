@@ -1,0 +1,6 @@
+<div class="relative">
+  <input matInput [matDatepicker]="picker" [formControl]="dateControl" placeholder="Selecciona una data" type="date"
+    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 [&::-webkit-calendar-picker-indicator]:hidden">
+  <mat-datepicker-toggle matSuffix [for]="picker" class="absolute right-[2px] top-[1px]"></mat-datepicker-toggle>
+  <mat-datepicker #picker></mat-datepicker>
+</div>
