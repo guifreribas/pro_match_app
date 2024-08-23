@@ -14,17 +14,3 @@ export const validateDni = (
   }
   return null;
 };
-
-export const validatePlayerIsOlderThan = ({
-  birthday,
-  age,
-}: {
-  birthday: string | string[];
-  age: number;
-}) => {
-  const years = getYears(new Date(String(birthday)));
-  if (years < age) {
-    return false;
-  }
-  return true;
-};
