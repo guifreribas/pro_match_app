@@ -1,4 +1,14 @@
-import { Component, forwardRef, LOCALE_ID, inject } from '@angular/core';
+import {
+  Component,
+  forwardRef,
+  LOCALE_ID,
+  inject,
+  Input,
+  OnChanges,
+  SimpleChanges,
+  Output,
+  EventEmitter,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
   ControlValueAccessor,
@@ -76,7 +86,9 @@ export const MY_DATE_FORMATS = {
     </div>
   `,
 })
-export class DatepickerComponent implements ControlValueAccessor {
+export class DatepickerComponent implements ControlValueAccessor, OnChanges {
+  @Input() classesFromParent: { [Key: string]: boolean } = {};
+  @Output() dateChange = new EventEmitter<any>();
   dateControl = new FormControl();
   onChange: any = () => {};
   onTouch: any = () => {};
@@ -98,6 +110,12 @@ export class DatepickerComponent implements ControlValueAccessor {
     });
   }
 
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['classesFromParent']) {
+      this.applyClasses();
+    }
+  }
+
   writeValue(value: any): void {
     if (value) {
       console.log({ value });
@@ -116,6 +134,13 @@ export class DatepickerComponent implements ControlValueAccessor {
     this.onTouch = fn;
   }
 
+  onDateInput(event: any) {
+    const value = event.value;
+    this.onChange(this.formatDate(value));
+    this.onTouch();
+    this.dateChange.emit({ value: this.formatDate(value) });
+  }
+
   setDisabledState?(isDisabled: boolean): void {
     isDisabled ? this.dateControl.disable() : this.dateControl.enable();
   }
@@ -127,5 +152,19 @@ export class DatepickerComponent implements ControlValueAccessor {
   private parseDate(dateString: string): moment.Moment | null {
     const parsed = moment(dateString, 'DD/MM/YYYY', true);
     return parsed.isValid() ? parsed : null;
+  }
+
+  private applyClasses() {
+    const inputElement = document.querySelector(
+      'input[matInput]'
+    ) as HTMLElement;
+    if (inputElement) {
+      Object.keys(this.classesFromParent).forEach((className) => {
+        inputElement.classList.toggle(
+          className,
+          this.classesFromParent[className]
+        );
+      });
+    }
   }
 }
