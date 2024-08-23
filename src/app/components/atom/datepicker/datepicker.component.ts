@@ -100,6 +100,7 @@ export class DatepickerComponent implements ControlValueAccessor {
 
   writeValue(value: any): void {
     if (value) {
+      console.log({ value });
       const date = this.parseDate(value);
       this.dateControl.setValue(date, { emitEvent: false });
     } else {
@@ -120,7 +121,7 @@ export class DatepickerComponent implements ControlValueAccessor {
   }
 
   private formatDate(date: moment.Moment): string {
-    return date.format('DD/MM/YYYY');
+    return date.format('YYYY/MM/DD');
   }
 
   private parseDate(dateString: string): moment.Moment | null {
