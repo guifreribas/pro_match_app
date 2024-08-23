@@ -19,7 +19,7 @@
         <span class="sr-only">Toggle sidebar</span>
       </button>
 
-      <img class="max-w-28 drop-shadow-md " src="/assets/logos/pro_match_logo.png" alt="logo">
+      <img class="max-w-28 drop-shadow-md object-cover" src="/assets/logos/pro_match_logo.png" alt="logo">
     </div>
 
 
@@ -33,7 +33,7 @@
         <img class="w-8 h-8 rounded-full object-cover" [src]="imgUrl + this.me()?.avatar" alt="user photo" />
         }
         @else{
-        <img class="w-8 h-8 rounded-full" src="/assets/icons/avatar.svg" alt="user photo" />
+        <img class="w-8 h-8 rounded-full object-cover" src="/assets/icons/avatar.svg" alt="user photo" />
         }
       </button>
       <!-- Dropdown menu -->
