@@ -90,18 +90,16 @@ export class CreatePlayerModalComponent implements OnInit {
       'border-red-500': isInvalid && isTouchedOrSubmitted,
       'border-2': isInvalid && isTouchedOrSubmitted,
     };
-    console.log('Birthday classes updated:', this.dynamicClasses);
+    // console.log('Birthday classes updated:', this.dynamicClasses);
   }
 
   async onSubmit(e: SubmitEvent) {
     e.preventDefault();
     this.isSubmitted = true;
     if (this.playerForm.invalid) return;
-    console.log('No hi ha errors');
     this.isCreatingPlayer.set(true);
     const player: Player = {
       ...this.playerForm.value,
-      birthday: String(this.datepicker.getDate()),
       user_id: this._userState.me()?.id_user,
     };
     let resource: ResourceCreateResponse | null = null;
@@ -112,6 +110,9 @@ export class CreatePlayerModalComponent implements OnInit {
     }
     const playerCreateResponse = await this.createPlayer(player);
     console.log(playerCreateResponse);
+    this.isCreatingPlayer.set(false);
+    this.playerForm.markAsPristine();
+    this.isSubmitted = false;
     this.playerForm.reset();
   }
 
@@ -148,7 +149,6 @@ export class CreatePlayerModalComponent implements OnInit {
       this._resourceService.createResource(formData).subscribe({
         next: (res: ResourceCreateResponse) => {
           resolve(res);
-          this.isCreatingPlayer.set(false);
         },
         error: (err) => {
           console.log(err);
