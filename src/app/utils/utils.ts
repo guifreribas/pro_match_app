@@ -16,6 +16,7 @@ export const validateDni = (
 };
 
 export function urlParser(params = {}, baseUrl = '') {
+  if (!params) return baseUrl;
   const urlParams = new URLSearchParams(params);
   const fullUrl = `${baseUrl}?${urlParams.toString()}`;
   return fullUrl;
