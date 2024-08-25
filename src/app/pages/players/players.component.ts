@@ -1,11 +1,9 @@
 import {
   AfterViewInit,
   Component,
-  ElementRef,
   inject,
   OnInit,
   signal,
-  ViewChild,
   WritableSignal,
 } from '@angular/core';
 import { DashboardPanelLayoutComponent } from '../../layouts/dashboard-panel-layout/dashboard-panel-layout.component';
@@ -17,6 +15,8 @@ import { PlayerService } from '@app/services/api_services/player.service';
 import { Player, PlayersGetResponse } from '@app/models/player';
 import { CommonModule } from '@angular/common';
 import { config } from '@app/config/config';
+
+type Action = 'NEXT' | 'PREVIOUS' | 'GO_ON_PAGE';
 
 @Component({
   selector: 'app-players',
@@ -32,18 +32,29 @@ import { config } from '@app/config/config';
   styleUrl: './players.component.scss',
 })
 export class PlayersComponent implements OnInit, AfterViewInit {
-  private _playerService = inject(PlayerService);
+  public imgUrl = config.IMG_URL;
+  public players: Player[] = [];
+  public page = 1;
   public playersResponse: WritableSignal<PlayersGetResponse | null> =
     signal(null);
-  public players: Player[] = [];
-  public imgUrl = config.IMG_URL;
+
+  private _playerService = inject(PlayerService);
 
   ngOnInit(): void {
-    this._playerService.getPlayers().subscribe({
+    this._getPlayers();
+  }
+
+  ngAfterViewInit(): void {
+    setTimeout(() => {
+      initFlowbite();
+    }, 100);
+  }
+
+  private _getPlayers(action: Action = 'GO_ON_PAGE', page: string = '1') {
+    this._playerService.getPlayers({ page }).subscribe({
       next: (res) => {
         console.log(res);
         console.log({ players: res.data.items });
-        // this.playersResponse = res;
         this.playersResponse.set(res);
         this.players = res.data.items;
       },
@@ -53,9 +64,18 @@ export class PlayersComponent implements OnInit, AfterViewInit {
     });
   }
 
-  ngAfterViewInit(): void {
-    setTimeout(() => {
-      initFlowbite();
-    }, 100);
+  goOnPage(page: number) {
+    this._getPlayers('GO_ON_PAGE', page.toString());
+  }
+
+  goPreviousPage() {
+    const currentPage = this.playersResponse()?.data?.currentPage ?? 0;
+    const previusPage = currentPage - 1 > 0 ? currentPage - 1 : 1;
+    this._getPlayers('PREVIOUS', String(previusPage));
+  }
+
+  goNextPage() {
+    const currentPage = this.playersResponse()?.data?.currentPage ?? 0;
+    this._getPlayers('NEXT', String(currentPage + 1));
   }
 }
