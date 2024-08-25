@@ -4,6 +4,12 @@ import { GenericApiService } from './generic-api.service';
 import { Observable } from 'rxjs';
 import { getAllResponse } from '../../models/api';
 import { Team } from '../../models/team';
+import { urlParser } from '@app/utils/utils';
+
+interface GetTeamsParams {
+  q?: string;
+  page?: string;
+}
 
 @Injectable({
   providedIn: 'root',
@@ -14,8 +20,9 @@ export class TeamService {
 
   constructor() {}
 
-  getTeams(): Observable<getAllResponse<Team>> {
-    return this.genericService.getAll<getAllResponse<Team>>(this.apiUrl);
+  getTeams(params?: GetTeamsParams): Observable<getAllResponse<Team>> {
+    const url = urlParser(params, this.apiUrl);
+    return this.genericService.getAll<getAllResponse<Team>>(url);
   }
 
   getTeam(id: number): Observable<getAllResponse<Team>> {
