@@ -14,3 +14,9 @@ export const validateDni = (
   }
   return null;
 };
+
+export function urlParser(params = {}, baseUrl = '') {
+  const urlParams = new URLSearchParams(params);
+  const fullUrl = `${baseUrl}?${urlParams.toString()}`;
+  return fullUrl;
+}
