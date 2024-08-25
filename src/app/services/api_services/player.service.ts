@@ -10,8 +10,9 @@ import {
 import { Player, PlayerCreateResponse } from '../../models/player';
 import { urlParser } from '@app/utils/utils';
 
-interface PlayerParams {
-  page: string;
+interface GetPlayersParams {
+  q?: string;
+  page?: string;
 }
 
 @Injectable({
@@ -23,8 +24,8 @@ export class PlayerService {
 
   constructor() {}
 
-  getPlayers({ page = '1' }: PlayerParams): Observable<getAllResponse<Player>> {
-    const url = urlParser({ page }, this.apiUrl);
+  getPlayers(params?: GetPlayersParams): Observable<getAllResponse<Player>> {
+    const url = urlParser(params, this.apiUrl);
     return this.genericService.getAll<getAllResponse<Player>>(url);
   }
 
