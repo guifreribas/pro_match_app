@@ -8,6 +8,11 @@ import {
   postOneResponse,
 } from '../../models/api';
 import { Player, PlayerCreateResponse } from '../../models/player';
+import { urlParser } from '@app/utils/utils';
+
+interface PlayerParams {
+  page: string;
+}
 
 @Injectable({
   providedIn: 'root',
@@ -18,8 +23,9 @@ export class PlayerService {
 
   constructor() {}
 
-  getPlayers(): Observable<getAllResponse<Player>> {
-    return this.genericService.getAll<getAllResponse<Player>>(this.apiUrl);
+  getPlayers({ page = '1' }: PlayerParams): Observable<getAllResponse<Player>> {
+    const url = urlParser({ page }, this.apiUrl);
+    return this.genericService.getAll<getAllResponse<Player>>(url);
   }
 
   getPlayer(id: number): Observable<getOneResponse<Player>> {
