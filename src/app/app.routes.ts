@@ -13,6 +13,7 @@ import { MatchesComponent } from './pages/matches/matches.component';
 import { LeaguesComponent } from './pages/leagues/leagues.component';
 import { TeamsComponent } from './pages/teams/teams.component';
 import { RefereesComponent } from './pages/referees/referees.component';
+import { TeamComponent } from './pages/team/team.component';
 
 export const routes: Routes = [
   { path: 'login', component: LoginComponent },
@@ -31,6 +32,11 @@ export const routes: Routes = [
       {
         path: 'players/:id',
         component: PlayerComponent,
+        canActivate: [authGuard],
+      },
+      {
+        path: 'teams/:id',
+        component: TeamComponent,
         canActivate: [authGuard],
       },
       {
