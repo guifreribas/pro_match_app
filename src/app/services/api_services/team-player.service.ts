@@ -9,7 +9,7 @@ import { TeamPlayer } from '../../models/team-player';
   providedIn: 'root',
 })
 export class TeamPlayerService {
-  private apiUrl = `${config.apiUrl}/team-players`;
+  public apiUrl = `${config.apiUrl}/team-players`;
   private genericService = inject(GenericApiService);
 
   constructor() {}
