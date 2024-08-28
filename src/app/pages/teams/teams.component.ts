@@ -1,7 +1,7 @@
 import { AfterViewInit, Component, inject, OnInit } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { AsideComponent } from '@app/components/organism/aside/aside.component';
-import { CreateTeamModalComponent } from '@app/components/team/create-team-modal/create-team-modal.component';
+import { CreateTeamModalComponent } from '@app/components/teams/create-team-modal/create-team-modal.component';
 import { DashboardPanelLayoutComponent } from '@app/layouts/dashboard-panel-layout/dashboard-panel-layout.component';
 import { Team, TeamsGetResponse } from '@app/models/team';
 import { TeamService } from '@app/services/api_services/team.service';
