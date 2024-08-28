@@ -6,9 +6,8 @@ import { config } from '@app/config/config';
 import { DashboardPanelLayoutComponent } from '@app/layouts/dashboard-panel-layout/dashboard-panel-layout.component';
 import { Player } from '@app/models/player';
 import { PlayerService } from '@app/services/api_services/player.service';
+import { PlayerViewState } from '@app/types/player';
 import { getYears } from '@app/utils/utils';
-
-type PlayerViewState = 'VIEW' | 'EDIT';
 
 @Component({
   selector: 'app-player',
@@ -26,8 +25,8 @@ export class PlayerComponent {
   public player = signal<Player | null>(null);
   public playerId: number | null = null;
   public playerYears: number | null = null;
-  public playerViewState: PlayerViewState = 'VIEW';
-  private _isEditing = false;
+  public playerViewState = signal<PlayerViewState>('VIEW');
+  public _isEditing = false;
 
   private _playerService = inject(PlayerService);
   private _route = inject(ActivatedRoute);
@@ -35,7 +34,7 @@ export class PlayerComponent {
   ngOnInit(): void {
     this.playerId = this._route.snapshot.params['id'];
     this._isEditing = this._route.snapshot.queryParams['edit'];
-    if (this._isEditing) this.playerViewState = 'EDIT';
+    if (this._isEditing) this.playerViewState.set('EDIT');
     if (this.playerId) {
       this._playerService.getPlayer(this.playerId).subscribe({
         next: (res) => {

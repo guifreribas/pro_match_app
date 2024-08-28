@@ -1,6 +1,7 @@
 <app-dashboard-panel-layout>
-  @if(playerViewState === 'VIEW'){
-  <app-player-view [player]="player()" [playerYears]="playerYears"></app-player-view>
+  @if(playerViewState() === 'VIEW'){
+  <app-player-view [player]="player()" [playerYears]="playerYears"
+    [playerViewState]="playerViewState"></app-player-view>
   }
   @else{
   <app-player-edit [player]="player"></app-player-edit>
