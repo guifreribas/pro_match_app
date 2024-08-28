@@ -23,7 +23,7 @@ type PlayerViewState = 'VIEW' | 'EDIT';
 })
 export class PlayerComponent {
   public imgUrl = config.IMG_URL;
-  public player: Player | null = null;
+  public player = signal<Player | null>(null);
   public playerId: number | null = null;
   public playerYears: number | null = null;
   public playerViewState: PlayerViewState = 'VIEW';
@@ -36,13 +36,12 @@ export class PlayerComponent {
     this.playerId = this._route.snapshot.params['id'];
     this._isEditing = this._route.snapshot.queryParams['edit'];
     if (this._isEditing) this.playerViewState = 'EDIT';
-
     if (this.playerId) {
       this._playerService.getPlayer(this.playerId).subscribe({
         next: (res) => {
           const playerYears = getYears(new Date(res.data.birthday));
           console.log(playerYears);
-          this.player = res.data;
+          this.player.set(res.data);
           this.playerYears = playerYears;
         },
         error: (err) => {
