@@ -3,7 +3,11 @@ import { config } from '../../config/config';
 import { GenericApiService } from './generic-api.service';
 import { Observable } from 'rxjs';
 import { getAllResponse } from '../../models/api';
-import { TeamPlayer } from '../../models/team-player';
+import {
+  TeamPlayer,
+  TeamPlayersGetResponse,
+  TeamPlayerWithDetails,
+} from '../../models/team-player';
 
 @Injectable({
   providedIn: 'root',
@@ -14,8 +18,10 @@ export class TeamPlayerService {
 
   constructor() {}
 
-  getTeamPlayers(): Observable<getAllResponse<TeamPlayer>> {
-    return this.genericService.getAll<getAllResponse<TeamPlayer>>(this.apiUrl);
+  getTeamPlayers(): Observable<getAllResponse<TeamPlayerWithDetails>> {
+    return this.genericService.getAll<getAllResponse<TeamPlayerWithDetails>>(
+      this.apiUrl
+    );
   }
 
   getTeamPlayer(id: number): Observable<getAllResponse<TeamPlayer>> {
