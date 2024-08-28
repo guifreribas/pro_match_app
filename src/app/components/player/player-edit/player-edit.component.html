@@ -1,1 +1,133 @@
-<p>player-edit works!</p>
+<div class="bg-white dark:bg-gray-800 relative shadow-md sm:rounded-lg overflow-hidden max-w-6xl">
+  <div class="relative p-4 bg-white rounded-lg shadow sm:p-5" [hidden]="this.isCreatingPlayer()">
+    <!-- Modal header -->
+    <div class="flex justify-between items-center pb-4 mb-4 rounded-t border-b sm:mb-5 ">
+      <h3 class="text-lg font-semibold text-gray-900 ">
+        Editar jugador/a
+      </h3>
+
+      @if(this.player()?.avatar){
+      <img class="w-10 h-10 rounded-lg object-cover" src="{{imgUrl + this.player()?.avatar}}"
+        alt="{{this.player()?.name}} {{this.player()?.last_name}}">
+      }
+      @else {
+      <img class="w-10 h-10 rounded-lg object-cover" src="/assets/icons/avatar.svg"
+        alt="{{this.player()?.name}} {{this.player()?.last_name}}">
+      }
+
+    </div>
+    <!-- Modal body -->
+    <form [formGroup]="playerForm" (submit)="onSubmit($event)">
+      <div class="grid gap-4 mb-4 sm:grid-cols-2 ">
+        <div class="relative">
+          <label for="name" class="block mb-2 text-sm font-medium text-gray-900">
+            Nombre
+          </label>
+          <input type="text" name="name" id="name" formControlName="name" autocomplete="name"
+            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 "
+            [ngClass]="{ 'border-red-500 border-2': (playerForm.get('name')?.errors?.['required'] || playerForm.get('name')?.errors?.['name']) && (isSubmitted || playerForm.get('name')?.touched)}"
+            placeholder="Añade el nombre" required="">
+          @if(playerForm.get('name')?.errors?.['required'] && (isSubmitted || playerForm.get('name')?.touched)){
+          <p id="outlined_error_help" class="mt-2 text-xs text-red-600 absolute -top-1.5 right-0"><span
+              class="font-medium">Ops!</span> Nombre es requerido</p>
+          }
+        </div>
+        <div class="relative">
+          <label for="brand" class="block mb-2 text-sm font-medium text-gray-900 ">
+            Apellidos
+          </label>
+          <input type="text" name="brand" id="brand" formControlName="lastName"
+            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"
+            [ngClass]="{ 'border-red-500 border-2': (playerForm.get('lastName')?.errors?.['required'] || playerForm.get('lastName')?.errors?.['lastName']) && (isSubmitted || playerForm.get('lastName')?.touched)}"
+            placeholder="Añade los apellidos" required="">
+          @if(playerForm.get('lastName')?.errors?.['required'] && (isSubmitted ||
+          playerForm.get('lastName')?.touched)){
+          <p id="outlined_error_help" class="mt-2 text-xs text-red-600 absolute -top-1.5 right-0"><span
+              class="font-medium">Ops!</span> Apellidos es requerido</p>
+          }
+        </div>
+        <div class="relative">
+          <label for="price" class="block mb-2 text-sm font-medium text-gray-900 ">
+            DNI
+          </label>
+          <input type="text" name="price" id="price" formControlName="dni"
+            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"
+            [ngClass]="{ 'border-red-500 border-2': (playerForm.get('dni')?.errors?.['required'] || playerForm.get('dni')?.errors?.['dni']) && (isSubmitted || playerForm.get('dni')?.touched)}"
+            placeholder="Añade el DNI" required="">
+          @if(playerForm.get('dni')?.errors?.['required'] && (isSubmitted || playerForm.get('dni')?.touched)){
+          <p id="outlined_error_help" class="mt-2 text-xs text-red-600 absolute -top-1.5 right-0"><span
+              class="font-medium">Ops!</span> DNI es requerido</p>
+          }
+          @else if(playerForm.get('dni')?.errors?.['dni'] && (isSubmitted || playerForm.get('dni')?.touched)){
+          <p id="outlined_error_help" class="mt-2 text-xs text-red-600 absolute -top-1.5 right-0"><span
+              class="font-medium">Ops!</span> DNI no es valido</p>
+          }
+        </div>
+
+        <div>
+          <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white" for="user_avatar">
+            Sube una imagen
+          </label>
+          <input type="file" name="avatar" id="avatar" formControlName="avatar" (change)="onAvatarChange($event)"
+            class="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 focus:outline-none"
+            aria-describedby="user_avatar_help" id="user_avatar" type="file">
+        </div>
+
+
+        <div class="relative">
+          <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white" for="user_avatar">
+            Fecha de nacimiento
+          </label>
+          <div class="relative max-w-sm">
+            <app-datepicker formControlName="birthday" [classesFromParent]="dynamicClasses"
+              (dateChange)="onDateChange($event)"></app-datepicker>
+          </div>
+          @if(playerForm.get('birthday')?.errors?.['required'] && (isSubmitted ||
+          playerForm.get('birthday')?.touched)){
+          <p id="outlined_error_help" class="mt-2 text-xs text-red-600 absolute -top-1.5 right-0"><span
+              class="font-medium">Ops!</span> Campo requerido</p>
+          }
+          @else if(playerForm.get('birthday')?.errors?.['underage'] && (isSubmitted ||
+          playerForm.get('birthday')?.touched)){
+          <p id="outlined_error_help" class="mt-2 text-xs text-red-600 absolute -top-1.5 right-0">
+            Es menor de 16años!
+          </p>
+          }
+        </div>
+
+
+
+
+
+        <!-- <div>
+            <label for="category" class="block mb-2 text-sm font-medium text-gray-900 ">Category</label>
+            <select id="category"
+              class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 ">
+              <option selected="">Select category</option>
+              <option value="TV">TV/Monitors</option>
+              <option value="PC">PC</option>
+              <option value="GA">Gaming/Console</option>
+              <option value="PH">Phones</option>
+            </select>
+          </div>
+          <div class="sm:col-span-2">
+            <label for="description" class="block mb-2 text-sm font-medium text-gray-900 ">Description</label>
+            <textarea id="description" rows="4"
+              class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-primary-500 focus:border-primary-500 "
+              placeholder="Write product description here"></textarea>
+          </div> -->
+      </div>
+      <button type="submit"
+        class="text-white inline-flex items-center bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center mt-2">
+        <svg class="mr-1 -ml-1 w-6 h-6" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+          <path fill-rule="evenodd"
+            d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z"
+            clip-rule="evenodd">
+          </path>
+        </svg>
+        Editar jugador/a
+      </button>
+    </form>
+  </div>
+
+</div>
