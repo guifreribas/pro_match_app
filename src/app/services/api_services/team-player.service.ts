@@ -2,12 +2,22 @@ import { inject, Injectable } from '@angular/core';
 import { config } from '../../config/config';
 import { GenericApiService } from './generic-api.service';
 import { Observable } from 'rxjs';
-import { getAllResponse } from '../../models/api';
+import { getAllResponse, postOneResponse } from '../../models/api';
 import {
+  CreateTeamPlayer,
   TeamPlayer,
   TeamPlayersGetResponse,
   TeamPlayerWithDetails,
 } from '../../models/team-player';
+import { urlParser } from '@app/utils/utils';
+
+interface GetTeamPlayersParams {
+  q?: string;
+  page?: string;
+  limit?: number;
+  team_id?: number | null;
+  player_id?: number | null;
+}
 
 @Injectable({
   providedIn: 'root',
@@ -18,9 +28,12 @@ export class TeamPlayerService {
 
   constructor() {}
 
-  getTeamPlayers(): Observable<getAllResponse<TeamPlayerWithDetails>> {
+  getTeamPlayers(
+    params?: GetTeamPlayersParams
+  ): Observable<getAllResponse<TeamPlayerWithDetails>> {
+    const url = urlParser(params, this.apiUrl);
     return this.genericService.getAll<getAllResponse<TeamPlayerWithDetails>>(
-      this.apiUrl
+      url
     );
   }
 
@@ -32,12 +45,12 @@ export class TeamPlayerService {
   }
 
   createTeamPlayer(
-    teamPlayer: TeamPlayer
-  ): Observable<getAllResponse<TeamPlayer>> {
-    return this.genericService.create<TeamPlayer, getAllResponse<TeamPlayer>>(
-      this.apiUrl,
-      teamPlayer
-    );
+    teamPlayer: CreateTeamPlayer
+  ): Observable<postOneResponse<TeamPlayer>> {
+    return this.genericService.create<
+      CreateTeamPlayer,
+      postOneResponse<TeamPlayer>
+    >(this.apiUrl, teamPlayer);
   }
 
   updateTeamPlayer(
