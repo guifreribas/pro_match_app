@@ -95,17 +95,20 @@ export class PlayersComponent implements OnInit, AfterViewInit {
 
   goOnPage(page: number) {
     this._getPlayers('GO_ON_PAGE', page.toString());
+    this.reInitFlowbite();
   }
 
   goPreviousPage() {
     const currentPage = this.playersResponse()?.data?.currentPage ?? 0;
     const previusPage = currentPage - 1 > 0 ? currentPage - 1 : 1;
     this._getPlayers('PREVIOUS', String(previusPage));
+    this.reInitFlowbite();
   }
 
   goNextPage() {
     const currentPage = this.playersResponse()?.data?.currentPage ?? 0;
     this._getPlayers('NEXT', String(currentPage + 1));
+    this.reInitFlowbite();
   }
 
   onSearchInput(e: Event) {
@@ -119,5 +122,11 @@ export class PlayersComponent implements OnInit, AfterViewInit {
     if (query.length >= 2) {
       this._searchSubject.next(query);
     }
+  }
+
+  reInitFlowbite() {
+    setTimeout(() => {
+      initFlowbite();
+    }, 100);
   }
 }
