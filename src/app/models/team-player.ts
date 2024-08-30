@@ -10,6 +10,9 @@ export interface TeamPlayer {
   updated_at?: Date;
 }
 
+export interface CreateTeamPlayer
+  extends Pick<TeamPlayer, 'team_id' | 'player_id' | 'user_id'> {}
+
 export interface TeamPlayerCreateResponse {
   success: boolean;
   message: string;
@@ -30,7 +33,7 @@ export interface TeamPlayerDeleteResponse {
   timestamp: string;
 }
 
-type PlayerSummary = Pick<Player, 'name' | 'last_name' | 'birthday'> & {
+type PlayerSummary = Pick<Player, 'name' | 'last_name' | 'birthday' | 'dni'> & {
   avatar?: string;
 };
 type TeamSummary = Pick<Team, 'name'> & {
