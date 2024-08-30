@@ -1,5 +1,8 @@
 <app-dashboard-panel-layout>
-  <div class="bg-white dark:bg-gray-800 relative shadow-md sm:rounded-lg overflow-hidden max-w-6xl">
-    <p>team works!</p>
-  </div>
+  @if(teamViewState() === 'VIEW'){
+  <app-team-view [team]="team()" [teamViewState]="teamViewState"></app-team-view>
+  }
+  @else{
+  <app-team-edit [team]="team"></app-team-edit>
+  }
 </app-dashboard-panel-layout>
