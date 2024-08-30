@@ -7,7 +7,6 @@
       <path
         d="M5.25 5.25a3 3 0 0 0-3 3v10.5a3 3 0 0 0 3 3h10.5a3 3 0 0 0 3-3V13.5a.75.75 0 0 0-1.5 0v5.25a1.5 1.5 0 0 1-1.5 1.5H5.25a1.5 1.5 0 0 1-1.5-1.5V8.25a1.5 1.5 0 0 1 1.5-1.5h5.25a.75.75 0 0 0 0-1.5H5.25Z" />
     </svg>
-
   </button>
   <div class="w-full flex flex-wrap gap-8 py-4 pb-12 border-b">
     @if(player?.avatar){
@@ -32,6 +31,8 @@
   <section class="flex flex-col gap-4 w-full justify-center">
 
     <h5 class="text-lg font-semibold text-gray-800 ">Equipos</h5>
+
+
     @for(team of teamPlayers(); track team.team_player_id){
     <a routerLink="/teams/{{team?.team_id}}"
       class="flex flex-row gap-4 p-2 w-full items-center rounded-lg hover:cursor-pointer hover:bg-gray-100 transition-all duration-100">

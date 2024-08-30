@@ -4,14 +4,23 @@ import {
   WritableSignal,
   OnInit,
   inject,
+  OnChanges,
 } from '@angular/core';
-import { RouterModule } from '@angular/router';
+import { ActivatedRoute, RouterModule } from '@angular/router';
 import { config } from '@app/config/config';
-import { Player } from '@app/models/player';
-import { TeamPlayer, TeamPlayerWithDetails } from '@app/models/team-player';
+import { TeamPlayerWithDetails } from '@app/models/team-player';
 import { TeamPlayerService } from '@app/services/api_services/team-player.service';
 import { PlayerViewState } from '@app/types/player';
 import { signal } from '@angular/core';
+import {
+  catchError,
+  debounceTime,
+  distinctUntilChanged,
+  Subject,
+  switchMap,
+} from 'rxjs';
+import { Player } from '@app/models/player';
+import { initFlowbite } from 'flowbite';
 
 @Component({
   selector: 'app-player-view',
@@ -26,11 +35,15 @@ export class PlayerViewComponent implements OnInit {
   @Input() playerViewState!: WritableSignal<PlayerViewState>;
   public imgUrl: string = config.IMG_URL;
   public teamPlayers = signal<TeamPlayerWithDetails[]>([]);
+  public searchedTeamPlayers = signal<TeamPlayerWithDetails[] | null>(null);
 
   private _teamPlayersService = inject(TeamPlayerService);
+  private _searchSubject = new Subject<string>();
+  private _route = inject(ActivatedRoute);
 
   ngOnInit(): void {
-    this._teamPlayersService.getTeamPlayers().subscribe({
+    const playerId = this._route.snapshot.params['id'];
+    this._teamPlayersService.getTeamPlayers({ player_id: playerId }).subscribe({
       next: (res) => {
         console.log(res);
         this.teamPlayers.set(res.data.items);
@@ -39,5 +52,36 @@ export class PlayerViewComponent implements OnInit {
         console.log(err);
       },
     });
+
+    this._searchSubject
+      .pipe(
+        debounceTime(200),
+        distinctUntilChanged(),
+        switchMap((query) =>
+          this._teamPlayersService.getTeamPlayers({ q: query }).pipe(
+            catchError((error) => {
+              console.log(error);
+              return [];
+            })
+          )
+        )
+      )
+      .subscribe((res) => {
+        console.log(res);
+        this.searchedTeamPlayers.set(res.data.items);
+      });
+  }
+
+  onSearchInput(e: Event) {
+    const inputElement = e.target as HTMLInputElement;
+    const query = inputElement.value;
+    if (query.length === 0) {
+      this.searchedTeamPlayers.set(null);
+      return;
+    }
+    // if (inputElement.value.length < 2) return;
+    if (query.length >= 2) {
+      this._searchSubject.next(query);
+    }
   }
 }
