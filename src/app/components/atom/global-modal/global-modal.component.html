@@ -1,0 +1,13 @@
+@if(isVisible){
+<div class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+  <div class="bg-white rounded-lg shadow-lg max-w-lg w-full p-6">
+    <div class="text-lg font-semibold mb-4">{{ title }}</div>
+    <div class="mb-6">{{ message }}</div>
+    <div class="flex justify-end">
+      <button (click)="closeModal()" class="bg-blue-500 text-white px-4 py-2 rounded">
+        Tanca
+      </button>
+    </div>
+  </div>
+</div>
+}
