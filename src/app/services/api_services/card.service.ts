@@ -2,11 +2,11 @@ import { inject, Injectable } from '@angular/core';
 import { config } from '../../config/config';
 import { Observable } from 'rxjs';
 import {
-  deleteOneResponse,
+  deleteResponse,
   getAllResponse,
   getOneResponse,
-  postOneResponse,
-  putOneResponse,
+  postResponse,
+  updateResponse,
 } from '../../models/api';
 import { Card } from '../../models/card';
 import { GenericApiService } from './generic-api.service';
@@ -28,22 +28,22 @@ export class CardService {
     return this.genericService.getOne<getOneResponse<Card>>(this.apiUrl, id);
   }
 
-  createCard(card: Card): Observable<postOneResponse<Card>> {
-    return this.genericService.create<Card, postOneResponse<Card>>(
+  createCard(card: Card): Observable<postResponse<Card>> {
+    return this.genericService.create<Card, postResponse<Card>>(
       this.apiUrl,
       card
     );
   }
 
-  updateCard(card: Card, id: number): Observable<putOneResponse<Card>> {
-    return this.genericService.update<Card, putOneResponse<Card>>(
+  updateCard(card: Card, id: number): Observable<updateResponse<Card>> {
+    return this.genericService.update<Card, updateResponse<Card>>(
       this.apiUrl,
       id,
       card
     );
   }
 
-  deleteCard(id: number): Observable<deleteOneResponse> {
-    return this.genericService.delete<deleteOneResponse>(this.apiUrl, id);
+  deleteCard(id: number): Observable<deleteResponse> {
+    return this.genericService.delete<deleteResponse>(this.apiUrl, id);
   }
 }
