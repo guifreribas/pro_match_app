@@ -20,7 +20,7 @@ interface GetOrganizationsParams {
   providedIn: 'root',
 })
 export class OrganizationService {
-  private apiUrl = `${config.apiUrl}/organizations`;
+  public apiUrl = `${config.apiUrl}/organizations`;
   private genericService = inject(GenericApiService);
 
   constructor() {}
