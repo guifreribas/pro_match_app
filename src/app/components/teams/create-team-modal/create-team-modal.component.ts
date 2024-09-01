@@ -7,7 +7,7 @@ import {
   Validators,
 } from '@angular/forms';
 import { RouterModule } from '@angular/router';
-import { postOneResponse } from '@app/models/api';
+import { postResponse } from '@app/models/api';
 import { ResourceCreateResponse } from '@app/models/resource';
 import { Team, TeamsCreateResponse } from '@app/models/team';
 
@@ -62,11 +62,11 @@ export class CreateTeamModalComponent {
     console.log(teamCreateResponse);
   }
 
-  async createTeam(team: Team): Promise<postOneResponse<TeamsCreateResponse>> {
+  async createTeam(team: Team): Promise<postResponse<TeamsCreateResponse>> {
     try {
       return firstValueFrom(
         this._genericService
-          .create<Team, postOneResponse<TeamsCreateResponse>>(
+          .create<Team, postResponse<TeamsCreateResponse>>(
             this._teamService.apiUrl,
             team
           )

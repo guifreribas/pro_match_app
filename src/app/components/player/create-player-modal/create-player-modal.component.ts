@@ -18,7 +18,7 @@ import {
   Validators,
 } from '@angular/forms';
 import { RouterModule } from '@angular/router';
-import { getAllResponse, postOneResponse } from '@app/models/api';
+import { getAllResponse, postResponse } from '@app/models/api';
 import { Player, PlayerCreateResponse } from '@app/models/player';
 import { ResourceCreateResponse } from '@app/models/resource';
 import { GenericApiService } from '@app/services/api_services/generic-api.service';
@@ -151,11 +151,11 @@ export class CreatePlayerModalComponent implements OnInit {
 
   async createPlayer(
     player: Player
-  ): Promise<postOneResponse<PlayerCreateResponse>> {
+  ): Promise<postResponse<PlayerCreateResponse>> {
     try {
       return firstValueFrom(
         this._genericService
-          .create<Player, postOneResponse<PlayerCreateResponse>>(
+          .create<Player, postResponse<PlayerCreateResponse>>(
             this._playerService.apiUrl,
             player
           )

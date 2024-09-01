@@ -10,7 +10,6 @@ import { DashboardPanelLayoutComponent } from '../../layouts/dashboard-panel-lay
 import { RouterModule } from '@angular/router';
 import { initFlowbite } from 'flowbite';
 import { CreatePlayerModalComponent } from '@app/components/player/create-player-modal/create-player-modal.component';
-import { AsideComponent } from '../../components/organism/aside/aside.component';
 import { PlayerService } from '@app/services/api_services/player.service';
 import { Player, PlayersGetResponse } from '@app/models/player';
 import { CommonModule } from '@angular/common';
@@ -32,7 +31,6 @@ type Action = 'NEXT' | 'PREVIOUS' | 'GO_ON_PAGE';
     DashboardPanelLayoutComponent,
     RouterModule,
     CreatePlayerModalComponent,
-    AsideComponent,
     CommonModule,
   ],
   templateUrl: './players.component.html',

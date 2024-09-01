@@ -22,7 +22,7 @@ import {
 import { RouterModule } from '@angular/router';
 import { DatepickerComponent } from '@app/components/atom/datepicker/datepicker.component';
 import { config } from '@app/config/config';
-import { postOneResponse } from '@app/models/api';
+import { postResponse } from '@app/models/api';
 import { Player, PlayerCreateResponse } from '@app/models/player';
 import { ResourceCreateResponse } from '@app/models/resource';
 import { TeamsGetResponse } from '@app/models/team';
@@ -165,11 +165,11 @@ export class PlayerEditComponent {
 
   async createPlayer(
     player: Player
-  ): Promise<postOneResponse<PlayerCreateResponse>> {
+  ): Promise<postResponse<PlayerCreateResponse>> {
     try {
       return firstValueFrom(
         this._genericService
-          .create<Player, postOneResponse<PlayerCreateResponse>>(
+          .create<Player, postResponse<PlayerCreateResponse>>(
             this._playerService.apiUrl,
             player
           )
