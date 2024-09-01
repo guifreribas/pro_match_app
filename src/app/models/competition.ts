@@ -5,6 +5,8 @@ export interface Competition {
   id_competition: number;
   type: CompetitionType;
   subtype: CompetitionSubtype;
+  user_id: number;
+  organization_id: number;
   created_at?: Date;
   updated_at?: Date;
 }

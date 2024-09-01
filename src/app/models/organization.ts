@@ -3,7 +3,6 @@ export interface Organization {
   name: string;
   address: string;
   logo: string;
-  competition_id: number;
   user_id: number;
   created_at?: Date;
   updated_at?: Date;
