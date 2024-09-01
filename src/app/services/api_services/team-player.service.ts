@@ -2,7 +2,11 @@ import { inject, Injectable } from '@angular/core';
 import { config } from '../../config/config';
 import { GenericApiService } from './generic-api.service';
 import { Observable } from 'rxjs';
-import { getAllResponse, postOneResponse } from '../../models/api';
+import {
+  deleteOneResponse,
+  getAllResponse,
+  postOneResponse,
+} from '../../models/api';
 import {
   CreateTeamPlayer,
   TeamPlayer,
@@ -64,10 +68,8 @@ export class TeamPlayerService {
     );
   }
 
-  deleteTeamPlayer(id: number): Observable<getAllResponse<TeamPlayer>> {
-    return this.genericService.delete<getAllResponse<TeamPlayer>>(
-      this.apiUrl,
-      id
-    );
+  deleteTeamPlayer(id: number): Observable<deleteOneResponse> {
+    console.log('deleteTeamPlayer', id);
+    return this.genericService.delete<deleteOneResponse>(this.apiUrl, id);
   }
 }
