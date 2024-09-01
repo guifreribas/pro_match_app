@@ -92,11 +92,11 @@ export class TeamViewComponent implements OnInit {
     };
     this._teamPlayersService.getTeamPlayers(getTeamPlayersParams).subscribe({
       next: (res) => {
-        console.log(res);
         this.teamPlayers.set(res.data.items);
       },
       error: (err) => {
         console.log(err);
+        throw err;
       },
     });
 
@@ -114,7 +114,6 @@ export class TeamViewComponent implements OnInit {
         )
       )
       .subscribe((res) => {
-        console.log(res);
         this.searchedPlayers.set(res.data.items);
         this.initPlayerForms(res.data.items);
       });
@@ -147,19 +146,12 @@ export class TeamViewComponent implements OnInit {
   }
 
   handleAddPlayer(playerId: number) {
-    console.log('submit');
     if (!this._teamId) return;
     const playerForm = this.playerForms[playerId];
     if (playerForm.invalid) {
       playerForm.markAllAsTouched();
       return;
     }
-    console.log({
-      team_id: this._teamId,
-      player_id: playerId,
-      user_id: this._userState.me()!.id_user,
-      player_number: this.playerForms[playerId].value.dorsal,
-    });
     this._teamPlayersService
       .createTeamPlayer({
         team_id: this._teamId,
@@ -169,9 +161,7 @@ export class TeamViewComponent implements OnInit {
       })
       .subscribe({
         next: (res) => {
-          console.log(res);
           this.teamPlayers.set([...this.teamPlayers(), res.data]);
-          console.log(this.teamPlayers());
           this._globalModalService.openModal('Jugador/a añadido', '');
           this.playerSearchInput.setValue('');
           this.searchedPlayers.set(null);
@@ -200,13 +190,11 @@ export class TeamViewComponent implements OnInit {
       .deleteTeamPlayer(TeamPlayer.id_team_player)
       .subscribe({
         next: (res) => {
-          console.log(res);
           this.teamPlayers.update((prev) =>
             prev.filter(
               (player) => player.id_team_player !== TeamPlayer.id_team_player
             )
           );
-          console.log(this.teamPlayers());
           this._globalModalService.openModal('Jugador/a eliminado', '');
         },
         error: (err) => {
