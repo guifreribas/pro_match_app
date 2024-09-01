@@ -2,8 +2,19 @@ import { inject, Injectable } from '@angular/core';
 import { config } from '../../config/config';
 import { GenericApiService } from './generic-api.service';
 import { Observable } from 'rxjs';
-import { getAllResponse } from '../../models/api';
+import {
+  getAllResponse,
+  getOneResponse,
+  postResponse,
+  updateResponse,
+} from '../../models/api';
 import { Organization } from '../../models/organization';
+import { urlParser } from '@app/utils/utils';
+
+interface GetOrganizationsParams {
+  q?: string;
+  page?: string;
+}
 
 @Injectable({
   providedIn: 'root',
@@ -14,14 +25,15 @@ export class OrganizationService {
 
   constructor() {}
 
-  getOrganizations(): Observable<getAllResponse<Organization>> {
-    return this.genericService.getAll<getAllResponse<Organization>>(
-      this.apiUrl
-    );
+  getOrganizations(
+    params?: GetOrganizationsParams
+  ): Observable<getAllResponse<Organization>> {
+    const url = urlParser(params, this.apiUrl);
+    return this.genericService.getAll<getAllResponse<Organization>>(url);
   }
 
-  getOrganization(id: number): Observable<getAllResponse<Organization>> {
-    return this.genericService.getOne<getAllResponse<Organization>>(
+  getOrganization(id: number): Observable<getOneResponse<Organization>> {
+    return this.genericService.getOne<getOneResponse<Organization>>(
       this.apiUrl,
       id
     );
@@ -29,20 +41,20 @@ export class OrganizationService {
 
   createOrganization(
     organization: Organization
-  ): Observable<getAllResponse<Organization>> {
-    return this.genericService.create<
-      Organization,
-      getAllResponse<Organization>
-    >(this.apiUrl, organization);
+  ): Observable<postResponse<Organization>> {
+    return this.genericService.create<Organization, postResponse<Organization>>(
+      this.apiUrl,
+      organization
+    );
   }
 
   updateOrganization(
     organization: Organization,
     id: number
-  ): Observable<getAllResponse<Organization>> {
+  ): Observable<updateResponse<Organization>> {
     return this.genericService.update<
       Organization,
-      getAllResponse<Organization>
+      updateResponse<Organization>
     >(this.apiUrl, id, organization);
   }
 
