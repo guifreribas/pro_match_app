@@ -3,11 +3,11 @@ import { config } from '../../config/config';
 import { GenericApiService } from './generic-api.service';
 import { Observable } from 'rxjs';
 import {
-  deleteOneResponse,
+  deleteResponse,
   getAllResponse,
   getOneResponse,
-  postOneResponse,
-  putOneResponse,
+  postResponse,
+  updateResponse,
 } from '../../models/api';
 import { Competition } from '../../models/competition';
 
@@ -33,25 +33,25 @@ export class CompetitionService {
 
   createCompetition(
     competition: Competition
-  ): Observable<postOneResponse<Competition>> {
-    return this.genericService.create<
-      Competition,
-      postOneResponse<Competition>
-    >(this.apiUrl, competition);
+  ): Observable<postResponse<Competition>> {
+    return this.genericService.create<Competition, postResponse<Competition>>(
+      this.apiUrl,
+      competition
+    );
   }
 
   updateCompetition(
     competition: Competition,
     id: number
-  ): Observable<putOneResponse<Competition>> {
-    return this.genericService.update<Competition, putOneResponse<Competition>>(
+  ): Observable<updateResponse<Competition>> {
+    return this.genericService.update<Competition, updateResponse<Competition>>(
       this.apiUrl,
       id,
       competition
     );
   }
 
-  deleteCompetition(id: number): Observable<deleteOneResponse> {
-    return this.genericService.delete<deleteOneResponse>(this.apiUrl, id);
+  deleteCompetition(id: number): Observable<deleteResponse> {
+    return this.genericService.delete<deleteResponse>(this.apiUrl, id);
   }
 }

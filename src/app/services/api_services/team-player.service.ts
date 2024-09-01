@@ -2,11 +2,7 @@ import { inject, Injectable } from '@angular/core';
 import { config } from '../../config/config';
 import { GenericApiService } from './generic-api.service';
 import { Observable } from 'rxjs';
-import {
-  deleteOneResponse,
-  getAllResponse,
-  postOneResponse,
-} from '../../models/api';
+import { deleteResponse, getAllResponse, postResponse } from '../../models/api';
 import {
   CreateTeamPlayer,
   TeamPlayer,
@@ -51,10 +47,10 @@ export class TeamPlayerService {
 
   createTeamPlayer(
     teamPlayer: CreateTeamPlayer
-  ): Observable<postOneResponse<TeamPlayer>> {
+  ): Observable<postResponse<TeamPlayer>> {
     return this.genericService.create<
       CreateTeamPlayer,
-      postOneResponse<TeamPlayer>
+      postResponse<TeamPlayer>
     >(this.apiUrl, teamPlayer);
   }
 
@@ -69,8 +65,8 @@ export class TeamPlayerService {
     );
   }
 
-  deleteTeamPlayer(id: number): Observable<deleteOneResponse> {
+  deleteTeamPlayer(id: number): Observable<deleteResponse> {
     console.log('deleteTeamPlayer', id);
-    return this.genericService.delete<deleteOneResponse>(this.apiUrl, id);
+    return this.genericService.delete<deleteResponse>(this.apiUrl, id);
   }
 }

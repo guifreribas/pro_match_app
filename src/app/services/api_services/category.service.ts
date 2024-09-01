@@ -2,11 +2,11 @@ import { inject, Injectable } from '@angular/core';
 import { config } from '../../config/config';
 import { Observable } from 'rxjs';
 import {
-  deleteOneResponse,
+  deleteResponse,
   getAllResponse,
   getOneResponse,
-  postOneResponse,
-  putOneResponse,
+  postResponse,
+  updateResponse,
 } from '../../models/api';
 import { Category } from '../../models/category';
 import { GenericApiService } from './generic-api.service';
@@ -31,8 +31,8 @@ export class CategoryService {
     );
   }
 
-  createCategory(category: Category): Observable<postOneResponse<Category>> {
-    return this.genericService.create<Category, postOneResponse<Category>>(
+  createCategory(category: Category): Observable<postResponse<Category>> {
+    return this.genericService.create<Category, postResponse<Category>>(
       this.apiUrl,
       category
     );
@@ -41,15 +41,15 @@ export class CategoryService {
   updateCategory(
     category: Category,
     id: number
-  ): Observable<putOneResponse<Category>> {
-    return this.genericService.update<Category, putOneResponse<Category>>(
+  ): Observable<updateResponse<Category>> {
+    return this.genericService.update<Category, updateResponse<Category>>(
       this.apiUrl,
       id,
       category
     );
   }
 
-  deleteCategory(id: number): Observable<deleteOneResponse> {
-    return this.genericService.delete<deleteOneResponse>(this.apiUrl, id);
+  deleteCategory(id: number): Observable<deleteResponse> {
+    return this.genericService.delete<deleteResponse>(this.apiUrl, id);
   }
 }

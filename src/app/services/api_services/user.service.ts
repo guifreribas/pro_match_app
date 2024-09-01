@@ -2,11 +2,11 @@ import { inject, Injectable } from '@angular/core';
 import { config } from '../../config/config';
 import { Observable } from 'rxjs';
 import {
-  deleteOneResponse,
+  deleteResponse,
   getAllResponse,
   getOneResponse,
-  postOneResponse,
-  putOneResponse,
+  postResponse,
+  updateResponse,
 } from '../../models/api';
 import { User } from '../../models/user';
 import { GenericApiService } from './generic-api.service';
@@ -34,22 +34,22 @@ export class UserService {
     return this.genericService.getOne<getOneResponse<User>>(this.apiUrl, id);
   }
 
-  createUser(user: User): Observable<postOneResponse<User>> {
-    return this.genericService.create<User, postOneResponse<User>>(
+  createUser(user: User): Observable<postResponse<User>> {
+    return this.genericService.create<User, postResponse<User>>(
       this.apiUrl,
       user
     );
   }
 
-  updateUser(user: any, id: number): Observable<putOneResponse<User>> {
-    return this.genericService.update<User, putOneResponse<User>>(
+  updateUser(user: any, id: number): Observable<updateResponse<User>> {
+    return this.genericService.update<User, updateResponse<User>>(
       this.apiUrl,
       id,
       user
     );
   }
 
-  deleteUser(id: number): Observable<deleteOneResponse> {
-    return this.genericService.delete<deleteOneResponse>(this.apiUrl, id);
+  deleteUser(id: number): Observable<deleteResponse> {
+    return this.genericService.delete<deleteResponse>(this.apiUrl, id);
   }
 }
