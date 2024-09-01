@@ -6,12 +6,16 @@ export interface TeamPlayer {
   team_id: number;
   player_id: number;
   user_id: number;
+  player_number: number;
   created_at?: Date;
   updated_at?: Date;
 }
 
 export interface CreateTeamPlayer
-  extends Pick<TeamPlayer, 'team_id' | 'player_id' | 'user_id'> {}
+  extends Pick<
+    TeamPlayer,
+    'team_id' | 'player_id' | 'user_id' | 'player_number'
+  > {}
 
 export interface TeamPlayerCreateResponse {
   success: boolean;
