@@ -47,41 +47,41 @@ export interface getOneResponseError {
   timestamp: string;
 }
 
-export interface postOneResponse<T> {
+export interface postResponse<T> {
   success: boolean;
   message: string;
   data: T;
   timestamp: string;
 }
 
-export interface postOneResponseError {
+export interface postResponseError {
   success: false;
   message: string;
   data: null;
   timestamp: string;
 }
 
-export interface putOneResponse<T> {
+export interface updateResponse<T> {
   success: boolean;
   message: string;
   data: T;
   timestamp: string;
 }
 
-export interface putOneResponseError {
+export interface updateResponseError {
   success: false;
   message: string;
   data: null;
   timestamp: string;
 }
 
-export interface deleteOneResponse {
+export interface deleteResponse {
   success: boolean;
   message: string;
   timestamp: string;
 }
 
-export interface deleteOneResponseError {
+export interface deleteResponseError {
   success: false;
   message: string;
   timestamp: string;
