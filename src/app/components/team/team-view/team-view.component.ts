@@ -83,7 +83,10 @@ export class TeamViewComponent implements OnInit {
     this._teamId = this._route.snapshot.params['id'] ?? null;
     const getTeamPlayersParams = {
       team_id: this._teamId,
+      page: '1',
       limit: 50,
+      sortBy: 'player_number',
+      sortOrder: 'asc',
     };
     this._teamPlayersService.getTeamPlayers(getTeamPlayersParams).subscribe({
       next: (res) => {

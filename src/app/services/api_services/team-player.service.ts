@@ -10,7 +10,6 @@ import {
 import {
   CreateTeamPlayer,
   TeamPlayer,
-  TeamPlayersGetResponse,
   TeamPlayerWithDetails,
 } from '../../models/team-player';
 import { urlParser } from '@app/utils/utils';
@@ -21,6 +20,8 @@ interface GetTeamPlayersParams {
   limit?: number;
   team_id?: number | null;
   player_id?: number | null;
+  sortBy?: string;
+  sortOrder?: string;
 }
 
 @Injectable({
