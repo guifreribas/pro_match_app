@@ -39,6 +39,7 @@ import {
 import { initFlowbite } from 'flowbite';
 import { AfterViewInit } from '@angular/core';
 import { TeamPlayer } from '../../../models/team-player';
+import { GlobalModalService } from '@app/services/global-modal.service';
 
 @Component({
   selector: 'app-team-view',
@@ -74,6 +75,7 @@ export class TeamViewComponent implements OnInit {
   private _playerService = inject(PlayerService);
   private _userState = inject(UserStateService);
   private _formBuilder = inject(FormBuilder);
+  private _globalModalService = inject(GlobalModalService);
 
   ngOnInit(): void {
     setTimeout(() => {
@@ -170,14 +172,14 @@ export class TeamViewComponent implements OnInit {
           console.log(res);
           this.teamPlayers.set([...this.teamPlayers(), res.data]);
           console.log(this.teamPlayers());
-          alert('Jugador añadido');
+          this._globalModalService.openModal('Jugador/a añadido', '');
           this.playerSearchInput.setValue('');
           this.searchedPlayers.set(null);
           this.isPlayerCreatedSuccessfully = true;
         },
         error: (err) => {
           console.error(err);
-          alert(err.error.message);
+          this._globalModalService.openModal('Error', err.error.message);
           throw err;
         },
       });
@@ -205,11 +207,11 @@ export class TeamViewComponent implements OnInit {
             )
           );
           console.log(this.teamPlayers());
-          alert('Jugador eliminado');
+          this._globalModalService.openModal('Jugador/a eliminado', '');
         },
         error: (err) => {
           console.error(err);
-          alert('Error al eliminar jugador');
+          this._globalModalService.openModal('Error', err.error.message);
           throw err;
         },
       });
