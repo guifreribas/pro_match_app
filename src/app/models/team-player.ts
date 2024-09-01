@@ -2,7 +2,7 @@ import { Player } from './player';
 import { Team } from './team';
 
 export interface TeamPlayer {
-  team_player_id: number;
+  id_team_player: number;
   team_id: number;
   player_id: number;
   user_id: number;
