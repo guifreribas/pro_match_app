@@ -14,6 +14,7 @@ import { LeaguesComponent } from './pages/leagues/leagues.component';
 import { TeamsComponent } from './pages/teams/teams.component';
 import { RefereesComponent } from './pages/referees/referees.component';
 import { TeamComponent } from './pages/team/team.component';
+import { OrganizationsComponent } from './pages/organizations/organizations.component';
 
 export const routes: Routes = [
   { path: 'login', component: LoginComponent },
@@ -67,6 +68,11 @@ export const routes: Routes = [
       {
         path: 'referees',
         component: RefereesComponent,
+        canActivate: [authGuard],
+      },
+      {
+        path: 'organizations',
+        component: OrganizationsComponent,
         canActivate: [authGuard],
       },
       { path: '**', redirectTo: '' },
