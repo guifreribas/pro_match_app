@@ -14,6 +14,7 @@ import { Team, TeamsCreateResponse } from '@app/models/team';
 import { GenericApiService } from '@app/services/api_services/generic-api.service';
 import { ResourceService } from '@app/services/api_services/resource.service';
 import { TeamService } from '@app/services/api_services/team.service';
+import { UserStateService } from '@app/services/global_states/user-state.service';
 import { catchError, firstValueFrom } from 'rxjs';
 
 @Component({
@@ -33,6 +34,7 @@ export class CreateTeamModalComponent {
   private _teamService = inject(TeamService);
   private _resourceService = inject(ResourceService);
   private _genericService = inject(GenericApiService);
+  private _userState = inject(UserStateService);
   private _avatar: File | null = null;
 
   constructor() {}
@@ -42,6 +44,7 @@ export class CreateTeamModalComponent {
 
     let team: Team = {
       ...this.teamForm.value,
+      user_id: this._userState.me()?.id_user,
     };
 
     if (this.teamForm.invalid) {
