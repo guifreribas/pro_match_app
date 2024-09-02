@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject, WritableSignal } from '@angular/core';
+import { Component, inject, ViewChild, WritableSignal } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { CreateOrganizationModalComponent } from '@app/components/organization/create-organization-modal/create-organization-modal.component';
 import { config } from '@app/config/config';
@@ -8,7 +8,7 @@ import { Organization } from '@app/models/organization';
 import { OrganizationService } from '@app/services/api_services/organization.service';
 import { OrganizationsGetResponse } from '@app/models/organization';
 import { signal } from '@angular/core';
-import { initFlowbite } from 'flowbite';
+import { initFlowbite, Modal } from 'flowbite';
 import {
   catchError,
   debounceTime,
