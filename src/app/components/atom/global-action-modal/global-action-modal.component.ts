@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, HostListener } from '@angular/core';
 
 interface OpenModal {
   title: string;
@@ -40,5 +40,12 @@ export class GlobalActionModalComponent {
   onAction() {
     this.action();
     this.closeModal();
+  }
+
+  @HostListener('document:keydown', ['$event'])
+  handleKeydown(event: KeyboardEvent) {
+    if (event.key === 'Escape' && this.isVisible) {
+      this.closeModal();
+    }
   }
 }
