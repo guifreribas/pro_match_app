@@ -15,6 +15,7 @@ import { TeamsComponent } from './pages/teams/teams.component';
 import { RefereesComponent } from './pages/referees/referees.component';
 import { TeamComponent } from './pages/team/team.component';
 import { OrganizationsComponent } from './pages/organizations/organizations.component';
+import { OrganizationComponent } from './pages/organization/organization.component';
 
 export const routes: Routes = [
   { path: 'login', component: LoginComponent },
@@ -38,6 +39,11 @@ export const routes: Routes = [
       {
         path: 'teams/:id',
         component: TeamComponent,
+        canActivate: [authGuard],
+      },
+      {
+        path: 'organizations/:id',
+        component: OrganizationComponent,
         canActivate: [authGuard],
       },
       {
