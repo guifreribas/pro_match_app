@@ -104,12 +104,15 @@ export class CreateOrganizationModalComponent {
       console.log(resource);
       organization.logo = resource.data.name;
     }
-    await this.createOrganization(organization);
+    const organizationCreateResponse = await this.createOrganization(
+      organization
+    );
+    console.log({ organizationCreateResponse });
     this.isCreatingOrganization.set(false);
-    this.organizationForm.markAsPristine();
+    this.organizationForm.reset();
     this.organizations.set([...this.organizations(), organization]);
     this.isSubmitted = false;
-    this._globalModalService.openModal('Centro creado correctamente', '');
+    // this._globalModalService.openModal('Centro creado correctamente', '');
   }
 
   async createOrganization(
