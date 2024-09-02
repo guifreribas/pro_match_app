@@ -8,9 +8,9 @@ import { Component, Input } from '@angular/core';
   styleUrl: './global-modal.component.scss',
 })
 export class GlobalModalComponent {
-  @Input() title: string = '';
-  @Input() message: string = '';
-  isVisible: boolean = false;
+  public title: string = '';
+  public message: string = '';
+  public isVisible: boolean = false;
 
   openModal(title: string, message: string) {
     this.title = title;
