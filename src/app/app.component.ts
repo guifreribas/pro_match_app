@@ -9,11 +9,12 @@ import { RouterOutlet } from '@angular/router';
 import { initFlowbite } from 'flowbite';
 import { GlobalModalComponent } from './components/atom/global-modal/global-modal.component';
 import { GlobalModalService } from './services/global-modal.service';
+import { GlobalActionModalComponent } from './components/atom/global-action-modal/global-action-modal.component';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, GlobalModalComponent],
+  imports: [RouterOutlet, GlobalModalComponent, GlobalActionModalComponent],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss',
 })
