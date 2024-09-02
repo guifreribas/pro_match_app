@@ -6,7 +6,7 @@ interface OpenModal {
   message: string;
   actionButtonMessage: string;
   cancelButtonMessage?: string;
-  action: () => void;
+  action: () => void | any;
 }
 
 @Injectable({
@@ -23,7 +23,7 @@ export class GlobalActionModalService {
   }
 
   openModal(props: OpenModal) {
-    this._modalComponent.openModal(props);
+    this._modalComponent.openModal(props as OpenModal);
   }
 
   closeModal() {

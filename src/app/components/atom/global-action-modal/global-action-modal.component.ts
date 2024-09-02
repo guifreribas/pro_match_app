@@ -20,21 +20,25 @@ export class GlobalActionModalComponent {
   public message: string = '';
   public actionButtonMessage: string = 'Aceptar';
   public cancelButtonMessage: string = 'Cancelar';
-  public action: () => void = () => {};
+  public action: () => void | any = () => {};
   public isVisible: boolean = false;
 
   openModal(props: OpenModal) {
-    const { title, message, actionButtonMessage, cancelButtonMessage, action } =
-      props;
+    const { title, message, actionButtonMessage, action } = props;
     this.title = title;
     this.message = message;
     this.actionButtonMessage = actionButtonMessage;
-    this.cancelButtonMessage = cancelButtonMessage ?? 'Cancelar';
+    this.cancelButtonMessage = props?.cancelButtonMessage ?? 'Cancelar';
     this.action = action;
     this.isVisible = true;
   }
 
   closeModal() {
     this.isVisible = false;
+  }
+
+  onAction() {
+    this.action();
+    this.closeModal();
   }
 }

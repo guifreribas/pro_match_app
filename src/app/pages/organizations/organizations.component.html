@@ -66,7 +66,7 @@
         <tbody>
 
           <!-- Organizations  -->
-          @for(organization of organizations; track organization.id_organization){
+          @for(organization of organizations(); track organization.id_organization){
           <tr class="border-b dark:border-gray-700">
             <td scope="row" class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap">{{organization.name}}</td>
             <td class="px-4 py-3">{{organization.address}}</td>
@@ -92,7 +92,7 @@
                 </svg>
               </button>
               <div [id]="'dropdown-' + organization.id_organization"
-                class="hidden z-10 w-44 bg-white rounded divide-y divide-gray-100 shadow dark:bg-gray-700 dark:divide-gray-600">
+                class="hidden z-10 w-44 bg-white rounded divide-y divide-gray-100 shadow">
                 <ul class="py-1 text-sm text-gray-700 dark:text-gray-200"
                   [attr.aria-labelledby]="'dropdown-button-' + organization.id_organization">
                   <li>
@@ -108,12 +108,10 @@
                     </a>
                   </li>
                 </ul>
-                <div class="py-1">
-                  <a [routerLink]="['#']"
-                    class="block py-2 px-4 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white">
-                    Eliminar
-                  </a>
-                </div>
+                <button (click)="handleDeleteOrganization(organization)"
+                  class="block w-full py-2 px-4 text-sm text-start text-gray-700 hover:bg-gray-100 ">
+                  Eliminar
+                </button>
               </div>
             </td>
           </tr>
@@ -190,4 +188,4 @@
 
 
 
-<app-create-organization-modal></app-create-organization-modal>
+<app-create-organization-modal [organizations]="organizations"></app-create-organization-modal>

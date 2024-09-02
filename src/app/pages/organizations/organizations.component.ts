@@ -16,6 +16,8 @@ import {
   Subject,
   switchMap,
 } from 'rxjs';
+import { GlobalModalService } from '@app/services/global-modal.service';
+import { GlobalActionModalService } from '@app/services/global-action-modal.service';
 
 type Action = 'NEXT' | 'PREVIOUS' | 'GO_ON_PAGE';
 
@@ -33,7 +35,7 @@ type Action = 'NEXT' | 'PREVIOUS' | 'GO_ON_PAGE';
 })
 export class OrganizationsComponent {
   public imgUrl = config.IMG_URL;
-  public organizations: Organization[] = [];
+  public organizations: WritableSignal<Organization[]> = signal([]);
   public page = 1;
   public organizationsResponse: WritableSignal<OrganizationsGetResponse | null> =
     signal(null);
@@ -41,6 +43,8 @@ export class OrganizationsComponent {
 
   private _organizationService = inject(OrganizationService);
   private _searchSubject = new Subject<string>();
+  private _globalModalService = inject(GlobalModalService);
+  private _globalActionModalService = inject(GlobalActionModalService);
 
   constructor() {
     this._searchSubject
@@ -78,7 +82,7 @@ export class OrganizationsComponent {
         console.log(res);
         console.log({ organizations: res.data.items });
         this.organizationsResponse.set(res);
-        this.organizations = res.data.items;
+        this.organizations.set(res.data.items);
       },
       error: (err) => {
         console.log(err);
@@ -121,5 +125,34 @@ export class OrganizationsComponent {
     setTimeout(() => {
       initFlowbite();
     }, 100);
+  }
+
+  handleDeleteOrganization(organization: Organization) {
+    this._globalActionModalService.openModal({
+      title: '¿Estás seguro?',
+      message: `Estás seguro que quieres eliminar el centro ${organization.name}?`,
+      actionButtonMessage: 'Eliminar',
+      cancelButtonMessage: 'Cancelar',
+      action: () => this.deleteOrganization(organization.id_organization),
+    });
+  }
+
+  deleteOrganization(id: number): any {
+    this._organizationService.deleteOrganization(id).subscribe({
+      next: (res) => {
+        console.log(res);
+        this.organizations.update((prev) =>
+          prev.filter((organization) => organization.id_organization !== id)
+        );
+        this._globalModalService.openModal('Centro eliminado', '');
+      },
+      error: (err) => {
+        console.log(err);
+        this._globalModalService.openModal(
+          '¡Opss, lo lamento!',
+          'Ha ocurrido un error vuelve a intentarlo'
+        );
+      },
+    });
   }
 }
