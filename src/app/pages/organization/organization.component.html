@@ -1,0 +1,9 @@
+<app-dashboard-panel-layout>
+  @if(organizationViewState() === 'VIEW'){
+  <app-organization-view [organization]="organization"
+    [organizationViewState]="organizationViewState"></app-organization-view>
+  }
+  @else{
+  <app-organization-edit [organization]="organization"></app-organization-edit>
+  }
+</app-dashboard-panel-layout>
