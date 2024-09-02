@@ -1,4 +1,11 @@
-import { ChangeDetectorRef, Component, inject, signal } from '@angular/core';
+import {
+  ChangeDetectorRef,
+  Component,
+  inject,
+  Input,
+  signal,
+  WritableSignal,
+} from '@angular/core';
 import {
   FormBuilder,
   FormControl,
@@ -16,7 +23,6 @@ import { ResourceCreateResponse } from '@app/models/resource';
 import { GenericApiService } from '@app/services/api_services/generic-api.service';
 import { OrganizationService } from '@app/services/api_services/organization.service';
 import { UserStateService } from '@app/services/global_states/user-state.service';
-import { CreateResourceData } from '../../../models/resource';
 import {
   catchError,
   debounceTime,
@@ -29,6 +35,7 @@ import { postResponse } from '@app/models/api';
 import { ResourceService } from '@app/services/api_services/resource.service';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
+import { GlobalModalService } from '@app/services/global-modal.service';
 
 @Component({
   selector: 'app-create-organization-modal',
@@ -38,6 +45,8 @@ import { RouterModule } from '@angular/router';
   styleUrl: './create-organization-modal.component.scss',
 })
 export class CreateOrganizationModalComponent {
+  @Input() organizations!: WritableSignal<Organization[]>;
+
   public imgUrl = config.IMG_URL;
   public organizationForm!: FormGroup;
   public isSubmitted = false;
@@ -48,6 +57,7 @@ export class CreateOrganizationModalComponent {
   private _resourceService = inject(ResourceService);
   private _searchSubject = new Subject<string>();
   private _genericService = inject(GenericApiService);
+  private _globalModalService = inject(GlobalModalService);
   private _userState = inject(UserStateService);
   private _avatar: File | null = null;
 
@@ -94,13 +104,12 @@ export class CreateOrganizationModalComponent {
       console.log(resource);
       organization.logo = resource.data.name;
     }
-    const organizationCreateResponse = await this.createOrganization(
-      organization
-    );
-    console.log(organizationCreateResponse);
+    await this.createOrganization(organization);
     this.isCreatingOrganization.set(false);
     this.organizationForm.markAsPristine();
+    this.organizations.set([...this.organizations(), organization]);
     this.isSubmitted = false;
+    this._globalModalService.openModal('Centro creado correctamente', '');
   }
 
   async createOrganization(
@@ -116,12 +125,17 @@ export class CreateOrganizationModalComponent {
           .pipe(
             catchError((err) => {
               console.log(err);
+              this._globalModalService.openModal('Error', err.error.message);
               throw err;
             })
           )
       );
     } catch (error) {
       console.log(error);
+      this._globalModalService.openModal(
+        '¡Opss, lo lamento!',
+        'Ha ocurrido un error vuelve a intentarlo'
+      );
       throw error;
     }
   }
