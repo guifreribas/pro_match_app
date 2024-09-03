@@ -6,16 +6,15 @@ import { MainLayoutComponent } from './layouts/main-layout/main-layout.component
 import { authGuard } from './auth.guard';
 import { ProfileComponent } from './pages/profile/profile.component';
 import { PlayersComponent } from './pages/players/players.component';
-import { PlayerCardComponent } from './components/player-card/player-card.component';
 import { CreatePlayerComponent } from './pages/create-player/create-player.component';
 import { PlayerComponent } from './pages/player/player.component';
 import { MatchesComponent } from './pages/matches/matches.component';
-import { LeaguesComponent } from './pages/leagues/leagues.component';
 import { TeamsComponent } from './pages/teams/teams.component';
 import { RefereesComponent } from './pages/referees/referees.component';
 import { TeamComponent } from './pages/team/team.component';
 import { OrganizationsComponent } from './pages/organizations/organizations.component';
 import { OrganizationComponent } from './pages/organization/organization.component';
+import { CompetitionsComponent } from './pages/competitions/competitions.component';
 
 export const routes: Routes = [
   { path: 'login', component: LoginComponent },
@@ -62,8 +61,8 @@ export const routes: Routes = [
         canActivate: [authGuard],
       },
       {
-        path: 'leagues',
-        component: LeaguesComponent,
+        path: 'competitions',
+        component: CompetitionsComponent,
         canActivate: [authGuard],
       },
       {
