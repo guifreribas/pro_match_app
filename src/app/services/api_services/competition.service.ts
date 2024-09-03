@@ -10,6 +10,12 @@ import {
   updateResponse,
 } from '../../models/api';
 import { Competition } from '../../models/competition';
+import { urlParser } from '@app/utils/utils';
+
+interface GetCompetitionsParams {
+  q?: string;
+  page?: string;
+}
 
 @Injectable({
   providedIn: 'root',
@@ -20,8 +26,11 @@ export class CompetitionService {
 
   constructor() {}
 
-  getCompetitions(): Observable<getAllResponse<Competition>> {
-    return this.genericService.getAll<getAllResponse<Competition>>(this.apiUrl);
+  getCompetitions(
+    params?: GetCompetitionsParams
+  ): Observable<getAllResponse<Competition>> {
+    const url = urlParser(params, this.apiUrl);
+    return this.genericService.getAll<getAllResponse<Competition>>(url);
   }
 
   getCompetition(id: number): Observable<getOneResponse<Competition>> {
