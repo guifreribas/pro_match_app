@@ -5,13 +5,23 @@ export type MatchPart =
   | 'EXTRA_TIME_SECOND_HALF'
   | 'PENALTIES';
 
+export type MatchStatus =
+  | 'SCHEDULED'
+  | 'IN_PROGRESS'
+  | 'FINISHED'
+  | 'POSTPONED'
+  | 'CANCELLED'
+  | 'ABANDONED'
+  | 'TO_BE_SCHEDULED';
+
 export interface Match {
   id_match: number;
-  minute: number;
-  part: MatchPart;
-  player_id: number;
-  team_id: number;
+  status: MatchStatus;
   category_id: number;
+  local_team: number;
+  visitor_team: number;
+  date: Date;
+  competition_category_id: number;
   created_at?: Date;
   updated_at?: Date;
 }
