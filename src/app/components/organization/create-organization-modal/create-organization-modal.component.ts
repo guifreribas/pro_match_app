@@ -75,12 +75,17 @@ export class CreateOrganizationModalComponent {
         debounceTime(200),
         distinctUntilChanged(),
         switchMap((query) =>
-          this._organizationService.getOrganizations({ q: query }).pipe(
-            catchError((error) => {
-              console.log(error);
-              return [];
+          this._organizationService
+            .getOrganizations({
+              user_id: this._userState.me()!.id_user,
+              q: query,
             })
-          )
+            .pipe(
+              catchError((error) => {
+                console.log(error);
+                return [];
+              })
+            )
         )
       )
       .subscribe((res) => {
