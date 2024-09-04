@@ -18,6 +18,7 @@ import {
 } from 'rxjs';
 import { GlobalModalService } from '@app/services/global-modal.service';
 import { GlobalActionModalService } from '@app/services/global-action-modal.service';
+import { UserStateService } from '@app/services/global_states/user-state.service';
 
 type Action = 'NEXT' | 'PREVIOUS' | 'GO_ON_PAGE';
 
@@ -45,6 +46,7 @@ export class OrganizationsComponent {
   private _searchSubject = new Subject<string>();
   private _globalModalService = inject(GlobalModalService);
   private _globalActionModalService = inject(GlobalActionModalService);
+  private _userState = inject(UserStateService);
 
   constructor() {
     this._searchSubject
@@ -52,12 +54,17 @@ export class OrganizationsComponent {
         debounceTime(200),
         distinctUntilChanged(),
         switchMap((query) =>
-          this._organizationService.getOrganizations({ q: query }).pipe(
-            catchError((error) => {
-              console.log(error);
-              return [];
+          this._organizationService
+            .getOrganizations({
+              user_id: this._userState.me()!.id_user,
+              q: query,
             })
-          )
+            .pipe(
+              catchError((error) => {
+                console.log(error);
+                return [];
+              })
+            )
         )
       )
       .subscribe((res) => {
@@ -77,17 +84,19 @@ export class OrganizationsComponent {
   }
 
   private _getOrganizations(action: Action = 'GO_ON_PAGE', page: string = '1') {
-    this._organizationService.getOrganizations({ page }).subscribe({
-      next: (res) => {
-        console.log(res);
-        console.log({ organizations: res.data.items });
-        this.organizationsResponse.set(res);
-        this.organizations.set(res.data.items);
-      },
-      error: (err) => {
-        console.log(err);
-      },
-    });
+    this._organizationService
+      .getOrganizations({ user_id: this._userState.me()!.id_user, page })
+      .subscribe({
+        next: (res) => {
+          console.log(res);
+          console.log({ organizations: res.data.items });
+          this.organizationsResponse.set(res);
+          this.organizations.set(res.data.items);
+        },
+        error: (err) => {
+          console.log(err);
+        },
+      });
   }
 
   goOnPage(page: number) {
