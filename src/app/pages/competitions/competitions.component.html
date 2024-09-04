@@ -21,7 +21,8 @@
       </div>
       <div
         class="w-full md:w-auto flex flex-col md:flex-row space-y-2 md:space-y-0 items-stretch md:items-center justify-end md:space-x-3 flex-shrink-0">
-        <button type="button" id="defaultModalButton"
+        <button type="button" id="competitionModalButton" data-modal-target="competitionModal"
+          (click)="onCreateCompetitionModal()" data-modal-toggle="competitionModal"
           class="flex items-center justify-center text-white bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 font-medium rounded-lg text-sm px-4 py-2 dark:bg-primary-600 dark:hover:bg-primary-700 focus:outline-none">
           <svg class="mr-1 -ml-1 w-6 h-6" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
             <path fill-rule="evenodd"
@@ -29,7 +30,7 @@
               clip-rule="evenodd">
             </path>
           </svg>
-          Añadir Equipo
+          Añadir Competición
         </button>
       </div>
       <!-- <div
@@ -60,7 +61,7 @@
         </thead>
         <tbody>
 
-          <!-- Lista de jugadores -->
+          <!-- Lista de competiciones -->
           @for(competition of competitions; track competition.id_competition){
           <tr class="border-b dark:border-gray-700">
             <td scope="row" class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap">{{competition.name}}</td>
@@ -167,3 +168,5 @@
   </div>
 
 </app-dashboard-panel-layout>
+
+<app-create-competition-modal [organizations]="organizations"></app-create-competition-modal>
