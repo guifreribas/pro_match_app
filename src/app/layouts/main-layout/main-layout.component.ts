@@ -18,7 +18,7 @@ export class MainLayoutComponent implements OnInit {
   private UserService = inject(UserService);
 
   ngOnInit(): void {
-    if (!this.userState.me()) {
+    if (!this.userState.me()?.id_user) {
       this.UserService.getMe().subscribe({
         next: (res) => {
           console.log({ res });
