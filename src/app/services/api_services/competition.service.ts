@@ -49,6 +49,13 @@ export class CompetitionService {
     );
   }
 
+  createCompetitionFull(competition: Competition): Observable<any> {
+    return this.genericService.create<Competition, any>(
+      `${config.apiUrl}/competitions/full`,
+      competition
+    );
+  }
+
   updateCompetition(
     competition: Competition,
     id: number
