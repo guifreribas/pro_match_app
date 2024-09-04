@@ -14,6 +14,7 @@ import { urlParser } from '@app/utils/utils';
 interface GetOrganizationsParams {
   q?: string;
   page?: string;
+  user_id: number;
 }
 
 @Injectable({
