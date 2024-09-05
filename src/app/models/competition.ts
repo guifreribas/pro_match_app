@@ -1,3 +1,4 @@
+import { CompetitionType } from './competitionType';
 import { Organization } from './organization';
 
 export type CompetitionFormat = 'SINGLE_ROUND' | 'DOUBLE_ROUND' | 'KNOCKOUT';
@@ -13,14 +14,15 @@ export interface Competition {
 }
 
 export interface CompetitionWithDetails extends Competition {
-  organization?: Organization;
+  organization: Pick<Organization, 'name' | 'logo' | 'address'> | null;
+  competitionType: Pick<CompetitionType, 'name'> | null;
 }
 
 export interface CompetitionsGetResponse {
   success: boolean;
   message: string;
   data: {
-    items: Competition[];
+    items: CompetitionWithDetails[];
     itemCount: number;
     totalItems: number;
     currentPage: number;
