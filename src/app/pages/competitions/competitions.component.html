@@ -1,5 +1,5 @@
 <app-dashboard-panel-layout>
-  <div class="bg-white dark:bg-gray-800 relative shadow-md sm:rounded-lg overflow-hidden max-w-6xl">
+  <div class="bg-white dark:bg-gray-800 relative shadow-md sm:rounded-lg  max-w-6xl">
     <div class="flex flex-col md:flex-row items-center justify-between space-y-3 md:space-y-0 md:space-x-4 p-4">
       <div class="w-full md:w-1/2">
         <form class="flex items-center">
@@ -20,10 +20,12 @@
         </form>
       </div>
       <div
-        class="w-full md:w-auto flex flex-col md:flex-row space-y-2 md:space-y-0 items-stretch md:items-center justify-end md:space-x-3 flex-shrink-0">
+        class=" relative w-full md:w-auto flex flex-row md:flex-row space-y-2 md:space-y-0 items-stretch md:items-center justify-end md:space-x-3 flex-shrink-0">
+
         <button type="button" id="competitionModalButton" data-modal-target="competitionModal"
-          (click)="onCreateCompetitionModal()" data-modal-toggle="competitionModal"
-          class="flex items-center justify-center text-white bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 font-medium rounded-lg text-sm px-4 py-2 dark:bg-primary-600 dark:hover:bg-primary-700 focus:outline-none">
+          data-popover-target="popover-info-create-competition" [attr.data-popover-placement]="popoverPosition()"
+          type="button" (click)="onCreateCompetitionModal()" data-modal-toggle="competitionModal"
+          class="w-full flex items-center justify-center text-white bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 font-medium rounded-lg text-sm px-4 py-2 focus:outline-none">
           <svg class="mr-1 -ml-1 w-6 h-6" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
             <path fill-rule="evenodd"
               d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z"
@@ -32,6 +34,33 @@
           </svg>
           Añadir Competición
         </button>
+
+
+
+        <div id="popover-info-create-competition" data-popover role="tooltip"
+          class="w-96 absolute z-10 invisible inline-block text-sm font-medium text-primary-800 transition-opacity duration-500 bg-white rounded-lg shadow-md opacity-0 tooltip">
+          <section class="flex flex-col gap-2">
+            <div
+              class="flex flex-row gap-2 items-center px-3 py-2 bg-primary-800 border-b border-primary-800 text-white font-extrabold rounded-t-lg">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="size-6 text-white">
+                <path fill-rule="evenodd"
+                  d="M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75S2.25 17.385 2.25 12Zm8.706-1.442c1.146-.573 2.437.463 2.126 1.706l-.709 2.836.042-.02a.75.75 0 0 1 .67 1.34l-.04.022c-1.147.573-2.438-.463-2.127-1.706l.71-2.836-.042.02a.75.75 0 1 1-.671-1.34l.041-.022ZM12 9a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5Z"
+                  clip-rule="evenodd" />
+              </svg>
+
+              <h3>Crea una nueva competición</h3>
+            </div>
+            <ul class="list-disc list-outside flex flex-col gap-1 px-3 py-2 pl-8">
+              <li class="">
+                Después añade equipos a la competición e inicializa la competición
+              </li>
+              <li class="text-red-600">
+                ¡Una vez inicializada la competición, <span class="font-bold">no se podrà editar la competición!</span>
+              </li>
+            </ul>
+          </section>
+          <div class="tooltip-arrow bg-primary-800" data-popper-arrow></div>
+        </div>
       </div>
       <!-- <div
         class="w-full md:w-auto flex flex-col md:flex-row space-y-2 md:space-y-0 items-stretch md:items-center justify-end md:space-x-3 flex-shrink-0">
@@ -52,8 +81,11 @@
         <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
           <tr>
             <th scope="col" class="px-4 py-3">Nombre</th>
-            <th scope="col" class="px-4 py-3">Temporada</th>
             <th scope="col" class="px-4 py-3">Tipo</th>
+            <th scope="col" class="px-4 py-3">Formato</th>
+            <th scope="col" class="px-4 py-3">Categoria</th>
+            <th scope="col" class="px-4 py-3">Temporada</th>
+            <th scope="col" class="px-4 py-3">Centro</th>
             <th scope="col" class="px-4 py-3">
               <span class="sr-only">Actions</span>
             </th>
@@ -65,9 +97,11 @@
           @for(competition of competitions; track competition.id_competition){
           <tr class="border-b dark:border-gray-700">
             <td scope="row" class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap">{{competition.name}}</td>
-            <td class="px-4 py-3">2024/2025</td>
-            <td class="px-4 py-3">{{competition.format}}</td>
-
+            <td class="px-4 py-3">{{competition?.competitionType?.name === 'LEAGUE' ? 'Liga' : 'Copa'}}</td>
+            <td class="px-4 py-3">{{competitionFormatMap[competition.format]}}</td>
+            <td class="px-4 py-3">{{getGender(competition.category?.gender)}}</td>
+            <td class="px-4 py-3">{{competition.competitionCategory?.season}}</td>
+            <td class="px-4 py-3">{{competition?.organization?.name}}</td>
 
             <td class="px-4 py-3 flex items-center justify-end">
               <button [id]="'dropdown-button-' + competition.id_competition"
