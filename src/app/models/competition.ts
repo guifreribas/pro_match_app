@@ -9,17 +9,22 @@ export interface Competition {
   id_competition: number;
   name: string;
   format: CompetitionFormat;
+  isInitialized: boolean;
   user_id: number;
   organization_id: number;
   created_at?: Date;
   updated_at?: Date;
 }
 
+interface CompetitionCategoryWithDetails {
+  season: Pick<CompetitionCategory, 'season'> | null;
+  category: Pick<Category, 'name' | 'gender'> | null;
+}
+
 export interface CompetitionWithDetails extends Competition {
   organization: Pick<Organization, 'name' | 'logo' | 'address'> | null;
   competitionType: Pick<CompetitionType, 'name'> | null;
-  category: Pick<Category, 'name' | 'gender'> | null;
-  competitionCategory: Pick<CompetitionCategory, 'season'> | null;
+  competitionCategory: CompetitionCategoryWithDetails;
 }
 
 export interface CompetitionsGetResponse {
