@@ -1,3 +1,5 @@
+import { Category } from './category';
+import { CompetitionCategory } from './competitionCategory';
 import { CompetitionType } from './competitionType';
 import { Organization } from './organization';
 
@@ -16,6 +18,8 @@ export interface Competition {
 export interface CompetitionWithDetails extends Competition {
   organization: Pick<Organization, 'name' | 'logo' | 'address'> | null;
   competitionType: Pick<CompetitionType, 'name'> | null;
+  category: Pick<Category, 'name' | 'gender'> | null;
+  competitionCategory: Pick<CompetitionCategory, 'season'> | null;
 }
 
 export interface CompetitionsGetResponse {
