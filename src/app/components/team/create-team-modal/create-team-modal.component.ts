@@ -60,6 +60,7 @@ export class CreateTeamModalComponent {
 
     const teamCreateResponse = await this.createTeam(team);
     console.log(teamCreateResponse);
+    this.teamForm.reset();
   }
 
   async createTeam(team: Team): Promise<postResponse<TeamsCreateResponse>> {
