@@ -99,7 +99,7 @@ export class CompetitionsComponent {
       });
   }
 
-  getGender(gender: string = '') {
+  getGender(gender: string = 'Otro') {
     return this._genderMap[gender] || 'Otro';
   }
 
@@ -112,5 +112,9 @@ export class CompetitionsComponent {
     } else {
       this.popoverPosition.set('left');
     }
+  }
+
+  getRowClass(competition: CompetitionWithDetails) {
+    return { 'bg-gray-100': !competition.isInitialized };
   }
 }
