@@ -13,7 +13,7 @@
       </svg>
     </button>
     <div id="tooltip-default" role="tooltip"
-      class="absolute z-10 invisible inline-block px-3 py-2 text-sm font-medium text-white transition-opacity duration-500 bg-primary-600 rounded-lg shadow-sm opacity-0 tooltip">
+      class="absolute z-10 invisible inline-block px-3 py-2 text-sm font-medium text-white transition-opacity duration-500 bg-primary-700 rounded-lg shadow-sm opacity-0 tooltip">
       Editar equipo
       <div class="tooltip-arrow" data-popper-arrow></div>
     </div>
@@ -69,7 +69,7 @@
           <div class="flex flex-row gap-2 items-center">
             <div class="relative">
               <input type="number" placeholder="Dorsal" [formControl]="getDorsalControl(player.id_player)"
-                class="min-w-12 max-w-20 bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block p-2"
+                class="min-w-12 max-w-20 bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-700 focus:border-primary-700 block p-2"
                 [ngClass]="{ 'border-red-500 border-2': isInvalidDorsal(player.id_player)}">
               @if(isInvalidDorsal(player.id_player)){
               <p class="absolute -bottom-4 left-0 text-xs text-red-500 w-fit text-nowrap">Dorsal requerido</p>

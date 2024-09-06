@@ -24,7 +24,7 @@
             Nombre
           </label>
           <input type="text" name="name" id="name" formControlName="name" autocomplete="name"
-            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 "
+            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-700 focus:border-primary-700 block w-full p-2.5 "
             [ngClass]="{ 'border-red-500 border-2': (playerForm.get('name')?.errors?.['required'] || playerForm.get('name')?.errors?.['name']) && (isSubmitted || playerForm.get('name')?.touched)}"
             placeholder="Añade el nombre" required="">
           @if(playerForm.get('name')?.errors?.['required'] && (isSubmitted || playerForm.get('name')?.touched)){
@@ -37,7 +37,7 @@
             Apellidos
           </label>
           <input type="text" name="brand" id="brand" formControlName="lastName"
-            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"
+            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-700 focus:border-primary-700 block w-full p-2.5"
             [ngClass]="{ 'border-red-500 border-2': (playerForm.get('lastName')?.errors?.['required'] || playerForm.get('lastName')?.errors?.['lastName']) && (isSubmitted || playerForm.get('lastName')?.touched)}"
             placeholder="Añade los apellidos" required="">
           @if(playerForm.get('lastName')?.errors?.['required'] && (isSubmitted ||
@@ -51,7 +51,7 @@
             DNI
           </label>
           <input type="text" name="price" id="price" formControlName="dni"
-            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"
+            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-700 focus:border-primary-700 block w-full p-2.5"
             [ngClass]="{ 'border-red-500 border-2': (playerForm.get('dni')?.errors?.['required'] || playerForm.get('dni')?.errors?.['dni']) && (isSubmitted || playerForm.get('dni')?.touched)}"
             placeholder="Añade el DNI" required="">
           @if(playerForm.get('dni')?.errors?.['required'] && (isSubmitted || playerForm.get('dni')?.touched)){

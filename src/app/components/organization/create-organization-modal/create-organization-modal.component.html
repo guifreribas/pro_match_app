@@ -48,7 +48,7 @@
               Nombre
             </label>
             <input type="text" name="name" id="name" formControlName="name" autocomplete="name"
-              class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 "
+              class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-700 focus:border-primary-700 block w-full p-2.5 "
               [ngClass]="{ 'border-red-500 border-2': (organizationForm.get('name')?.errors?.['required'] || organizationForm.get('name')?.errors?.['name']) && (isSubmitted || organizationForm.get('name')?.touched)}"
               placeholder="Añade el nombre" required="">
             @if(organizationForm.get('name')?.errors?.['required'] && (isSubmitted ||
@@ -72,7 +72,7 @@
               Dirección
             </label>
             <textarea type="text" name="address" id="address" formControlName="address"
-              class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"
+              class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-700 focus:border-primary-700 block w-full p-2.5"
               [ngClass]="{ 'border-red-500 border-2': (organizationForm.get('address')?.errors?.['required'] || organizationForm.get('address')?.errors?.['address']) && (isSubmitted || organizationForm.get('address')?.touched)}"
               placeholder="calle, número, ciudad" required=""> </textarea>
             @if(organizationForm.get('address')?.errors?.['required'] && (isSubmitted ||
