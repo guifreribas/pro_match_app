@@ -12,6 +12,7 @@ import { DatepickerComponent } from '@app/components/atom/datepicker/datepicker.
 import { config } from '@app/config/config';
 import { getOneResponse } from '@app/models/api';
 import { CompetitionWithDetails } from '@app/models/competition';
+import { CompetitionTeam } from '@app/models/competitionTeam';
 import { Team, TeamsGetResponse } from '@app/models/team';
 import { CompetitionTeamService } from '@app/services/api_services/competition-team.service';
 import { CompetitionService } from '@app/services/api_services/competition.service';
@@ -35,6 +36,7 @@ export class CompetitionInitalizerComponent implements OnInit {
   public imgUrl = config.IMG_URL;
   public teamsSearchInput: FormControl = new FormControl('');
   public startDateInput: FormControl = new FormControl('');
+  public discardedDatesInput: FormControl = new FormControl('');
   public competitionDaysInput: FormControl = new FormControl('');
   public competition = signal<getOneResponse<CompetitionWithDetails> | null>(
     null
@@ -46,6 +48,7 @@ export class CompetitionInitalizerComponent implements OnInit {
   public minDate = new Date(2024, 0, 1);
   public maxDate = new Date(2024, 11, 31);
   public startDate: Date | null = null;
+  public discardedDays: Date[] = [];
   public competitionDays: string[] = [];
   public days = [
     'Lunes',
@@ -130,12 +133,19 @@ export class CompetitionInitalizerComponent implements OnInit {
       if (!prevTeams) return [team];
       return [...prevTeams, team];
     });
+    console.log(this.teamsAdded());
   }
 
   handleDeleteTeam(team: Team) {
     this.teamsAdded.update((prevTeams) => {
       if (!prevTeams) return [];
       return prevTeams.filter((prevTeam) => prevTeam.id_team !== team.id_team);
+    });
+  }
+
+  handleDeletedDate(date: Date) {
+    this.discardedDays = this.discardedDays.filter((discardedDate) => {
+      return discardedDate !== date;
     });
   }
 
@@ -146,13 +156,18 @@ export class CompetitionInitalizerComponent implements OnInit {
     this.startDate = this.startDateInput.value;
   }
 
+  onAddDiscardedDate() {
+    console.log(this.discardedDatesInput.value);
+    this.discardedDays.push(this.discardedDatesInput.value);
+  }
+
   onAddCompetitionDays(event: Event, day: string, index: number) {
     if (!event.target) return;
     const target = event.target as HTMLInputElement;
     if (target.checked) {
-      this.competitionDays.sort((a, b) => ad - b.key);
+      this.competitionDays[index] = day;
     } else {
-      this.competitionDays = this.competitionDays.filter((item) => item);
+      this.competitionDays[index] = '';
     }
   }
 }
