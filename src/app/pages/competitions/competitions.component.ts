@@ -59,7 +59,6 @@ export class CompetitionsComponent {
   ngOnInit(): void {
     this._competitionService
       .getCompetitions({
-        user_id: this._userState.me()!.id_user,
         includeCompetitionType: true,
         includeOrganization: true,
         includeCompetitionCategory: true,
