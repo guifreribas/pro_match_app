@@ -1,70 +1,113 @@
 <div class="min-h-fit relative flex flex-col gap-4 w-full justify-center">
   <div class="`relative w-full max-w-[1200px] flex flex-col gap-8 p-12
     sm:rounded-lg bg-white  shadow-md  overflow-hidden`">
-    <div class="relative">
-      <h3 class="font-bold text-lg uppercase py-2">Añade equipos a la "competición"</h3>
-      <form class="flex relative flex-col items-start">
-        <label for="simple-search" class="text-sm text-gray-500">Busca y añade equipos a la competición:</label>
-        <div class="relative w-full">
-          <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-            <svg aria-hidden="true" class="w-5 h-5 text-primary-700" fill="currentColor" viewbox="0 0 20 20"
-              xmlns="http://www.w3.org/2000/svg">
-              <path fill-rule="evenodd"
-                d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"
-                clip-rule="evenodd" />
-            </svg>
-          </div>
-          <input type="text" id="simple-search" (input)="onSearchInput($event)" [formControl]="competitionSearchInput"
-            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-700 focus:border-primary-700 block w-full pl-10 p-2"
-            placeholder="Fantastic Team..." required="">
-        </div>
-      </form>
 
-      @if(searchedPlayers()?.length ?? 0 > 0){
-      <div #searchedPlayersContainer
-        class="absolute w-full overflow-auto top-12 right-0 bg-gray-50 flex flex-col rounded-lg shadow-md">
-        @for(player of searchedPlayers()!; track $index){
-        <a class="flex flex-row flex-wrap gap-1 p-4 items-center justify-between text-gray-600 text-sm w-full"
-          [routerLink]="['/teams', player.id_player]">
-          <div class="flex flex-row gap-2 items-center">
-            <p class="font-bold">{{player.name}}</p>
-            <p>{{player.last_name}}</p>
-            <p>{{player.dni}}</p>
-          </div>
-          <div class="flex flex-row gap-2 items-center">
-            <div class="relative">
-              <input type="number" placeholder="Dorsal" [formControl]="getDorsalControl(player.id_player)"
-                class="min-w-12 max-w-20 bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-700 focus:border-primary-700 block p-2"
-                [ngClass]="{ 'border-red-500 border-2': isInvalidDorsal(player.id_player)}">
-              @if(isInvalidDorsal(player.id_player)){
-              <p class="absolute -bottom-4 left-0 text-xs text-red-500 w-fit text-nowrap">Dorsal requerido</p>
+    <div class="relative w-full ">
+      <h3 class="font-bold text-lg uppercase py-2">Añade equipos a la "competición"</h3>
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+        <form class="flex relative flex-col items-start">
+          <label for="simple-search" class="text-sm text-gray-500">Busca y añade equipos a la competición:</label>
+          <div class="relative w-full max-w-[384px]">
+            <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+              <svg aria-hidden="true" class="w-5 h-5 text-primary-700" fill="currentColor" viewbox="0 0 20 20"
+                xmlns="http://www.w3.org/2000/svg">
+                <path fill-rule="evenodd"
+                  d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"
+                  clip-rule="evenodd" />
+              </svg>
+            </div>
+            <input type="text" id="simple-search" (input)="onSearchInput($event)" [formControl]="teamsSearchInput"
+              class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg max-w-[384px] focus:ring-primary-700 focus:border-primary-700 block w-full pl-10 p-2"
+              placeholder="Fantastic Team..." required="">
+            <div class="absolute inset-y-0 right-2 flex items-center pl-3" (click)="onResetInput()">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
+                class="size-5 text-gray-500 hover:text-black hover:cursor-pointer active:text-primary-700 trainsition-colors duration-100">
+                <path fill-rule="evenodd"
+                  d="M5.47 5.47a.75.75 0 0 1 1.06 0L12 10.94l5.47-5.47a.75.75 0 1 1 1.06 1.06L13.06 12l5.47 5.47a.75.75 0 1 1-1.06 1.06L12 13.06l-5.47 5.47a.75.75 0 0 1-1.06-1.06L10.94 12 5.47 6.53a.75.75 0 0 1 0-1.06Z"
+                  clip-rule="evenodd" />
+              </svg>
+            </div>
+
+            @if(searchedTeams()?.data?.items?.length ?? 0 > 0){
+            <div #searchedPlayersContainer
+              class="absolute w-full overflow-auto top-12 right-0 bg-gray-50 flex flex-col rounded-lg shadow-md z-10">
+              @for(team of searchedTeams()?.data?.items; track $index){
+              <a class="flex flex-row flex-wrap gap-1 p-4 items-center justify-between text-gray-600 text-sm w-full"
+                [routerLink]="['/teams', team.id_team]">
+                <div class="flex flex-row gap-2 items-center">
+                  @if(team.avatar){
+                  <img class="w-10 h-10 rounded-lg object-cover" src="{{imgUrl + team.avatar}}" alt="{{team.name}}">
+                  }
+                  @else {
+                  <img class="w-10 h-10 rounded-lg object-cover" src="/assets/icons/avatar.svg" alt="{{team.name}}">
+                  }
+                  <p class="font-bold">{{team.name}}</p>
+
+                </div>
+                <div class="flex flex-row gap-2 items-center">
+
+                  <button type="submit" (click)="handleAddTeam($event, team)"
+                    class="flex items-center justify-center text- py-2 px-3 rounded-lg leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 ">
+                    Añadir
+                  </button>
+                </div>
+
+              </a>
               }
             </div>
-            <button type="submit" (click)="handleAddPlayer(player.id_player)"
-              class="flex items-center justify-center text- py-2 px-3 rounded-lg leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 ">
-              Añadir
-            </button>
-          </div>
+            }
 
-        </a>
-        }
+          </div>
+        </form>
+
+        <div>
+          <div class="opacity-0"> <span class="text-sm">.</span></div>
+          <ul class="list-none list-outside grid grid-cols-1 sm:grid-cols-2 gap-1 px-3 text-start text-sm ">
+            @for(team of teamsAdded()!; track $index){
+            <li class="flex flex-row gap-2 items-center relative border p-1 border-gray-300 rounded-lg shadow-sm">
+              @if(team.avatar){
+              <img class="w-10 h-10 rounded-lg object-cover" src="{{imgUrl + team.avatar}}" alt="{{team.name}}">
+              }
+              @else {
+              <img class="w-10 h-10 rounded-lg object-cover" src="/assets/icons/avatar.svg" alt="{{team.name}}">
+              }
+              <p class="font-bold">{{team.name}}</p>
+
+              <div class="absolute inset-y-0 right-2 flex items-center pl-3" (click)="handleDeleteTeam(team)">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
+                  class="size-5 text-primary-700 hover:text-black hover:cursor-pointer active:text-primary-700 trainsition-colors duration-100">
+                  <path fill-rule="evenodd"
+                    d="M16.5 4.478v.227a48.816 48.816 0 0 1 3.878.512.75.75 0 1 1-.256 1.478l-.209-.035-1.005 13.07a3 3 0 0 1-2.991 2.77H8.084a3 3 0 0 1-2.991-2.77L4.087 6.66l-.209.035a.75.75 0 0 1-.256-1.478A48.567 48.567 0 0 1 7.5 4.705v-.227c0-1.564 1.213-2.9 2.816-2.951a52.662 52.662 0 0 1 3.369 0c1.603.051 2.815 1.387 2.815 2.951Zm-6.136-1.452a51.196 51.196 0 0 1 3.273 0C14.39 3.05 15 3.684 15 4.478v.113a49.488 49.488 0 0 0-6 0v-.113c0-.794.609-1.428 1.364-1.452Zm-.355 5.945a.75.75 0 1 0-1.5.058l.347 9a.75.75 0 1 0 1.499-.058l-.346-9Zm5.48.058a.75.75 0 1 0-1.498-.058l-.347 9a.75.75 0 0 0 1.5.058l.345-9Z"
+                    clip-rule="evenodd" />
+                </svg>
+              </div>
+            </li>
+            }
+
+          </ul>
+        </div>
+
       </div>
-      }
+
     </div>
 
 
     <div class="border-b opacity-70 my-4"></div>
     <div class="relative">
-
       <h3 class="font-bold text-lg uppercase py-2">Añade una fecha de inicio</h3>
-
       <div class="relative">
         <label class="block mb-2 text-sm font-medium text-gray-900 " for="user_avatar">
-          Fecha de inicio: <span class="font-bold">15/09/2024</span>
+          Fecha de inicio: <span class="font-bold">{{startDate | date:'dd/MM/yyyy'}}</span>
         </label>
-        <div class="relative max-w-sm">
-          <app-datepicker formControlName="startDate" [classesFromParent]="dynamicClasses"
-            (dateChange)="onDateChange($event)"></app-datepicker>
+        <div class="relative w-full max-w-sm flex flex-row gap-2 ">
+          <div class="relative w-full">
+            <app-datepicker [formControl]="startDateInput" [classesFromParent]="dynamicClasses" [minDate]="minDate"
+              [maxDate]="maxDate" (dateChange)="onDateChange($event)"></app-datepicker>
+          </div>
+          <button (click)="onAddStartDate()"
+            class="w-fit border border-gray-300 text-primary-700 hover:bg-primary-800 hover:border-primary-700 hover:text-white transition-colors duration-100 rounded-lg px-2">
+            Añadir
+          </button>
         </div>
         <!-- @if(playerForm.get('birthday')?.errors?.['required'] && (isSubmitted ||
         playerForm.get('birthday')?.touched)){
@@ -82,54 +125,83 @@
     </div>
 
     <div class="border-b opacity-70 my-4"></div>
+
+
     <div class="relative">
-
       <h3 class="font-bold text-lg uppercase py-2">Descarta fechas de competición</h3>
-
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
         <div>
-
           <label class="block mb-2 text-sm font-medium text-gray-900 " for="user_avatar">
             Fechas:
           </label>
-          <div class="relative max-w-sm">
-            <app-datepicker formControlName="startDate" [classesFromParent]="dynamicClasses"
-              (dateChange)="onDateChange($event)"></app-datepicker>
+          <div class="relative w-full max-w-sm flex flex-row gap-2 ">
+            <div class="relative w-full">
+              <app-datepicker formControlName="startDate" [classesFromParent]="dynamicClasses"
+                (dateChange)="onDateChange($event)">
+              </app-datepicker>
+            </div>
+            <button
+              class="w-fit border border-gray-300 text-primary-700 hover:bg-primary-800 hover:border-primary-700 hover:text-white transition-colors duration-100 rounded-lg px-2">
+              Añadir
+            </button>
           </div>
-          <!-- @if(playerForm.get('birthday')?.errors?.['required'] && (isSubmitted ||
-        playerForm.get('birthday')?.touched)){
-        <p id="outlined_error_help" class="mt-2 text-xs text-red-600 absolute -top-1.5 right-0"><span
-            class="font-medium">Ops!</span> Campo requerido</p>
-        }
-        @else if(playerForm.get('birthday')?.errors?.['underage'] && (isSubmitted ||
-        playerForm.get('birthday')?.touched)){
-        <p id="outlined_error_help" class="mt-2 text-xs text-red-600 absolute -top-1.5 right-0">
-          Es menor de 16años!
-        </p>
-        } -->
         </div>
-
         <div>
-          <div class="opacity-0"> <span class="font-bold">.4</span></div>
+          <div class="opacity-0"> <span class="font-bold">.</span></div>
           <ul class="list-disc list-outside flex flex-col gap-1 px-3 text-start text-sm ">
             <li>Fecha descartada: <span class="font-bold">15/09/2024</span></li>
             <li>Fecha descartada: <span class="font-bold">15/09/2024</span></li>
             <li>Fecha descartada: <span class="font-bold">15/09/2024</span></li>
           </ul>
         </div>
+      </div>
+    </div>
 
+    <div class="border-b opacity-70 my-4"></div>
+
+
+    <div class="relative">
+      <h3 class="font-bold text-lg uppercase py-2">Añade días de competición</h3>
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+        <div>
+          <label class="block mb-2 text-sm font-medium text-gray-900 " for="user_avatar">
+            Días de competición:
+            @for(day of competitionDays; track $index){
+            <span class="font-bold"> {{day }}</span>
+            }
+          </label>
+          <div class="relative w-full max-w-sm flex flex-row gap-2 ">
+            <div class="relative w-full">
+
+              @for(day of days; track $index){
+              <div class="flex items-center mb-4">
+                <input id="default-checkbox" type="checkbox" value="" (input)="onAddCompetitionDays($event,day, $index)"
+                  class="w-4 h-4 text-primary-700 bg-gray-100 border-gray-300 rounded focus:ring-primary-700 dark:focus:ring-primary-700 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
+                <label for="default-checkbox" class="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">
+                  {{day}}
+                </label>
+              </div>
+              }
+            </div>
+
+          </div>
+        </div>
+
+
+
+        <div class="border-b opacity-70 my-4"></div>
+
+
+
+        <button type="submit"
+          class="flex flex-row gap-2 items-center w-fit text-white font-bold bg-primary-700 hover:bg-primary-800 focus:ring-2 focus:ring-primary-300 focus:outline-none rounded-lg text-sm px-5 py-2.5 text-center transition-all duration-100">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="size-6">
+            <path fill-rule="evenodd"
+              d="M4.755 10.059a7.5 7.5 0 0 1 12.548-3.364l1.903 1.903h-3.183a.75.75 0 1 0 0 1.5h4.992a.75.75 0 0 0 .75-.75V4.356a.75.75 0 0 0-1.5 0v3.18l-1.9-1.9A9 9 0 0 0 3.306 9.67a.75.75 0 1 0 1.45.388Zm15.408 3.352a.75.75 0 0 0-.919.53 7.5 7.5 0 0 1-12.548 3.364l-1.902-1.903h3.183a.75.75 0 0 0 0-1.5H2.984a.75.75 0 0 0-.75.75v4.992a.75.75 0 0 0 1.5 0v-3.18l1.9 1.9a9 9 0 0 0 15.059-4.035.75.75 0 0 0-.53-.918Z"
+              clip-rule="evenodd" />
+          </svg>
+
+          Inicializar</button>
       </div>
 
     </div>
-    <button type="submit"
-      class="flex flex-row gap-2 items-center w-fit text-white font-bold bg-primary-700 hover:bg-primary-800 focus:ring-2 focus:ring-primary-300 focus:outline-none rounded-lg text-sm px-5 py-2.5 text-center transition-all duration-100">
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="size-6">
-        <path fill-rule="evenodd"
-          d="M4.755 10.059a7.5 7.5 0 0 1 12.548-3.364l1.903 1.903h-3.183a.75.75 0 1 0 0 1.5h4.992a.75.75 0 0 0 .75-.75V4.356a.75.75 0 0 0-1.5 0v3.18l-1.9-1.9A9 9 0 0 0 3.306 9.67a.75.75 0 1 0 1.45.388Zm15.408 3.352a.75.75 0 0 0-.919.53 7.5 7.5 0 0 1-12.548 3.364l-1.902-1.903h3.183a.75.75 0 0 0 0-1.5H2.984a.75.75 0 0 0-.75.75v4.992a.75.75 0 0 0 1.5 0v-3.18l1.9 1.9a9 9 0 0 0 15.059-4.035.75.75 0 0 0-.53-.918Z"
-          clip-rule="evenodd" />
-      </svg>
-
-      Inicializar</button>
-  </div>
-
-</div>
