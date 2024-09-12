@@ -9,7 +9,11 @@ import {
   postResponse,
   updateResponse,
 } from '../../models/api';
-import { Competition, CompetitionWithDetails } from '../../models/competition';
+import {
+  Competition,
+  CompetitionsGetResponse,
+  CompetitionWithDetails,
+} from '../../models/competition';
 import { urlParser } from '@app/utils/utils';
 
 interface GetCompetitionsParams {
@@ -18,7 +22,7 @@ interface GetCompetitionsParams {
   includeCompetitionType?: boolean;
   includeOrganization?: boolean;
   includeCompetitionCategory?: boolean;
-  user_id: number;
+  user_id?: number;
 }
 
 @Injectable({
@@ -40,8 +44,10 @@ export class CompetitionService {
     );
   }
 
-  getCompetition(id: number): Observable<getOneResponse<Competition>> {
-    return this.genericService.getOne<getOneResponse<Competition>>(
+  getCompetition(
+    id: number
+  ): Observable<getOneResponse<CompetitionWithDetails>> {
+    return this.genericService.getOne<getOneResponse<CompetitionWithDetails>>(
       this.apiUrl,
       id
     );
