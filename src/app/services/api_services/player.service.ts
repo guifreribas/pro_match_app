@@ -9,6 +9,7 @@ import { urlParser } from '@app/utils/utils';
 interface GetPlayersParams {
   q?: string;
   page?: string;
+  user_id?: number;
 }
 
 @Injectable({
