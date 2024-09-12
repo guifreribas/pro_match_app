@@ -8,13 +8,15 @@ import {
   SimpleChanges,
   Output,
   EventEmitter,
+  ChangeDetectionStrategy,
 } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule, JsonPipe } from '@angular/common';
 import {
   ControlValueAccessor,
   NG_VALUE_ACCESSOR,
   ReactiveFormsModule,
   FormControl,
+  FormGroup,
 } from '@angular/forms';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatInputModule } from '@angular/material/input';
@@ -68,25 +70,28 @@ export const MY_DATE_FORMATS = {
       multi: true,
     },
   ],
-  template: `
-    <div class="relative">
-      <input
-        matInput
-        [matDatepicker]="picker"
-        [formControl]="dateControl"
-        placeholder="Selecciona una data"
-        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-700 focus:border-primary-700 block w-full p-2.5"
-      />
-      <mat-datepicker-toggle
-        matSuffix
-        [for]="picker"
-        class="absolute right-[2px] top-[1px]"
-      ></mat-datepicker-toggle>
-      <mat-datepicker #picker></mat-datepicker>
-    </div>
-  `,
+  templateUrl: './datepicker.component.html',
+  // template: `
+  //   <div class="relative">
+  //     <input
+  //       matInput
+  //       [matDatepicker]="picker"
+  //       [formControl]="dateControl"
+  //       placeholder="Selecciona una data"
+  //       class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-700 focus:border-primary-700 block w-full p-2.5"
+  //     />
+  //     <mat-datepicker-toggle
+  //       matSuffix
+  //       [for]="picker"
+  //       class="absolute right-[2px] top-[1px]"
+  //     ></mat-datepicker-toggle>
+  //     <mat-datepicker #picker></mat-datepicker>
+  //   </div>
+  // `,
 })
 export class DatepickerComponent implements ControlValueAccessor, OnChanges {
+  @Input() minDate?: Date;
+  @Input() maxDate?: Date;
   @Input() classesFromParent: { [Key: string]: boolean } = {};
   @Output() dateChange = new EventEmitter<any>();
   dateControl = new FormControl();
@@ -97,6 +102,9 @@ export class DatepickerComponent implements ControlValueAccessor, OnChanges {
   private dateAdapter = inject(DateAdapter);
 
   constructor() {
+    // this.minDate = new Date(2024, 0, 1);
+    // this.maxDate = new Date(2024, 11, 31);
+
     this.dateAdapter.setLocale(this.locale);
 
     this.dateControl.valueChanges.subscribe((value) => {
