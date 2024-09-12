@@ -25,6 +25,18 @@ import {
   switchMap,
 } from 'rxjs';
 
+interface CompetitionDays {
+  index: number;
+  day: string[];
+}
+
+interface InitalizeCompetitionParams {
+  teams: Team[];
+  competitionDays: CompetitionDays[];
+  startDate: Date;
+  discardedDays: Date[];
+}
+
 @Component({
   selector: 'app-competition-initalizer',
   standalone: true,
@@ -34,6 +46,7 @@ import {
 })
 export class CompetitionInitalizerComponent implements OnInit {
   public imgUrl = config.IMG_URL;
+  public competitionId = 0;
   public teamsSearchInput: FormControl = new FormControl('');
   public startDateInput: FormControl = new FormControl('');
   public discardedDatesInput: FormControl = new FormControl('');
@@ -47,17 +60,17 @@ export class CompetitionInitalizerComponent implements OnInit {
   public teamsAdded = signal<Team[] | null>(null);
   public minDate = new Date(2024, 0, 1);
   public maxDate = new Date(2024, 11, 31);
-  public startDate: Date | null = null;
+  public startDate: Date = new Date();
   public discardedDays: Date[] = [];
-  public competitionDays: string[] = [];
+  public competitionDays: CompetitionDays[] = [];
   public days = [
-    'Lunes',
-    'Martes',
-    'Miércoles',
-    'Jueves',
-    'Viernes',
-    'Sábado',
-    'Domingo',
+    ['Lunes', 'MONDAY'],
+    ['Martes', 'TUESDAY'],
+    ['Miércoles', 'WEDNESDAY'],
+    ['Jueves', 'THURSDAY'],
+    ['Viernes', 'FRIDAY'],
+    ['Sábado', 'SATURDAY'],
+    ['Domingo', 'SUNDAY'],
   ];
 
   private _competitionService = inject(CompetitionService);
@@ -69,10 +82,10 @@ export class CompetitionInitalizerComponent implements OnInit {
   constructor(private _formBuilder: FormBuilder) {}
 
   ngOnInit(): void {
-    const competitionId = this._route.snapshot.params['id'];
-    this._competitionService.getCompetition(competitionId).subscribe({
+    this.competitionId = this._route.snapshot.params['id'];
+    this._competitionService.getCompetition(this.competitionId).subscribe({
       next: (res) => {
-        console.log(res);
+        console.log({ competitionWithDetails: res });
         this.competition.set(res);
       },
       error: (err) => {
@@ -102,7 +115,7 @@ export class CompetitionInitalizerComponent implements OnInit {
     const inputElement = e.target as HTMLInputElement;
     const query = inputElement.value;
     if (query.length === 0) {
-      this.searchedCompetition.set(null);
+      this.searchedTeams.set(null);
       // this.mainContainer.nativeElement.style.minHeight = 'auto';
       return;
     }
@@ -161,13 +174,27 @@ export class CompetitionInitalizerComponent implements OnInit {
     this.discardedDays.push(this.discardedDatesInput.value);
   }
 
-  onAddCompetitionDays(event: Event, day: string, index: number) {
+  onAddCompetitionDays(event: Event, day: string[], index: number) {
     if (!event.target) return;
     const target = event.target as HTMLInputElement;
     if (target.checked) {
-      this.competitionDays[index] = day;
+      this.competitionDays.push({ index, day: day });
+      this.competitionDays = this.competitionDays.sort(
+        (a, b) => a.index - b.index
+      );
     } else {
-      this.competitionDays[index] = '';
+      this.competitionDays = this.competitionDays.filter(
+        (item) => item.index !== index
+      );
     }
+  }
+
+  handleInitializeCompetition({
+    teams,
+    competitionDays,
+    startDate,
+    discardedDays,
+  }: InitalizeCompetitionParams) {
+    console.log({ teams, competitionDays, startDate, discardedDays });
   }
 }
