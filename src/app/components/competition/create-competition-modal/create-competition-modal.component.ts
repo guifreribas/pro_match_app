@@ -5,6 +5,7 @@ import {
   inject,
   Input,
   OnInit,
+  signal,
   ViewChild,
   WritableSignal,
 } from '@angular/core';
@@ -19,6 +20,9 @@ import { Organization } from '@app/models/organization';
 import { CompetitionService } from '@app/services/api_services/competition.service';
 import { catchError, firstValueFrom } from 'rxjs';
 import { CompetitionTypes } from '../../../config/constants';
+import { CategoryService } from '@app/services/api_services/category.service';
+import { UserStateService } from '@app/services/global_states/user-state.service';
+import { CategoriesGetResponse, Category } from '@app/models/category';
 
 @Component({
   selector: 'app-create-competition-modal',
@@ -32,6 +36,8 @@ export class CreateCompetitionModalComponent implements OnInit {
   @ViewChild('formatSelect') formatSelect!: ElementRef;
 
   public isSelectDisabled = true;
+  public categoriesResponse = signal<CategoriesGetResponse | null>(null);
+  public categories = signal<Category[]>([]);
 
   public competitionForm: FormGroup = new FormGroup({
     name: new FormControl('', [Validators.required]),
@@ -43,10 +49,24 @@ export class CreateCompetitionModalComponent implements OnInit {
   });
 
   private _competitionService = inject(CompetitionService);
+  private _categoryService = inject(CategoryService);
+  private _userState = inject(UserStateService);
 
   constructor() {}
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    this._categoryService
+      .getCategories({ user_id: this._userState.me()!.id_user, limit: 100 })
+      .subscribe({
+        next: (res) => {
+          console.log(res);
+          this.categories.set(res.data.items);
+        },
+        error: (err) => {
+          console.log(err);
+        },
+      });
+  }
 
   ngAfterViewInit(): void {
     console.log(
@@ -76,6 +96,8 @@ export class CreateCompetitionModalComponent implements OnInit {
     const competition = {
       competition_type_id: competitionTypeId,
       organization_id: Number(this.competitionForm.value.organization),
+      is_initialized: false,
+      category_id: this.competitionForm.value['category'],
       ...formWithoutOrganization,
     };
 

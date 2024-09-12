@@ -77,8 +77,9 @@
             <select id="category" formControlName="category"
               class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5">
               <option selected>Escoge una opción</option>
-              <option value="MALE">Masculino</option>
-              <option value="FEMALE">Femenino</option>
+              @for(category of categories(); track category.id_category){
+              <option value="{{category.id_category}}">{{category.name}} / {{category.gender}}</option>
+              }
               <option value="OTHER">Otro</option>
             </select>
           </div>
