@@ -20,7 +20,7 @@ export class GenericApiService {
     return this.http.post<R>(url, data);
   }
 
-  update<T, R>(url: string, id: number, data: T): Observable<R> {
+  update<T, R>(url: string, id: number, data: Partial<T>): Observable<R> {
     return this.http.put<R>(`${url}/${id}`, data);
   }
 
