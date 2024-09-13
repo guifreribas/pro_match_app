@@ -115,6 +115,6 @@ export class CompetitionsComponent {
   }
 
   getRowClass(competition: CompetitionWithDetails) {
-    return { 'bg-gray-100': !competition.isInitialized };
+    return { 'bg-gray-100': !competition.is_initialized };
   }
 }
