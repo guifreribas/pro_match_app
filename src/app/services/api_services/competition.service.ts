@@ -19,6 +19,7 @@ import { urlParser } from '@app/utils/utils';
 interface GetCompetitionsParams {
   q?: string;
   page?: string;
+  id_competition?: number;
   includeCompetitionType?: boolean;
   includeOrganization?: boolean;
   includeCompetitionCategory?: boolean;
@@ -70,7 +71,7 @@ export class CompetitionService {
   }
 
   updateCompetition(
-    competition: Competition,
+    competition: Partial<Competition>,
     id: number
   ): Observable<updateResponse<Competition>> {
     return this.genericService.update<Competition, updateResponse<Competition>>(
