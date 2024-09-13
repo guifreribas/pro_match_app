@@ -9,6 +9,7 @@ import {
 import { AuthService } from '../../services/api_services/auth.service';
 import { Router, RouterModule } from '@angular/router';
 import { UserStateService } from '../../services/global_states/user-state.service';
+import { LocalStorageService } from '@app/services/local-storage.service';
 
 @Component({
   selector: 'app-login',
@@ -25,6 +26,7 @@ export class LoginComponent implements OnInit {
   private authService = inject(AuthService);
   private userState = inject(UserStateService);
   private router = inject(Router);
+  private localStorageService = inject(LocalStorageService);
 
   ngOnInit(): void {
     this.loginForm = new FormGroup({
@@ -50,7 +52,7 @@ export class LoginComponent implements OnInit {
           console.log(res);
           this.userState.setMe(res.data.user);
           this.authService.setLoggedIn(true);
-          localStorage.setItem('loggedIn', 'true');
+          this.localStorageService.setItem('loggedIn', 'true');
           this.router.navigate(['/']);
         },
         error: (err) => {
