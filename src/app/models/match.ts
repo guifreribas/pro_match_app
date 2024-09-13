@@ -15,13 +15,13 @@ export type MatchStatus =
   | 'TO_BE_SCHEDULED';
 
 export interface Match {
-  id_match: number;
+  id_match?: number;
   status: MatchStatus;
-  category_id: number;
   local_team: number;
   visitor_team: number;
   date: Date;
   competition_category_id: number;
+  user_id: number;
   created_at?: Date;
   updated_at?: Date;
 }
