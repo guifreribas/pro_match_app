@@ -2,7 +2,7 @@ import { inject, Injectable } from '@angular/core';
 import { config } from '../../config/config';
 import { GenericApiService } from './generic-api.service';
 import { Observable } from 'rxjs';
-import { getAllResponse } from '../../models/api';
+import { getAllResponse, postResponse } from '../../models/api';
 import { Match } from '../../models/match';
 
 @Injectable({
@@ -22,8 +22,8 @@ export class MatchService {
     return this.genericService.getOne<getAllResponse<Match>>(this.apiUrl, id);
   }
 
-  createMatch(match: Match): Observable<getAllResponse<Match>> {
-    return this.genericService.create<Match, getAllResponse<Match>>(
+  createMatch(match: Match): Observable<postResponse<Match>> {
+    return this.genericService.create<Match, postResponse<Match>>(
       this.apiUrl,
       match
     );
