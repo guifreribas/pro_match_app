@@ -9,7 +9,7 @@ export interface Competition {
   id_competition: number;
   name: string;
   format: CompetitionFormat;
-  isInitialized: boolean;
+  is_initialized: boolean;
   user_id: number;
   organization_id: number;
   created_at?: Date;
@@ -19,12 +19,14 @@ export interface Competition {
 interface CompetitionCategoryWithDetails {
   season: Pick<CompetitionCategory, 'season'> | null;
   category: Pick<Category, 'name' | 'gender'> | null;
+  competition_category_id: Pick<CompetitionCategory, 'id_competition_category'>;
 }
 
 export interface CompetitionWithDetails extends Competition {
   organization: Pick<Organization, 'name' | 'logo' | 'address'> | null;
   competitionType: Pick<CompetitionType, 'name'> | null;
   competitionCategory: CompetitionCategoryWithDetails;
+  competition_category_id: Pick<CompetitionCategory, 'id_competition_category'>;
 }
 
 export interface CompetitionsGetResponse {
