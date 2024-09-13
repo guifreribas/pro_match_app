@@ -1,26 +1,24 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject, OnInit, signal } from '@angular/core';
-import {
-  FormBuilder,
-  FormControl,
-  FormGroup,
-  ReactiveFormsModule,
-  Validators,
-} from '@angular/forms';
+import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { DatepickerComponent } from '@app/components/atom/datepicker/datepicker.component';
 import { config } from '@app/config/config';
-import { getOneResponse } from '@app/models/api';
+import { generateLeagueCalendar } from '@app/helpers/competitions';
+import { getAllResponse, getOneResponse } from '@app/models/api';
 import { CompetitionWithDetails } from '@app/models/competition';
-import { CompetitionTeam } from '@app/models/competitionTeam';
 import { Team, TeamsGetResponse } from '@app/models/team';
 import { CompetitionTeamService } from '@app/services/api_services/competition-team.service';
 import { CompetitionService } from '@app/services/api_services/competition.service';
+import { MatchService } from '@app/services/api_services/match.service';
 import { TeamService } from '@app/services/api_services/team.service';
+import { UserStateService } from '@app/services/global_states/user-state.service';
+import { SearchServiceService } from '@app/services/search-service.service';
 import {
   catchError,
   debounceTime,
   distinctUntilChanged,
+  of,
   Subject,
   switchMap,
 } from 'rxjs';
@@ -42,22 +40,20 @@ interface InitalizeCompetitionParams {
   standalone: true,
   imports: [ReactiveFormsModule, CommonModule, RouterLink, DatepickerComponent],
   templateUrl: './competition-initalizer.component.html',
-  styleUrl: './competition-initalizer.component.scss',
+  styleUrls: ['./competition-initalizer.component.scss'],
 })
 export class CompetitionInitalizerComponent implements OnInit {
   public imgUrl = config.IMG_URL;
   public competitionId = 0;
   public teamsSearchInput: FormControl = new FormControl('');
-  public startDateInput: FormControl = new FormControl('');
-  public discardedDatesInput: FormControl = new FormControl('');
+  public startDateInput: FormControl = new FormControl(null);
+  public discardedDatesInput: FormControl = new FormControl(null);
   public competitionDaysInput: FormControl = new FormControl('');
-  public competition = signal<getOneResponse<CompetitionWithDetails> | null>(
-    null
-  );
+  public competition = signal<CompetitionWithDetails | null>(null);
   public dynamicClasses: { [key: string]: boolean } = {};
-  public searchedCompetition = signal<CompetitionWithDetails[] | null>(null);
+  public searchedCompetition = signal<CompetitionWithDetails[]>([]);
   public searchedTeams = signal<TeamsGetResponse | null>(null);
-  public teamsAdded = signal<Team[] | null>(null);
+  public teamsAdded = signal<Team[]>([]);
   public minDate = new Date(2024, 0, 1);
   public maxDate = new Date(2024, 11, 31);
   public startDate: Date = new Date();
@@ -76,54 +72,38 @@ export class CompetitionInitalizerComponent implements OnInit {
   private _competitionService = inject(CompetitionService);
   private _teamService = inject(TeamService);
   private _competitionTeamService = inject(CompetitionTeamService);
+  private _searchService = inject(SearchServiceService);
+  private _matchService = inject(MatchService);
+  private _userState = inject(UserStateService);
   private _route = inject(ActivatedRoute);
-  private _searchSubject = new Subject<string>();
 
-  constructor(private _formBuilder: FormBuilder) {}
+  constructor() {}
 
   ngOnInit(): void {
     this.competitionId = this._route.snapshot.params['id'];
-    this._competitionService.getCompetition(this.competitionId).subscribe({
-      next: (res) => {
-        console.log({ competitionWithDetails: res });
-        this.competition.set(res);
-      },
-      error: (err) => {
-        console.log(err);
-      },
-    });
-
-    this._searchSubject
-      .pipe(
-        distinctUntilChanged(),
-        debounceTime(200),
-        switchMap((query) =>
-          this._teamService.getTeams({ q: query }).pipe(
-            catchError((error) => {
-              console.log(error);
-              return [];
-            })
-          )
-        )
-      )
-      .subscribe((res) => {
-        this.searchedTeams.set(res);
+    this._competitionService
+      .getCompetitions({
+        user_id: this._userState.me()!.id_user,
+        includeCompetitionType: true,
+        includeOrganization: true,
+        includeCompetitionCategory: true,
+        id_competition: this.competitionId,
+      })
+      .subscribe({
+        next: (res) => {
+          console.log({ competitionWithDetails: res });
+          this.competition.set(res.data.items[0]);
+        },
+        error: (err) => {
+          console.error(err);
+        },
       });
-  }
 
-  onSearchInput(e: Event) {
-    const inputElement = e.target as HTMLInputElement;
-    const query = inputElement.value;
-    if (query.length === 0) {
-      this.searchedTeams.set(null);
-      // this.mainContainer.nativeElement.style.minHeight = 'auto';
-      return;
-    }
-
-    if (query.length >= 2) {
-      this._searchSubject.next(query);
-      // this.mainContainer.nativeElement.style.minHeight = '600px';
-    }
+    this._searchService
+      .search(this.teamsSearchInput.valueChanges, (query) =>
+        this._teamService.getTeams({ q: query })
+      )
+      .subscribe((res) => this.searchedTeams.set(res || null));
   }
 
   onResetInput() {
@@ -195,6 +175,65 @@ export class CompetitionInitalizerComponent implements OnInit {
     startDate,
     discardedDays,
   }: InitalizeCompetitionParams) {
-    console.log({ teams, competitionDays, startDate, discardedDays });
+    // console.log({ teams, competitionDays, startDate, discardedDays });
+    console.log('COMPETITION!', this.competition());
+
+    // console.log(competitionDays);
+    // const competitionDaysIndex = competitionDays.map((day) => day.index + 1);
+
+    // const leagueCalendar = generateLeagueCalendar({
+    //   teams,
+    //   startDate,
+    //   excludeDates: discardedDays,
+    //   validWeekDays: competitionDaysIndex,
+    //   isDoubleRound: this.competition()?.format === 'DOUBLE_ROUND',
+    //   userId: this._userState.me()!.id_user,
+    // });
+
+    // console.log({ leagueCalendar });
+
+    // for (const round of leagueCalendar) {
+    //   for (const match of round.matches) {
+    //     this._matchService
+    //       .createMatch({
+    //         status: 'TO_BE_SCHEDULED',
+    //         local_team: Number(match.match.home.id_team),
+    //         visitor_team: Number(match.match.away.id_team),
+    //         date: match.date,
+    //         competition_category_id: Number(
+    //           this.competition()?.competitionCategory.competition_category_id
+    //         ),
+    //         user_id: this._userState.me()!.id_user,
+    //       })
+    //       .subscribe({
+    //         next: (res) => {
+    //           console.log(res);
+    //         },
+    //         error: (err) => {
+    //           console.log(err);
+    //         },
+    //       });
+    //   }
+    // }
+
+    this.updateComptetition();
+  }
+
+  updateComptetition() {
+    this._competitionService
+      .updateCompetition(
+        {
+          is_initialized: true,
+        },
+        this.competitionId
+      )
+      .subscribe({
+        next: (res) => {
+          console.log(res);
+        },
+        error: (err) => {
+          console.log(err);
+        },
+      });
   }
 }
