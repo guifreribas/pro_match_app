@@ -1,1 +1,114 @@
-<p>competition-view works!</p>
+<div class="min-h-fit relative flex flex-col gap-4 w-full justify-center">
+  <div class="`relative w-full max-w-[1200px] flex flex-col gap-8 p-12
+    sm:rounded-lg bg-white  shadow-md  overflow-hidden`">
+    <h2 class="text-2xl font-bold">
+      {{competition()?.name}}
+    </h2>
+    <section class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div class="flex flex-row gap-2 items-center">
+        <svg xmlns="http://www.w3.org/2000/svg" class="text-gray-600 size-8" viewBox="0 0 24 24" stroke-width="1.5"
+          stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+          <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+          <path d="M8 21l8 0" />
+          <path d="M12 17l0 4" />
+          <path d="M7 4l10 0" />
+          <path d="M17 4v8a5 5 0 0 1 -10 0v-8" />
+          <path d="M5 9m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0" />
+          <path d="M19 9m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0" />
+        </svg>
+        <div class="flex flex-col ">
+          <p class="text-md font-bold text-gray-800">TIPO DE COMPETICIÓN</p>
+          <P class="text-md font-semibold text-gray-600">{{competitionType()}}</P>
+        </div>
+      </div>
+
+      <div class="flex flex-row gap-2 items-center">
+        <svg xmlns="http://www.w3.org/2000/svg" class="text-gray-600 size-8" viewBox="0 0 24 24" stroke-width="1.5"
+          stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+          <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+          <path d="M9 7m-4 0a4 4 0 1 0 8 0a4 4 0 1 0 -8 0" />
+          <path d="M3 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" />
+          <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+          <path d="M21 21v-2a4 4 0 0 0 -3 -3.85" />
+        </svg>
+        <div class="flex flex-col ">
+          <p class="text-md font-bold text-gray-800">CATEGORÍA</p>
+          <P class="text-md font-semibold text-gray-600">{{competition()?.competitionCategory?.category?.name}}</P>
+        </div>
+      </div>
+
+      <div class="flex flex-row gap-2 items-center">
+        <svg xmlns="http://www.w3.org/2000/svg" class="text-gray-600 size-8" viewBox="0 0 24 24" stroke-width="1.5"
+          stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+          <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+          <path d="M11.5 21h-5.5a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v6" />
+          <path d="M16 3v4" />
+          <path d="M8 3v4" />
+          <path d="M4 11h16" />
+          <path d="M15 19l2 2l4 -4" />
+        </svg>
+        <div class="flex flex-col ">
+          <p class="text-md font-bold text-gray-800">TEMPORADA</p>
+          <P class="text-md font-semibold text-gray-600">{{competition()?.competitionCategory?.season}}</P>
+        </div>
+      </div>
+
+      <div class="flex flex-row gap-2 items-center">
+        <svg xmlns="http://www.w3.org/2000/svg" class="text-gray-600 size-8" viewBox="0 0 24 24" stroke-width="1.5"
+          stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+          <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+          <path d="M9 7m-4 0a4 4 0 1 0 8 0a4 4 0 1 0 -8 0" />
+          <path d="M3 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" />
+          <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+          <path d="M21 21v-2a4 4 0 0 0 -3 -3.85" />
+        </svg>
+        <div class="flex flex-col ">
+          <p class="text-md font-bold text-gray-800">GÉNERO</p>
+          <P class="text-md font-semibold text-gray-600">{{competition()?.competitionCategory?.category?.gender}}</P>
+        </div>
+      </div>
+
+      <div class="flex flex-row gap-2 items-center">
+        <svg xmlns="http://www.w3.org/2000/svg" class="text-gray-600 size-8" viewBox="0 0 24 24" stroke-width="1.5"
+          stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+          <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+          <path d="M3 7l6 -3l6 3l6 -3v13l-6 3l-6 -3l-6 3v-13" />
+          <path d="M9 4v13" />
+          <path d="M15 7v13" />
+        </svg>
+        <div class="flex flex-col ">
+          <p class="text-md font-bold text-gray-800">CENTRO</p>
+          <P class="text-md font-semibold text-gray-600">{{competition()?.organization?.name}}</P>
+        </div>
+      </div>
+      <div class="flex flex-row gap-2 items-center">
+        <svg xmlns="http://www.w3.org/2000/svg" class="text-gray-600 size-8" viewBox="0 0 24 24" stroke-width="1.5"
+          stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+          <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+          <path d="M21 17l-18 0" />
+          <path d="M6 10l-3 -3l3 -3" />
+          <path d="M3 7l18 0" />
+          <path d="M18 20l3 -3l-3 -3" />
+        </svg>
+        <div class="flex flex-col ">
+          <p class="text-md font-bold text-gray-800">FORMATO</p>
+          <P class="text-md font-semibold text-gray-600">{{competition()?.format}}</P>
+        </div>
+      </div>
+
+
+
+    </section>
+  </div>
+  <div class="`relative w-full max-w-[1200px] flex flex-col gap-8 p-12
+    sm:rounded-lg bg-white  shadow-md  overflow-hidden`">
+
+    <full-calendar *ngIf='calendarVisible()' [options]='calendarOptions()'>
+      <ng-template #eventContent let-arg>
+        <b>{{ arg.timeText }}</b>
+        <i>{{ arg.event.title }}</i>
+      </ng-template>
+    </full-calendar>
+
+  </div>
+</div>
