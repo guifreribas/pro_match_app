@@ -3,7 +3,20 @@ import { config } from '../../config/config';
 import { GenericApiService } from './generic-api.service';
 import { Observable } from 'rxjs';
 import { getAllResponse, postResponse } from '../../models/api';
-import { Match } from '../../models/match';
+import { Match, MatchStatus, MatchWithDetails } from '../../models/match';
+import { urlParser } from '@app/utils/utils';
+
+interface GetMatchesParams {
+  q?: string;
+  page?: string;
+  id_match?: number;
+  status: MatchStatus;
+  local_team: number;
+  visitor_team: number;
+  date: Date;
+  competition_category_id: number;
+  user_id: number;
+}
 
 @Injectable({
   providedIn: 'root',
@@ -14,8 +27,11 @@ export class MatchService {
 
   constructor() {}
 
-  getMatches(): Observable<getAllResponse<Match>> {
-    return this.genericService.getAll<getAllResponse<Match>>(this.apiUrl);
+  getMatches(
+    params?: Partial<GetMatchesParams>
+  ): Observable<getAllResponse<MatchWithDetails>> {
+    const url = urlParser(params, this.apiUrl);
+    return this.genericService.getAll<getAllResponse<MatchWithDetails>>(url);
   }
 
   getMatch(id: number): Observable<getAllResponse<Match>> {
