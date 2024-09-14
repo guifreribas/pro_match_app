@@ -17,6 +17,7 @@ export const appConfig: ApplicationConfig = {
     provideRouter(routes),
     importProvidersFrom(RouterModule),
     provideHttpClient(withInterceptors([credentialsInterceptor])),
-    provideNativeDateAdapter(), provideAnimationsAsync(),
+    provideNativeDateAdapter(),
+    provideAnimationsAsync(),
   ],
 };
