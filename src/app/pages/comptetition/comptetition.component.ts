@@ -1,6 +1,7 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { CompetitionInitalizerComponent } from '@app/components/competition/competition-initalizer/competition-initalizer.component';
+import { CompetitionViewComponent } from '@app/components/competition/competition-view/competition-view.component';
 import { DashboardPanelLayoutComponent } from '@app/layouts/dashboard-panel-layout/dashboard-panel-layout.component';
 import { CompetitionWithDetails } from '@app/models/competition';
 import { CompetitionService } from '@app/services/api_services/competition.service';
@@ -15,7 +16,11 @@ interface CompetitionViewState {
 @Component({
   selector: 'app-comptetition',
   standalone: true,
-  imports: [DashboardPanelLayoutComponent, CompetitionInitalizerComponent],
+  imports: [
+    DashboardPanelLayoutComponent,
+    CompetitionInitalizerComponent,
+    CompetitionViewComponent,
+  ],
   templateUrl: './comptetition.component.html',
   styleUrl: './comptetition.component.scss',
 })
