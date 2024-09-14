@@ -9,6 +9,10 @@ export class UserStateService {
 
   readonly me = this._me.asReadonly();
 
+  getMe(): User | null {
+    return this._me();
+  }
+
   setMe(user: User) {
     this._me.set(user);
   }
