@@ -175,48 +175,41 @@ export class CompetitionInitalizerComponent implements OnInit {
     startDate,
     discardedDays,
   }: InitalizeCompetitionParams) {
-    // console.log({ teams, competitionDays, startDate, discardedDays });
-    console.log('COMPETITION!', this.competition());
+    const competitionDaysIndex = competitionDays.map((day) => day.index + 1);
 
-    // console.log(competitionDays);
-    // const competitionDaysIndex = competitionDays.map((day) => day.index + 1);
+    const leagueCalendar = generateLeagueCalendar({
+      teams,
+      startDate,
+      excludeDates: discardedDays,
+      validWeekDays: competitionDaysIndex,
+      isDoubleRound: this.competition()?.format === 'DOUBLE_ROUND',
+      userId: this._userState.me()!.id_user,
+    });
 
-    // const leagueCalendar = generateLeagueCalendar({
-    //   teams,
-    //   startDate,
-    //   excludeDates: discardedDays,
-    //   validWeekDays: competitionDaysIndex,
-    //   isDoubleRound: this.competition()?.format === 'DOUBLE_ROUND',
-    //   userId: this._userState.me()!.id_user,
-    // });
-
-    // console.log({ leagueCalendar });
-
-    // for (const round of leagueCalendar) {
-    //   for (const match of round.matches) {
-    //     this._matchService
-    //       .createMatch({
-    //         status: 'TO_BE_SCHEDULED',
-    //         local_team: Number(match.match.home.id_team),
-    //         visitor_team: Number(match.match.away.id_team),
-    //         date: match.date,
-    //         competition_category_id: Number(
-    //           this.competition()?.competitionCategory.competition_category_id
-    //         ),
-    //         user_id: this._userState.me()!.id_user,
-    //       })
-    //       .subscribe({
-    //         next: (res) => {
-    //           console.log(res);
-    //         },
-    //         error: (err) => {
-    //           console.log(err);
-    //         },
-    //       });
-    //   }
-    // }
-
-    this.updateComptetition();
+    for (const round of leagueCalendar) {
+      for (const match of round.matches) {
+        this._matchService
+          .createMatch({
+            status: 'TO_BE_SCHEDULED',
+            local_team: Number(match.match.home.id_team),
+            visitor_team: Number(match.match.away.id_team),
+            date: match.date,
+            competition_category_id: Number(
+              this.competition()?.competitionCategory.competition_category_id
+            ),
+            user_id: this._userState.me()!.id_user,
+          })
+          .subscribe({
+            next: (res) => {
+              console.log(res);
+              this.updateComptetition();
+            },
+            error: (err) => {
+              console.log(err);
+            },
+          });
+      }
+    }
   }
 
   updateComptetition() {
