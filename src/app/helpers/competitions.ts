@@ -69,7 +69,7 @@ export function generateRoundDates(
   let currentDate = new Date(startDate);
   currentDate.setHours(0, 0, 0, 0);
 
-  const maxWeeksToCheck = numberOfRounds * 2;
+  const maxWeeksToCheck = numberOfRounds * 3;
   let weeksChecked = 0;
   let roundsScheduled = 0;
 
