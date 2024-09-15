@@ -1,12 +1,139 @@
 <app-dashboard-panel-layout>
-  <section class="bg-white shadow rounded-lg p-8">
-    <h2 class="text-3xl uppercase font-bold mb-4">Centros</h2>
-    <app-organization-card></app-organization-card>
-    <app-organization-card></app-organization-card>
-  </section>
+  <h2 class="text-3xl uppercase font-bold">VISIÓN GENERAL</h2>
 
-  <section class="bg-white shadow rounded-lg p-8">
-    <h2 class="text-3xl uppercase font-bold mb-4">Jugadores</h2>
-    <app-player-card></app-player-card>
-  </section>
+  <article class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
+
+    <section class="bg-white shadow rounded-lg p-8 py-4">
+      <div class="flex flex-row gap-2  items-center ">
+        <h2 class="text-lg uppercase font-bold">Jugadores/as</h2>
+      </div>
+      <div class="flex flex-row gap-2 justify-between items-center text-gray-600 text-sm text-nowrap">
+        <p>{{overview()?.playerCount}} Jugadores/as</p>
+        <a [routerLink]="['/players']">
+          <svg xmlns="http://www.w3.org/2000/svg"
+            class="size-8 rounded-lg hover:text-gray-400 hover:cursor-pointer  transition-all duration-100"
+            viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round"
+            stroke-linejoin="round">
+            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+            <path
+              d="M12 9v-3.586a1 1 0 0 1 1.707 -.707l6.586 6.586a1 1 0 0 1 0 1.414l-6.586 6.586a1 1 0 0 1 -1.707 -.707v-3.586h-6v-6h6z" />
+            <path d="M3 9v6" />
+          </svg>
+        </a>
+      </div>
+    </section>
+
+    <section class="bg-white shadow rounded-lg p-8 py-4">
+      <h2 class="text-lg uppercase font-bold">Equipos</h2>
+      <div class="flex flex-row gap-2 justify-between items-center text-gray-600 text-sm text-nowrap">
+        <p>{{overview()?.teamCount}} Equipos</p>
+        <a [routerLink]="['/teams']">
+          <svg xmlns="http://www.w3.org/2000/svg"
+            class="size-8 rounded-lg hover:text-gray-400 hover:cursor-pointer  transition-all duration-100"
+            viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round"
+            stroke-linejoin="round">
+            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+            <path
+              d="M12 9v-3.586a1 1 0 0 1 1.707 -.707l6.586 6.586a1 1 0 0 1 0 1.414l-6.586 6.586a1 1 0 0 1 -1.707 -.707v-3.586h-6v-6h6z" />
+            <path d="M3 9v6" />
+          </svg>
+        </a>
+      </div>
+    </section>
+
+    <section class="bg-white shadow rounded-lg p-8 py-4">
+      <h2 class="text-lg uppercase font-bold">Competiciones</h2>
+      <div class="flex flex-row gap-2 justify-between items-center text-gray-600 text-sm text-nowrap">
+        <p>{{overview()?.competitionCount}} Competiciones</p>
+        <a [routerLink]="['/competitions']">
+          <svg xmlns="http://www.w3.org/2000/svg"
+            class="size-8 rounded-lg hover:text-gray-400 hover:cursor-pointer  transition-all duration-100"
+            viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round"
+            stroke-linejoin="round">
+            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+            <path
+              d="M12 9v-3.586a1 1 0 0 1 1.707 -.707l6.586 6.586a1 1 0 0 1 0 1.414l-6.586 6.586a1 1 0 0 1 -1.707 -.707v-3.586h-6v-6h6z" />
+            <path d="M3 9v6" />
+          </svg>
+        </a>
+      </div>
+    </section>
+
+    <section class="bg-white shadow rounded-lg p-8 py-4">
+      <h2 class="text-lg uppercase font-bold">Categorias</h2>
+      <div class="flex flex-row gap-2 justify-between items-center text-gray-600 text-sm text-nowrap">
+        <p>{{overview()?.categoryCount}} Categorias</p>
+        <a [routerLink]="['/categories']">
+          <svg xmlns="http://www.w3.org/2000/svg"
+            class="size-8 rounded-lg hover:text-gray-400 hover:cursor-pointer  transition-all duration-100"
+            viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round"
+            stroke-linejoin="round">
+            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+            <path
+              d="M12 9v-3.586a1 1 0 0 1 1.707 -.707l6.586 6.586a1 1 0 0 1 0 1.414l-6.586 6.586a1 1 0 0 1 -1.707 -.707v-3.586h-6v-6h6z" />
+            <path d="M3 9v6" />
+          </svg>
+        </a>
+      </div>
+    </section>
+
+    <section class="bg-white shadow rounded-lg p-8 py-4">
+      <h2 class="text-lg uppercase font-bold">Partidos</h2>
+      <div class="flex flex-row gap-2 justify-between items-center text-gray-600 text-sm text-nowrap">
+        <p>{{overview()?.matchCount}} Partidos</p>
+        <a [routerLink]="['/matches']">
+          <svg xmlns="http://www.w3.org/2000/svg"
+            class="size-8 rounded-lg hover:text-gray-400 hover:cursor-pointer  transition-all duration-100"
+            viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round"
+            stroke-linejoin="round">
+            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+            <path
+              d="M12 9v-3.586a1 1 0 0 1 1.707 -.707l6.586 6.586a1 1 0 0 1 0 1.414l-6.586 6.586a1 1 0 0 1 -1.707 -.707v-3.586h-6v-6h6z" />
+            <path d="M3 9v6" />
+          </svg>
+        </a>
+      </div>
+    </section>
+
+
+    <section class="bg-white shadow rounded-lg p-8 py-4">
+      <h2 class="text-lg uppercase font-bold">Arbitros</h2>
+      <div class="flex flex-row gap-2 justify-between items-center text-gray-600 text-sm text-nowrap">
+        <p>"23" Arbitros</p>
+        <a [routerLink]="['/players']">
+          <svg xmlns="http://www.w3.org/2000/svg"
+            class="size-8 rounded-lg hover:text-gray-400 hover:cursor-pointer  transition-all duration-100"
+            viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round"
+            stroke-linejoin="round">
+            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+            <path
+              d="M12 9v-3.586a1 1 0 0 1 1.707 -.707l6.586 6.586a1 1 0 0 1 0 1.414l-6.586 6.586a1 1 0 0 1 -1.707 -.707v-3.586h-6v-6h6z" />
+            <path d="M3 9v6" />
+          </svg>
+        </a>
+      </div>
+    </section>
+
+    <section class="bg-white shadow rounded-lg p-8 py-4">
+      <h2 class="text-lg uppercase font-bold">Centros</h2>
+      <div class="flex flex-row gap-2 justify-between items-center text-gray-600 text-sm text-nowrap">
+        <p>{{overview()?.organizationCount}} Centros</p>
+        <a [routerLink]="['/players']">
+          <svg xmlns="http://www.w3.org/2000/svg"
+            class="size-8 rounded-lg hover:text-gray-400 hover:cursor-pointer  transition-all duration-100"
+            viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round"
+            stroke-linejoin="round">
+            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+            <path
+              d="M12 9v-3.586a1 1 0 0 1 1.707 -.707l6.586 6.586a1 1 0 0 1 0 1.414l-6.586 6.586a1 1 0 0 1 -1.707 -.707v-3.586h-6v-6h6z" />
+            <path d="M3 9v6" />
+          </svg>
+        </a>
+      </div>
+    </section>
+
+
+  </article>
+
+
 </app-dashboard-panel-layout>
