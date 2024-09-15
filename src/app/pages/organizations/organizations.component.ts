@@ -1,5 +1,11 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject, ViewChild, WritableSignal } from '@angular/core';
+import {
+  Component,
+  effect,
+  inject,
+  ViewChild,
+  WritableSignal,
+} from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { CreateOrganizationModalComponent } from '@app/components/organization/create-organization-modal/create-organization-modal.component';
 import { config } from '@app/config/config';
@@ -21,6 +27,13 @@ import { GlobalActionModalService } from '@app/services/global-action-modal.serv
 import { UserStateService } from '@app/services/global_states/user-state.service';
 
 type Action = 'NEXT' | 'PREVIOUS' | 'GO_ON_PAGE';
+
+interface GetOrganizationsParams {
+  q?: string;
+  page?: string;
+  user_id?: number;
+  action: Action;
+}
 
 @Component({
   selector: 'app-organizations',
@@ -47,6 +60,7 @@ export class OrganizationsComponent {
   private _globalModalService = inject(GlobalModalService);
   private _globalActionModalService = inject(GlobalActionModalService);
   private _userState = inject(UserStateService);
+  private _hasFetchedOrganizations = false;
 
   constructor() {
     this._searchSubject
@@ -71,11 +85,17 @@ export class OrganizationsComponent {
         console.log(res);
         this.searchedOrganizations.set(res);
       });
+
+    effect(() => {
+      const user = this._userState.me();
+      if (user?.id_user && this._hasFetchedOrganizations === false) {
+        this._getOrganizations({ user_id: user.id_user });
+        this._hasFetchedOrganizations = true;
+      }
+    });
   }
 
-  ngOnInit(): void {
-    this._getOrganizations();
-  }
+  ngOnInit(): void {}
 
   ngAfterViewInit(): void {
     setTimeout(() => {
@@ -83,7 +103,10 @@ export class OrganizationsComponent {
     }, 100);
   }
 
-  private _getOrganizations(action: Action = 'GO_ON_PAGE', page: string = '1') {
+  private _getOrganizations({
+    action = 'GO_ON_PAGE',
+    page = '1',
+  }: Partial<GetOrganizationsParams>) {
     this._organizationService
       .getOrganizations({ user_id: this._userState.me()!.id_user, page })
       .subscribe({
@@ -100,20 +123,20 @@ export class OrganizationsComponent {
   }
 
   goOnPage(page: number) {
-    this._getOrganizations('GO_ON_PAGE', page.toString());
+    this._getOrganizations({ action: 'GO_ON_PAGE', page: page.toString() });
     this.reInitFlowbite();
   }
 
   goPreviousPage() {
     const currentPage = this.organizationsResponse()?.data?.currentPage ?? 0;
     const previusPage = currentPage - 1 > 0 ? currentPage - 1 : 1;
-    this._getOrganizations('PREVIOUS', String(previusPage));
+    this._getOrganizations({ action: 'PREVIOUS', page: String(previusPage) });
     this.reInitFlowbite();
   }
 
   goNextPage() {
     const currentPage = this.organizationsResponse()?.data?.currentPage ?? 0;
-    this._getOrganizations('NEXT', String(currentPage + 1));
+    this._getOrganizations({ action: 'NEXT', page: String(currentPage + 1) });
     this.reInitFlowbite();
   }
 
