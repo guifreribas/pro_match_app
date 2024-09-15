@@ -1,6 +1,7 @@
 import {
   AfterViewInit,
   Component,
+  effect,
   inject,
   OnInit,
   signal,
@@ -21,6 +22,7 @@ import {
   Subject,
   switchMap,
 } from 'rxjs';
+import { UserStateService } from '@app/services/global_states/user-state.service';
 
 type Action = 'NEXT' | 'PREVIOUS' | 'GO_ON_PAGE';
 
@@ -36,7 +38,7 @@ type Action = 'NEXT' | 'PREVIOUS' | 'GO_ON_PAGE';
   templateUrl: './players.component.html',
   styleUrl: './players.component.scss',
 })
-export class PlayersComponent implements OnInit, AfterViewInit {
+export class PlayersComponent implements AfterViewInit {
   public imgUrl = config.IMG_URL;
   public players: Player[] = [];
   public page = 1;
@@ -46,6 +48,8 @@ export class PlayersComponent implements OnInit, AfterViewInit {
 
   private _playerService = inject(PlayerService);
   private _searchSubject = new Subject<string>();
+  private _userState = inject(UserStateService);
+  private _hasFetchedPlayers = false;
 
   constructor() {
     this._searchSubject
@@ -65,16 +69,19 @@ export class PlayersComponent implements OnInit, AfterViewInit {
         console.log(res);
         this.searchedPlayers.set(res);
       });
-  }
 
-  ngOnInit(): void {
-    this._getPlayers();
+    effect(() => {
+      const user = this._userState.me();
+      if (user?.id_user && this._hasFetchedPlayers === false) {
+        this._getPlayers();
+        this.reInitFlowbite();
+        this._hasFetchedPlayers = true;
+      }
+    });
   }
 
   ngAfterViewInit(): void {
-    setTimeout(() => {
-      initFlowbite();
-    }, 100);
+    this.reInitFlowbite();
   }
 
   private _getPlayers(action: Action = 'GO_ON_PAGE', page: string = '1') {
@@ -93,20 +100,17 @@ export class PlayersComponent implements OnInit, AfterViewInit {
 
   goOnPage(page: number) {
     this._getPlayers('GO_ON_PAGE', page.toString());
-    this.reInitFlowbite();
   }
 
   goPreviousPage() {
     const currentPage = this.playersResponse()?.data?.currentPage ?? 0;
     const previusPage = currentPage - 1 > 0 ? currentPage - 1 : 1;
     this._getPlayers('PREVIOUS', String(previusPage));
-    this.reInitFlowbite();
   }
 
   goNextPage() {
     const currentPage = this.playersResponse()?.data?.currentPage ?? 0;
     this._getPlayers('NEXT', String(currentPage + 1));
-    this.reInitFlowbite();
   }
 
   onSearchInput(e: Event) {
