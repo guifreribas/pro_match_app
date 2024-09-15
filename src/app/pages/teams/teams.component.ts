@@ -1,4 +1,12 @@
-import { AfterViewInit, Component, inject, OnInit } from '@angular/core';
+import {
+  AfterViewInit,
+  ChangeDetectorRef,
+  Component,
+  effect,
+  inject,
+  OnInit,
+  signal,
+} from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { AsideComponent } from '@app/components/organism/aside/aside.component';
 import { CreateTeamModalComponent } from '@app/components/team/create-team-modal/create-team-modal.component';
@@ -23,7 +31,7 @@ import { UserStateService } from '@app/services/global_states/user-state.service
   styleUrl: './teams.component.scss',
 })
 export class TeamsComponent implements OnInit, AfterViewInit {
-  public teamsResponse: TeamsGetResponse | null = null;
+  public teamsResponse = signal<TeamsGetResponse | null>(null);
   public teams: Team[] = [];
   public createdAt: Date | null = null;
   public dayjs = dayjs;
@@ -32,21 +40,26 @@ export class TeamsComponent implements OnInit, AfterViewInit {
   private _teamService = inject(TeamService);
   private _userState = inject(UserStateService);
 
-  ngOnInit(): void {
-    console.log('my user id:', this._userState.me()?.id_user);
-    this._teamService
-      .getTeams({ user_id: this._userState.me()?.id_user })
-      .subscribe({
-        next: (res) => {
-          console.log(res);
-          console.log({ teams: res.data.items });
-          this.teams = res.data.items;
-        },
-        error: (err) => {
-          console.log(err);
-        },
-      });
+  constructor() {
+    effect(() => {
+      const user = this._userState.me();
+      if (user?.id_user) {
+        this._teamService.getTeams({ user_id: user.id_user }).subscribe({
+          next: (res) => {
+            console.log(res);
+            console.log({ teams: res.data.items });
+            this.teamsResponse.set(res);
+            this.teams = res.data.items;
+          },
+          error: (err) => {
+            console.log(err);
+          },
+        });
+      }
+    });
   }
+
+  ngOnInit(): void {}
 
   ngAfterViewInit(): void {
     //Init flowbite after view init to avoid flickering
