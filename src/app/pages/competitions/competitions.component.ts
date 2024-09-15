@@ -85,6 +85,7 @@ export class CompetitionsComponent {
             },
           });
       }
+      this._hasFetchedCompetitions = true;
     });
   }
 
