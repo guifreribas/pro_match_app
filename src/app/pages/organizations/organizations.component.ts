@@ -1,11 +1,5 @@
 import { CommonModule } from '@angular/common';
-import {
-  Component,
-  effect,
-  inject,
-  ViewChild,
-  WritableSignal,
-} from '@angular/core';
+import { Component, effect, inject, WritableSignal } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { CreateOrganizationModalComponent } from '@app/components/organization/create-organization-modal/create-organization-modal.component';
 import { config } from '@app/config/config';
@@ -14,7 +8,7 @@ import { Organization } from '@app/models/organization';
 import { OrganizationService } from '@app/services/api_services/organization.service';
 import { OrganizationsGetResponse } from '@app/models/organization';
 import { signal } from '@angular/core';
-import { initFlowbite, Modal } from 'flowbite';
+import { initFlowbite as initiationFlowbite } from 'flowbite';
 import {
   catchError,
   debounceTime,
@@ -93,14 +87,17 @@ export class OrganizationsComponent {
         this._hasFetchedOrganizations = true;
       }
     });
+
+    effect(() => {
+      const organization = this.organizationsResponse()?.data?.items[0];
+      if (organization) {
+        this.initFlowbite();
+      }
+    });
   }
 
-  ngOnInit(): void {}
-
   ngAfterViewInit(): void {
-    setTimeout(() => {
-      initFlowbite();
-    }, 100);
+    this.initFlowbite();
   }
 
   private _getOrganizations({
@@ -124,20 +121,17 @@ export class OrganizationsComponent {
 
   goOnPage(page: number) {
     this._getOrganizations({ action: 'GO_ON_PAGE', page: page.toString() });
-    this.reInitFlowbite();
   }
 
   goPreviousPage() {
     const currentPage = this.organizationsResponse()?.data?.currentPage ?? 0;
     const previusPage = currentPage - 1 > 0 ? currentPage - 1 : 1;
     this._getOrganizations({ action: 'PREVIOUS', page: String(previusPage) });
-    this.reInitFlowbite();
   }
 
   goNextPage() {
     const currentPage = this.organizationsResponse()?.data?.currentPage ?? 0;
     this._getOrganizations({ action: 'NEXT', page: String(currentPage + 1) });
-    this.reInitFlowbite();
   }
 
   onSearchInput(e: Event) {
@@ -153,9 +147,9 @@ export class OrganizationsComponent {
     }
   }
 
-  reInitFlowbite() {
+  initFlowbite() {
     setTimeout(() => {
-      initFlowbite();
+      initiationFlowbite();
     }, 100);
   }
 
