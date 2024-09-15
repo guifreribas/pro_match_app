@@ -39,11 +39,12 @@ export class TeamsComponent implements OnInit, AfterViewInit {
 
   private _teamService = inject(TeamService);
   private _userState = inject(UserStateService);
+  private _hasFetchedTeams = false;
 
   constructor() {
     effect(() => {
       const user = this._userState.me();
-      if (user?.id_user) {
+      if (user?.id_user && this._hasFetchedTeams === false) {
         this._teamService.getTeams({ user_id: user.id_user }).subscribe({
           next: (res) => {
             console.log(res);
@@ -56,6 +57,7 @@ export class TeamsComponent implements OnInit, AfterViewInit {
           },
         });
       }
+      this._hasFetchedTeams = true;
     });
   }
 
