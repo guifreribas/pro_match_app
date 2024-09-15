@@ -1,5 +1,12 @@
 import { CommonModule } from '@angular/common';
-import { Component, HostListener, inject, signal } from '@angular/core';
+import {
+  ChangeDetectorRef,
+  Component,
+  effect,
+  HostListener,
+  inject,
+  signal,
+} from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { CreateCompetitionModalComponent } from '@app/components/competition/create-competition-modal/create-competition-modal.component';
 import { CompetitionTypes } from '@app/config/constants';
@@ -45,6 +52,7 @@ export class CompetitionsComponent {
     KNOCKOUT_DOUBLE_ROUND: 'Liguilla dos vueltas más eliminatorias',
   };
 
+  private _hasFetchedCompetitions = false;
   private _competitionService = inject(CompetitionService);
   private _organizationService = inject(OrganizationService);
   private _userState = inject(UserStateService);
@@ -54,27 +62,51 @@ export class CompetitionsComponent {
     OTHER: 'Otro',
   };
 
-  constructor() {}
+  constructor(private changeDetector: ChangeDetectorRef) {
+    effect(() => {
+      const user = this._userState.me();
+      if (user?.id_user && this._hasFetchedCompetitions === false) {
+        this._competitionService
+          .getCompetitions({
+            user_id: user.id_user,
+            includeCompetitionType: true,
+            includeOrganization: true,
+            includeCompetitionCategory: true,
+          })
+          .subscribe({
+            next: (res) => {
+              console.log(res);
+              console.log({ competitions: res.data.items });
+              this.competitionsResponse.set(res);
+              this.competitions = res.data.items;
+            },
+            error: (err) => {
+              console.log(err);
+            },
+          });
+      }
+    });
+  }
 
   ngOnInit(): void {
-    this._competitionService
-      .getCompetitions({
-        user_id: this._userState.me()!.id_user,
-        includeCompetitionType: true,
-        includeOrganization: true,
-        includeCompetitionCategory: true,
-      })
-      .subscribe({
-        next: (res) => {
-          console.log(res);
-          console.log({ competitions: res.data.items });
-          this.competitionsResponse.set(res);
-          this.competitions = res.data.items;
-        },
-        error: (err) => {
-          console.log(err);
-        },
-      });
+    // this._competitionService
+    //   .getCompetitions({
+    //     user_id: this._userState.me()!.id_user,
+    //     includeCompetitionType: true,
+    //     includeOrganization: true,
+    //     includeCompetitionCategory: true,
+    //   })
+    //   .subscribe({
+    //     next: (res) => {
+    //       console.log(res);
+    //       console.log({ competitions: res.data.items });
+    //       this.competitionsResponse.set(res);
+    //       this.competitions = res.data.items;
+    //     },
+    //     error: (err) => {
+    //       console.log(err);
+    //     },
+    //   });
   }
 
   ngAfterViewInit(): void {
