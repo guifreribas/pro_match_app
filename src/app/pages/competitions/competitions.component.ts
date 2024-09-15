@@ -62,7 +62,7 @@ export class CompetitionsComponent {
     OTHER: 'Otro',
   };
 
-  constructor(private changeDetector: ChangeDetectorRef) {
+  constructor() {
     effect(() => {
       const user = this._userState.me();
       if (user?.id_user && this._hasFetchedCompetitions === false) {
@@ -88,26 +88,7 @@ export class CompetitionsComponent {
     });
   }
 
-  ngOnInit(): void {
-    // this._competitionService
-    //   .getCompetitions({
-    //     user_id: this._userState.me()!.id_user,
-    //     includeCompetitionType: true,
-    //     includeOrganization: true,
-    //     includeCompetitionCategory: true,
-    //   })
-    //   .subscribe({
-    //     next: (res) => {
-    //       console.log(res);
-    //       console.log({ competitions: res.data.items });
-    //       this.competitionsResponse.set(res);
-    //       this.competitions = res.data.items;
-    //     },
-    //     error: (err) => {
-    //       console.log(err);
-    //     },
-    //   });
-  }
+  ngOnInit(): void {}
 
   ngAfterViewInit(): void {
     setTimeout(() => {
