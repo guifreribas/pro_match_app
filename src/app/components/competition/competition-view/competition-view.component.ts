@@ -216,7 +216,8 @@ export class CompetitionViewComponent implements OnInit {
               title: match.local_team.name + ' vs ' + match.visitor_team.name,
               start: parsedDate.replace(/T.*$/, ''),
               allDay: true,
-              backgroundColor: this.colors[match.competition_category_id],
+              backgroundColor:
+                this.colors[match.competition_category.id_competition_category],
             };
           })
         );
