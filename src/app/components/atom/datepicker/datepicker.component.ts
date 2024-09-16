@@ -90,6 +90,8 @@ export const MY_DATE_FORMATS = {
   // `,
 })
 export class DatepickerComponent implements ControlValueAccessor, OnChanges {
+  @Input() mainContainerClass: string = 'relative';
+  @Input() placeholder: string = 'Selecciona una fecha';
   @Input() minDate?: Date;
   @Input() maxDate?: Date;
   @Input() classesFromParent: { [Key: string]: boolean } = {};

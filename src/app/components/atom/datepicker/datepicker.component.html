@@ -9,9 +9,9 @@
 </div> -->
 
 
-<div class="relative">
-  <input matInput [matDatepicker]="picker" [formControl]="dateControl" placeholder="Selecciona una fecha"
-    [min]="minDate" [max]="maxDate" (input)="onDateInput($event)"
+<div [class]="mainContainerClass">
+  <input matInput [matDatepicker]="picker" [formControl]="dateControl" [placeholder]="placeholder" [min]="minDate"
+    [max]="maxDate" (input)="onDateInput($event)"
     class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-700 focus:border-primary-700 block w-full p-2.5 [&::-webkit-calendar-picker-indicator]:hidden" />
   <mat-datepicker-toggle matSuffix [for]="picker" class="absolute right-[2px] top-[1px]"></mat-datepicker-toggle>
   <mat-datepicker #picker></mat-datepicker>
