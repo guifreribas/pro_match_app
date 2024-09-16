@@ -28,10 +28,54 @@ export interface Match {
   updated_at?: Date;
 }
 
+// export interface MatchWithDetails
+//   extends Omit<Match, 'local_team' | 'visitor_team'> {
+//   local_team: Pick<Team, 'name' | 'id_team' | 'avatar'>;
+//   visitor_team: Pick<Team, 'name' | 'id_team' | 'avatar'>;
+// }
 export interface MatchWithDetails
-  extends Omit<Match, 'local_team' | 'visitor_team'> {
-  local_team: Pick<Team, 'name' | 'id_team' | 'avatar'>;
-  visitor_team: Pick<Team, 'name' | 'id_team' | 'avatar'>;
+  extends Pick<
+    Match,
+    'id_match' | 'status' | 'date' | 'user_id' | 'created_at' | 'updated_at'
+  > {
+  local_team: LocalTeam;
+  visitor_team: VisitorTeam;
+  competition_category: CompetitionCategory;
+  competition: Competition;
+  category: Category;
+  organization: Organization;
+}
+
+export interface LocalTeam {
+  name: string;
+  avatar: string;
+}
+
+export interface VisitorTeam {
+  name: string;
+  avatar: string;
+}
+
+export interface CompetitionCategory {
+  id_competition_category: number;
+  season: string;
+}
+
+export interface Competition {
+  name: string;
+  format: string;
+  is_initialized: number;
+}
+
+export interface Category {
+  name: string;
+  gender: string;
+}
+
+export interface Organization {
+  name: string;
+  address: string;
+  logo: string;
 }
 
 export interface MatchGetResponse {
