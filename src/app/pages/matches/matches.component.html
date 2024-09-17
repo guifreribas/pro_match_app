@@ -7,8 +7,8 @@
         <!-- <div class="w-full md:w-1/2 relative"> -->
 
 
-        <form class="flex  relative flex-col gap-2" [formGroup]="matchForm">
-          <div class="flex flex-row gap-4 items-center">
+        <form class="w-full flex relative flex-col gap-2" [formGroup]="matchForm">
+          <div class="w-full flex flex-row gap-4 items-center">
 
             <div class="flex items-center justify-start">
               <select id="countries" formControlName="dateTypeSelect"
@@ -28,8 +28,7 @@
             </div>
           </div>
 
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-
+          <div class="w-full grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             <app-datepicker formControlName="startDate" [placeholder]="placeHolder"
               (dateChange)="onDateChange($event)"></app-datepicker>
 
@@ -37,7 +36,6 @@
             <app-datepicker formControlName="finishDate" [placeholder]="'Hasta...'"
               (dateChange)="onDateChange($event)"></app-datepicker>
             }
-
           </div>
         </form>
 
