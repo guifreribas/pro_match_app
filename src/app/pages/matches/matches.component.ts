@@ -1,5 +1,11 @@
 import { CommonModule } from '@angular/common';
-import { Component, effect, inject, signal } from '@angular/core';
+import {
+  AfterViewInit,
+  Component,
+  effect,
+  inject,
+  signal,
+} from '@angular/core';
 import {
   FormControl,
   FormGroup,
@@ -22,6 +28,7 @@ import {
 } from '@app/models/match';
 import { MatchService } from '@app/services/api_services/match.service';
 import { UserStateService } from '@app/services/global_states/user-state.service';
+import { initFlowbite } from 'flowbite';
 import { filter, Subject } from 'rxjs';
 
 type DateFilterType = 'DATE' | 'RANGE_DATE';
@@ -59,7 +66,7 @@ interface GetMatchesParams {
   templateUrl: './matches.component.html',
   styleUrl: './matches.component.scss',
 })
-export class MatchesComponent {
+export class MatchesComponent implements AfterViewInit {
   public matchesResponse = signal<getAllResponse<MatchWithDetails> | null>(
     null
   );
@@ -114,6 +121,16 @@ export class MatchesComponent {
         });
       }
     });
+  }
+
+  ngAfterViewInit(): void {
+    this._reinitFlowbite();
+  }
+
+  private _reinitFlowbite() {
+    setTimeout(() => {
+      initFlowbite();
+    }, 100);
   }
 
   private _getMatches(params?: Partial<GetMatchesParams>) {
