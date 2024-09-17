@@ -14,6 +14,8 @@ interface GetMatchesParams {
   local_team: number;
   visitor_team: number;
   date: Date;
+  dateBefore: Date;
+  dateAfter: Date;
   competition_category_id: number;
   user_id: number;
 }
@@ -31,6 +33,7 @@ export class MatchService {
     params?: Partial<GetMatchesParams>
   ): Observable<getAllResponse<MatchWithDetails>> {
     const url = urlParser(params, this.apiUrl);
+    console.log('url', url);
     return this.genericService.getAll<getAllResponse<MatchWithDetails>>(url);
   }
 
