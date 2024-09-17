@@ -2,6 +2,172 @@
   <h2 class="text-3xl uppercase font-bold">PARTIDOS</h2>
   <div class="bg-white dark:bg-gray-800 relative shadow-md sm:rounded-lg overflow-hidden max-w-6xl">
 
-    <p class="p-4 font-bold text-xl">matches works!</p>
+    <div class="bg-white dark:bg-gray-800 relative shadow-md sm:rounded-lg overflow-hidden max-w-6xl">
+      <div class="flex flex-col md:flex-row items-center justify-between space-y-3 md:space-y-0  p-4">
+        <!-- <div class="w-full md:w-1/2 relative"> -->
+
+
+        <form class="flex  relative flex-col gap-2" [formGroup]="matchForm">
+          <div class="flex flex-row gap-4 items-center">
+
+            <div class="flex items-center justify-start">
+              <select id="countries" formControlName="dateTypeSelect"
+                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-700 focus:border-primary-500 block w-full p-2.5">
+                <option value="DATE" selected>Buscar por fecha</option>
+                <option value="RANGE_DATE">Buscar por rango de fechas</option>
+              </select>
+            </div>
+
+            <div (click)="onResetDates()"
+              class="flex items-center gap-1 text-gray-900 hover:text-gray-500 hover:cursor-pointer transition-all duration-100">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="size-5 ">
+                <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8" />
+                <path d="M3 3v5h5" />
+              </svg>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+
+            <app-datepicker formControlName="startDate" [placeholder]="placeHolder"
+              (dateChange)="onDateChange($event)"></app-datepicker>
+
+            @if(dateFilterType() === 'RANGE_DATE'){
+            <app-datepicker formControlName="finishDate" [placeholder]="'Hasta...'"
+              (dateChange)="onDateChange($event)"></app-datepicker>
+            }
+
+          </div>
+        </form>
+
+      </div>
+      <div class="overflow-x-auto">
+        <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
+          <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+            <tr>
+              <th scope="col" class="px-4 py-3">Equipo local</th>
+              <th scope="col" class="px-4 py-3">Equipo visitante</th>
+              <th scope="col" class="px-4 py-3">Competitición</th>
+              <th scope="col" class="px-4 py-3">Fecha de partido</th>
+              <th scope="col" class="px-4 py-3">
+                <span class="sr-only">Acciones</span>
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+
+            <!-- Lista de jugadores -->
+            @for(match of matches(); track match.id_match){
+            <tr class="border-b dark:border-gray-700">
+              <td class="px-4 py-3">{{match.local_team.name}}</td>
+              <td class="px-4 py-3">{{match.visitor_team.name}}</td>
+              <td class="px-4 py-3">{{match.competition.name}}</td>
+              <td class="px-4 py-3">{{match.date | date:'dd/MM/yyyy'}}</td>
+
+
+              <td class="px-4 py-3 flex items-center justify-end">
+                <button [id]="'dropdown-button-' + match.id_match"
+                  [attr.data-dropdown-toggle]="'dropdown-' + match.id_match"
+                  class="inline-flex items-center p-0.5 text-sm font-medium text-center text-gray-500 hover:text-gray-800 rounded-lg focus:outline-none dark:text-gray-400 dark:hover:text-gray-100"
+                  type="button">
+                  <svg class="w-5 h-5" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20"
+                    xmlns="http://www.w3.org/2000/svg">
+                    <path
+                      d="M6 10a2 2 0 11-4 0 2 2 0 014 0zM12 10a2 2 0 11-4 0 2 2 0 014 0zM16 12a2 2 0 100-4 2 2 0 000 4z" />
+                  </svg>
+                </button>
+                <div [id]="'dropdown-' + match.id_match"
+                  class="hidden z-10 w-44 bg-white rounded divide-y divide-gray-100 shadow dark:bg-gray-700 dark:divide-gray-600">
+                  <ul class="py-1 text-sm text-gray-700 dark:text-gray-200"
+                    [attr.aria-labelledby]="'dropdown-button-' + match.id_match">
+                    <li>
+                      <a [routerLink]="['/matches', match.id_match]" [queryParams]="{ edit: true }"
+                        class="block py-2 px-4 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
+                        Ver ficha
+                      </a>
+                    </li>
+                    <li>
+                      <a [routerLink]="['/matches', match.id_match]" [queryParams]="{ edit: true }"
+                        class="block py-2 px-4 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
+                        Editar
+                      </a>
+                    </li>
+                  </ul>
+                  <div class="py-1">
+                    <a [routerLink]="['#']"
+                      class="block py-2 px-4 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white">
+                      Eliminar
+                    </a>
+                  </div>
+                </div>
+              </td>
+            </tr>
+            }
+
+
+
+          </tbody>
+        </table>
+      </div>
+      <nav class="flex flex-col md:flex-row justify-between items-start md:items-center space-y-3 md:space-y-0 p-4"
+        aria-label="Table navigation">
+        <span class="text-sm font-normal text-gray-500 dark:text-gray-400">
+          Mostrando
+          <span class="font-semibold text-gray-900 dark:text-white">
+            {{ ((currentPage - 1) * 10) + 1 }} -
+            {{ (currentPage - 1) * 10 + (matchesResponse()?.data?.itemCount ?? 0) }}
+          </span>
+          de
+          <span class="font-semibold text-gray-900 dark:text-white">{{matchesResponse()?.data?.totalItems}}</span>
+        </span>
+        <ul class="inline-flex items-stretch -space-x-px">
+          <li>
+            <button #prevPageArrow (click)="goPreviousPage()"
+              class="flex items-center justify-center h-full py-1.5 px-3 ml-0 text-gray-500 bg-white rounded-l-lg border border-gray-300 hover:bg-gray-100 hover:text-gray-700 ">
+              <span class="sr-only">Anterior</span>
+              <svg class="w-5 h-5" aria-hidden="true" fill="currentColor" viewbox="0 0 20 20"
+                xmlns="http://www.w3.org/2000/svg">
+                <path fill-rule="evenodd"
+                  d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z"
+                  clip-rule="evenodd" />
+              </svg>
+            </button>
+          </li>
+          @if(matchesResponse()?.data?.hasPreviousPage){
+          <li>
+            <button #prevPage (click)="goOnPage(currentPage - 1)"
+              class="flex items-center justify-center text-sm py-2 px-3 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 ">
+              {{currentPage - 1}}
+            </button>
+          </li>
+
+          }
+          <li>
+            <button #page aria-current="page"
+              class="flex items-center justify-center text-sm z-10 py-2 px-3 leading-tight text-primary-600 bg-primary-50 border border-primary-300 hover:bg-primary-100 hover:text-primary-700">{{matchesResponse()?.data?.currentPage}}</button>
+          </li>
+          @if(matchesResponse()?.data?.hasNextPage){
+          <li>
+            <button #nextPage (click)="goOnPage(currentPage + 1)"
+              class="flex items-center justify-center text-sm py-2 px-3 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700">
+              {{currentPage + 1}}</button>
+          </li>
+          }
+          <li>
+            <button #nextPageArrow (click)="goNextPage()"
+              class="flex items-center justify-center h-full py-1.5 px-3 leading-tight text-gray-500 bg-white rounded-r-lg border border-gray-300 hover:bg-gray-100 hover:text-gray-700">
+              <span class="sr-only">Siguiente</span>
+              <svg class="w-5 h-5" aria-hidden="true" fill="currentColor" viewbox="0 0 20 20"
+                xmlns="http://www.w3.org/2000/svg">
+                <path fill-rule="evenodd"
+                  d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
+                  clip-rule="evenodd" />
+              </svg>
+            </button>
+          </li>
+        </ul>
+      </nav>
+    </div>
   </div>
 </app-dashboard-panel-layout>
