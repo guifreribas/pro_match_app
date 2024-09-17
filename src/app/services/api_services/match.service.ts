@@ -33,7 +33,6 @@ export class MatchService {
     params?: Partial<GetMatchesParams>
   ): Observable<getAllResponse<MatchWithDetails>> {
     const url = urlParser(params, this.apiUrl);
-    console.log('url', url);
     return this.genericService.getAll<getAllResponse<MatchWithDetails>>(url);
   }
 
