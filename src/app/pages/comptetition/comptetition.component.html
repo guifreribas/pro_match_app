@@ -1,4 +1,14 @@
 <app-dashboard-panel-layout>
-  <!-- <app-competition-initalizer></app-competition-initalizer> -->
+  @if(competitionViewState() === 'VIEW'){
   <app-competition-view></app-competition-view>
+  }
+  @else if (competitionViewState() === 'EDIT'){
+  <app-competition-edit></app-competition-edit>
+  }
+  @else if (competitionViewState() === 'INITIALIZE'){
+  <app-competition-initalizer></app-competition-initalizer>
+  }
+  @else {
+  <p>Competition view state not defined</p>
+  }
 </app-dashboard-panel-layout>

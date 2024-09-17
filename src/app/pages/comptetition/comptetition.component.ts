@@ -1,5 +1,6 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
+import { CompetitionEditComponent } from '@app/components/competition/competition-edit/competition-edit.component';
 import { CompetitionInitalizerComponent } from '@app/components/competition/competition-initalizer/competition-initalizer.component';
 import { CompetitionViewComponent } from '@app/components/competition/competition-view/competition-view.component';
 import { DashboardPanelLayoutComponent } from '@app/layouts/dashboard-panel-layout/dashboard-panel-layout.component';
@@ -7,11 +8,7 @@ import { CompetitionWithDetails } from '@app/models/competition';
 import { CompetitionService } from '@app/services/api_services/competition.service';
 import { CompetitionStateService } from '@app/services/global_states/competition-state.service';
 
-interface CompetitionViewState {
-  VIEW: 'VIEW';
-  EDIT: 'EDIT';
-  INITIALIZE: 'INITIALIZE';
-}
+type CompetitionViewState = 'VIEW' | 'EDIT' | 'INITIALIZE';
 
 @Component({
   selector: 'app-comptetition',
@@ -20,6 +17,7 @@ interface CompetitionViewState {
     DashboardPanelLayoutComponent,
     CompetitionInitalizerComponent,
     CompetitionViewComponent,
+    CompetitionEditComponent,
   ],
   templateUrl: './comptetition.component.html',
   styleUrl: './comptetition.component.scss',
@@ -27,7 +25,7 @@ interface CompetitionViewState {
 export class ComptetitionComponent implements OnInit {
   public competitionId = '';
   public competition = signal<CompetitionWithDetails | null>(null);
-  // public competitionViewState = signal<CompetitionViewState>('VIEW');
+  public competitionViewState = signal<CompetitionViewState>('VIEW');
 
   private _competitionService = inject(CompetitionService);
   private _competitionState = inject(CompetitionStateService);
@@ -36,7 +34,9 @@ export class ComptetitionComponent implements OnInit {
 
   ngOnInit(): void {
     this.competitionId = this._route.snapshot.params['id'] || '';
-    this._isEditing = this._route.snapshot.queryParams['edit'];
+    const status = this._route.snapshot.queryParams['status'];
+    this.competitionViewState.set(status);
+
     if (this.competitionId) {
       this._competitionService
         .getCompetition(Number(this.competitionId))
