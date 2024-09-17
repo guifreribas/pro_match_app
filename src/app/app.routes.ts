@@ -17,6 +17,7 @@ import { OrganizationComponent } from './pages/organization/organization.compone
 import { CompetitionsComponent } from './pages/competitions/competitions.component';
 import { ComptetitionComponent } from './pages/comptetition/comptetition.component';
 import { CategoriesComponent } from './pages/categories/categories.component';
+import { MatchComponent } from './pages/match/match.component';
 
 export const routes: Routes = [
   { path: 'login', component: LoginComponent },
@@ -55,6 +56,11 @@ export const routes: Routes = [
       {
         path: 'players',
         component: PlayersComponent,
+        canActivate: [authGuard],
+      },
+      {
+        path: 'matches/:id',
+        component: MatchComponent,
         canActivate: [authGuard],
       },
       {
