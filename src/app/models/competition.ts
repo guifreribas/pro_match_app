@@ -17,7 +17,7 @@ export interface Competition {
 }
 
 interface CompetitionCategoryWithDetails {
-  season: Pick<CompetitionCategory, 'season'> | null;
+  season: string | null;
   category: Pick<Category, 'name' | 'gender'> | null;
   competition_category_id: number;
 }
