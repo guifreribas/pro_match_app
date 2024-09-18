@@ -1,1 +1,93 @@
-<p>competition-edit works!</p>
+<div class="bg-white dark:bg-gray-800 relative shadow-md sm:rounded-lg overflow-hidden max-w-6xl">
+  <div class="relative p-4 bg-white rounded-lg shadow sm:p-5">
+    <!-- <div class="relative p-4 bg-white rounded-lg shadow sm:p-5" [hidden]="this.isCreatingPlayer()"> -->
+
+    <form [formGroup]="competitionForm" (submit)=" onSubmit($event)">
+
+      <div class="grid gap-4 mb-4 sm:grid-cols-2">
+        <div>
+          <label for="name" class="block mb-2 text-sm font-medium text-gray-900">
+            Nombre
+          </label>
+          <input type="text" name="name" id="name" formControlName="name"
+            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-700 focus:border-primary-700 block w-full p-2.5 "
+            placeholder="Añade el nombre" required="">
+        </div>
+
+        <div>
+          <label for="organization" class="block mb-2 text-sm font-medium text-gray-900 ">Centro</label>
+          <select id="organization" formControlName="organization"
+            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5">
+            <option selected>Escoge una opción</option>
+            @for(organization of organizations(); track organization.id_organization){
+            <option value="{{organization.id_organization}}">{{organization.name}}</option>
+            }
+          </select>
+        </div>
+
+        <div>
+          <label for="competition" class="block mb-2 text-sm font-medium text-gray-900 ">Tipo de
+            competición</label>
+          <select id="competition" formControlName="competition"
+            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5">
+            <option selected>Escoge una opción</option>
+            <option value="LEAGUE">Liga</option>
+            <option value="TOURNAMENT">Copa</option>
+          </select>
+        </div>
+
+
+
+        <div>
+          <label for="format" class="block mb-2 text-sm font-medium text-gray-900 ">Tipo
+            formato</label>
+          <select id="format" formControlName="format" #formatSelect
+            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5">
+            <option selected>Escoge una opción</option>
+            <option value="DOUBLE_ROUND">Doble vuelta</option>
+            <option value="SINGLE_ROUND">Sólo ida</option>
+            <option value="KNOCKOUT">Knockout</option>
+            <option value="KNOCKOUT_SINGLE_ROUND">Liguilla una vuelta más knockout</option>
+            <option value="KNOCKOUT_DOUBLE_ROUND">Liguilla dos vueltas más knockout</option>
+          </select>
+        </div>
+
+        <div>
+          <label for="category" class="block mb-2 text-sm font-medium text-gray-900 ">Categoria</label>
+          <select id="category" formControlName="category"
+            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5">
+            <option selected>Escoge una opción</option>
+            @for(category of categories(); track category.id_category){
+            <option value="{{category.id_category}}">{{category.name}} / {{category.gender}}</option>
+            }
+            <option value="OTHER">Otro</option>
+          </select>
+        </div>
+
+        <div>
+          <label for="season" class="block mb-2 text-sm font-medium text-gray-900 ">Temporada</label>
+          <select id="season" formControlName="season"
+            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5">
+            <option selected>Escoge una opción</option>
+            <option value="2024/2025">2024/2025</option>
+            <option value="2025/2026">2025/2026</option>
+            <option value="2026/2027">2026/2027</option>
+            <option value="2027/2028">2027/2028</option>
+          </select>
+        </div>
+
+
+      </div>
+      <button type="submit"
+        class="text-white inline-flex items-center bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center mt-2">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+          stroke-linecap="round" stroke-linejoin="round" class="mr-1 -ml-1 size-4">
+          <path
+            d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z" />
+          <path d="m15 5 4 4" />
+        </svg>
+        Editar competición
+      </button>
+    </form>
+  </div>
+</div>
