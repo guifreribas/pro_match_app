@@ -30,6 +30,7 @@ import { MatchService } from '@app/services/api_services/match.service';
 import { UserStateService } from '@app/services/global_states/user-state.service';
 import { initFlowbite } from 'flowbite';
 import { filter, Subject } from 'rxjs';
+import { trigger, transition, style, animate } from '@angular/animations';
 
 type DateFilterType = 'DATE' | 'RANGE_DATE';
 type Action = 'NEXT' | 'PREVIOUS' | 'GO_ON_PAGE';
@@ -65,6 +66,24 @@ interface GetMatchesParams {
   ],
   templateUrl: './matches.component.html',
   styleUrl: './matches.component.scss',
+  animations: [
+    trigger('enterLeave', [
+      transition(':enter', [
+        style({ opacity: 0, transform: 'translateY(-10px)' }),
+        animate(
+          '0.2s ease-in-out',
+          style({ opacity: 1, transform: 'translateY(0)' })
+        ),
+      ]),
+      transition(':leave', [
+        style({ opacity: 1, transform: 'translateY(0)' }),
+        animate(
+          '0.2s ease-in-out',
+          style({ opacity: 0, transform: 'translateY(-10px)' })
+        ),
+      ]),
+    ]),
+  ],
 })
 export class MatchesComponent implements AfterViewInit {
   public matchesResponse = signal<getAllResponse<MatchWithDetails> | null>(
