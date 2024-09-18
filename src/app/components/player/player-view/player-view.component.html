@@ -1,14 +1,14 @@
 <div class=" p-12 lg:p-12 bg-white relative shadow-md sm:rounded-lg overflow-hidden flex flex-col gap-8 w-fit">
   <button class="absolute top-4 right-4 " (click)="this.playerViewState.set('EDIT')">
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
-      class="size-6 text-primary-700 hover:cursor-pointer hover:text-primary-800 transition-all duration-100">
+      class="size-6 text-gray-500 hover:cursor-pointer hover:text-gray-800 transition-all duration-100">
       <path
         d="M21.731 2.269a2.625 2.625 0 0 0-3.712 0l-1.157 1.157 3.712 3.712 1.157-1.157a2.625 2.625 0 0 0 0-3.712ZM19.513 8.199l-3.712-3.712-8.4 8.4a5.25 5.25 0 0 0-1.32 2.214l-.8 2.685a.75.75 0 0 0 .933.933l2.685-.8a5.25 5.25 0 0 0 2.214-1.32l8.4-8.4Z" />
       <path
         d="M5.25 5.25a3 3 0 0 0-3 3v10.5a3 3 0 0 0 3 3h10.5a3 3 0 0 0 3-3V13.5a.75.75 0 0 0-1.5 0v5.25a1.5 1.5 0 0 1-1.5 1.5H5.25a1.5 1.5 0 0 1-1.5-1.5V8.25a1.5 1.5 0 0 1 1.5-1.5h5.25a.75.75 0 0 0 0-1.5H5.25Z" />
     </svg>
   </button>
-  <div class="w-full flex flex-wrap gap-8 py-4 pb-12 border-b">
+  <!-- <div class="w-full flex flex-wrap gap-8 py-4 pb-12 border-b">
     @if(player?.avatar){
     <img src="{{imgUrl + player?.avatar}}" alt="{{player?.name}} {{player?.last_name}}"
       class="w-40 h-40 rounded-lg border object-cover">
@@ -26,9 +26,9 @@
       </div>
     </section>
 
-  </div>
+  </div> -->
 
-  <section class="flex flex-col gap-4 w-full justify-center">
+  <!-- <section class="flex flex-col gap-4 w-full justify-center">
 
     <h5 class="text-lg font-semibold text-gray-800 ">Equipos</h5>
 
@@ -46,6 +46,62 @@
       <p>{{team?.team?.name}}</p>
     </a>
     }
-  </section>
+  </section> -->
+
+  <div class="flex flex-col items-center max-w-md mx-auto bg-white rounded-xl overflow-hidden">
+    <div class="player-photo">
+      @if(player?.avatar){
+      <img src="{{imgUrl + player?.avatar}}" alt="{{player?.name}} {{player?.last_name}}"
+        [style.view-transition-name]="'player-' + player?.id_player" class="w-40 h-40 rounded-lg border object-cover">
+      }
+      @else {
+      <img src="/assets/icons/avatar.svg" alt="{{player?.name}} {{player?.last_name}}"
+        [style.view-transition-name]="'player-' + player?.id_player" class="w-40 h-40 rounded-lg border object-cover">
+      }
+    </div>
+    <div class="player-info p-6">
+      <h2 class="player-name text-xl font-semibold text-gray-900">Nom del jugador</h2>
+      <p class="text-gray-600 mt-2"><strong>DNI:</strong> {{player?.dni}}</p>
+      <p class="text-gray-600"><strong>Edad:</strong> {{playerYears}} años</p>
+      <p class="text-gray-600"><strong>Fecha de nacimiento:</strong>{{player?.birthday}}</p>
+      <div class="player-teams mt-4">
+        <strong class=" text-gray-800">Equips:</strong>
+        <ul class="list-none mt-2 space-y-2">
+          @for(team of teamPlayers(); track team.id_team_player){
+          <li
+            class="bg-gray-100 text-gray-800 p-2 rounded-lg shadow-md  hover:cursor-pointer  hover:bg-gray-50 hover:shadow-none transition-all duration-100">
+            <a routerLink="/teams/{{team?.team_id}}" class="flex flex-row gap-2 items-center justify-between">
+              <div class="flex flex-row gap-2 items-center">
+
+                @if(team?.team?.avatar){
+                <img src="{{imgUrl + team?.team?.avatar}}" alt="{{team?.team?.name}}"
+                  class="w-10 h-10 rounded-lg border object-cover">
+                }
+                @else {
+                <img src="/assets/icons/avatar.svg" alt="{{team?.team?.name}}"
+                  class="w-10 h-10 rounded-lg border object-cover">
+                }
+                <p class="text-md font-bold uppercase">{{team?.team?.name}}</p>
+              </div>
+              <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="size-8 rounded-lg" viewBox="0 0 24 24" stroke-width="1.5"
+                  stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                  <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                  <path
+                    d="M12 9v-3.586a1 1 0 0 1 1.707 -.707l6.586 6.586a1 1 0 0 1 0 1.414l-6.586 6.586a1 1 0 0 1 -1.707 -.707v-3.586h-6v-6h6z" />
+                  <path d="M3 9v6" />
+                </svg>
+              </div>
+            </a>
+          </li>
+
+          }
+          <!-- <li class="bg-gray-100 p-2 rounded">Equip 1</li>
+          <li class="bg-gray-100 p-2 rounded">Equip 2</li>
+          <li class="bg-gray-100 p-2 rounded">Equip 3</li> -->
+        </ul>
+      </div>
+    </div>
+  </div>
 
 </div>
