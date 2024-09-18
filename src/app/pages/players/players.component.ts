@@ -91,6 +91,7 @@ export class PlayersComponent implements AfterViewInit {
         console.log({ players: res.data.items });
         this.playersResponse.set(res);
         this.players = res.data.items;
+        this.reInitFlowbite();
       },
       error: (err) => {
         console.log(err);

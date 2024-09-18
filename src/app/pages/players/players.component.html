@@ -80,11 +80,11 @@
             <td class="px-4 py-3 ">
               @if(player.avatar){
               <img class="w-10 h-10 rounded-lg object-cover" src="{{imgUrl + player.avatar}}"
-                alt="{{player.name}} {{player.last_name}}">
+                [style.view-transition-name]="'player-' + player?.id_player" alt="{{player.name}} {{player.last_name}}">
               }
               @else {
               <img class="w-10 h-10 rounded-lg object-cover" src="/assets/icons/avatar.svg"
-                alt="{{player.name}} {{player.last_name}}">
+                [style.view-transition-name]="'player-' + player?.id_player" alt="{{player.name}} {{player.last_name}}">
               }
             </td>
 
