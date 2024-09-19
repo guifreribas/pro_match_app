@@ -43,16 +43,6 @@ import { CompetitionService } from '@app/services/api_services/competition.servi
   styleUrl: './competition-view.component.scss',
 })
 export class CompetitionViewComponent implements OnInit {
-  public colors = [
-    '#3d8333',
-    '#8e2de2',
-    '#4a148c',
-    '#c23616',
-    '#2a9d8f',
-    '#195f3b',
-    '#a8e063',
-    '#e6c600',
-  ];
   public imgUrl = config.IMG_URL;
   public formatMap: Record<string, string> = {
     SINGLE_ROUND: 'Doble vuelta',
@@ -216,8 +206,7 @@ export class CompetitionViewComponent implements OnInit {
               title: match.local_team.name + ' vs ' + match.visitor_team.name,
               start: parsedDate.replace(/T.*$/, ''),
               allDay: true,
-              backgroundColor:
-                this.colors[match.competition_category.id_competition_category],
+              backgroundColor: '#3d8333',
             };
           })
         );
