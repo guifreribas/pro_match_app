@@ -7,9 +7,10 @@ import { Team } from '../../models/team';
 import { urlParser } from '@app/utils/utils';
 
 interface GetTeamsParams {
-  q?: string;
-  page?: string;
-  user_id?: number;
+  q: string;
+  page: string;
+  user_id: number;
+  id_team: number;
 }
 
 @Injectable({
@@ -21,7 +22,7 @@ export class TeamService {
 
   constructor() {}
 
-  getTeams(params?: GetTeamsParams): Observable<getAllResponse<Team>> {
+  getTeams(params?: Partial<GetTeamsParams>): Observable<getAllResponse<Team>> {
     const url = urlParser(params, this.apiUrl);
     return this.genericService.getAll<getAllResponse<Team>>(url);
   }
