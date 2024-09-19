@@ -175,8 +175,13 @@ export class CompetitionEditComponent {
     //   dataToUpdate.competition_type_id =
     //     competition?.competitionType?.id_competition_type;
     // }
-    if (competition?.organization?.id_organization) {
-      dataToUpdate.organization_id = competition?.organization?.id_organization;
+    if (
+      competition?.organization?.id_organization !==
+      Number(this.competitionForm.controls.organization.value)
+    ) {
+      dataToUpdate.organization_id = Number(
+        this.competitionForm.controls.organization.value
+      );
     }
     console.log({ dataToUpdate });
     if (competition?.id_competition) {
