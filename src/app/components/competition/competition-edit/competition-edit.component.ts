@@ -76,14 +76,12 @@ export class CompetitionEditComponent {
           competition?.competitionCategory?.season || ''
         );
         this._areFormValuesInitalized = true;
-        console.log('INITIALIZED');
       }
     });
   }
 
   onSubmit(e: Event) {
     e.preventDefault();
-    console.log(this.competitionForm.value);
 
     const competitionCategoryMustBeUpadated =
       this._checkIfCompetitionCategoryMustBeUpdated();
@@ -91,7 +89,7 @@ export class CompetitionEditComponent {
       this._updateCompetitionCategory();
     }
 
-    const competitionMustBeUpdated = this.checkIfOrganizationMustBeUpdated();
+    const competitionMustBeUpdated = this.checkIfCompetitionMustBeUpdated();
     if (competitionMustBeUpdated) {
       this._updateCompetition();
     }
@@ -143,7 +141,7 @@ export class CompetitionEditComponent {
       });
   }
 
-  private checkIfOrganizationMustBeUpdated(): boolean {
+  private checkIfCompetitionMustBeUpdated(): boolean {
     const competition = this._competitionState.competitions();
     const name = competition?.name;
     const format = competition?.format;
@@ -163,27 +161,32 @@ export class CompetitionEditComponent {
   private _updateCompetition() {
     const dataToUpdate: Partial<Competition> = {};
     const competition = this._competitionState.competitions();
+    const control = this.competitionForm.controls;
 
-    if (competition?.name) {
-      dataToUpdate.name = this.competitionForm.controls.name.value || '';
+    if (competition?.name !== control.name.value) {
+      dataToUpdate.name = control.name.value || '';
     }
-    if (competition?.format) {
-      dataToUpdate.format = this.competitionForm.controls.format
-        .value as CompetitionFormat;
+    if (competition?.format !== control.format.value) {
+      dataToUpdate.format = control.format.value as CompetitionFormat;
     }
-    // if (competition?.competitionType?.id_competition_type) {
-    //   dataToUpdate.competition_type_id =
-    //     competition?.competitionType?.id_competition_type;
-    // }
+    if (
+      competition?.competitionType?.name !== control.competition.value &&
+      control.competition.value
+    ) {
+      const competitionTypeMap: Record<string, number> = {
+        LEAGUE: 1,
+        TOURNAMENT: 2,
+      };
+      dataToUpdate.competition_type_id =
+        competitionTypeMap[control.competition.value];
+    }
+
     if (
       competition?.organization?.id_organization !==
-      Number(this.competitionForm.controls.organization.value)
+      Number(control.organization.value)
     ) {
-      dataToUpdate.organization_id = Number(
-        this.competitionForm.controls.organization.value
-      );
+      dataToUpdate.organization_id = Number(control.organization.value);
     }
-    console.log({ dataToUpdate });
     if (competition?.id_competition) {
       this._competitionService
         .updateCompetition(dataToUpdate, Number(competition?.id_competition))
