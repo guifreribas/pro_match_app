@@ -11,13 +11,14 @@ import {
 import { urlParser } from '@app/utils/utils';
 
 interface GetTeamPlayersParams {
-  q?: string;
-  page?: string;
-  limit?: number;
-  team_id?: number | null;
-  player_id?: number | null;
-  sortBy?: string;
-  sortOrder?: string;
+  q: string;
+  page: string;
+  limit: number;
+  team_id: number;
+  player_id: number;
+  sortBy: string;
+  sortOrder: string;
+  user_id: number;
 }
 
 @Injectable({
@@ -30,7 +31,7 @@ export class TeamPlayerService {
   constructor() {}
 
   getTeamPlayers(
-    params?: GetTeamPlayersParams
+    params?: Partial<GetTeamPlayersParams>
   ): Observable<getAllResponse<TeamPlayerWithDetails>> {
     const url = urlParser(params, this.apiUrl);
     return this.genericService.getAll<getAllResponse<TeamPlayerWithDetails>>(
