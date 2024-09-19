@@ -1,16 +1,156 @@
 <div class="bg-white dark:bg-gray-800 relative shadow-md sm:rounded-lg overflow-hidden max-w-6xl">
   <div class="relative p-4 bg-white rounded-lg shadow sm:p-5">
-    <!-- Modal header -->
-    <div class="flex justify-between items-center pb-4 mb-4 rounded-t border-b sm:mb-5 ">
-      <h3 class="text-lg font-semibold text-gray-900 ">
-        Editar partido
-      </h3>
+    <div class="border-b pb-5 sm:pb-6">
 
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 items-center gap-x-4 gap-y-0 rounded-t mb-4">
+
+
+        <div class="w-full">
+          <label for="countries" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Estado del
+            partido:</label>
+          <select id="countries"
+            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-700 focus:border-primary-700 block w-full p-2.5 ">
+            <option value="SCHEDULED" selected>PROGRAMADO</option>
+            <option value="IN_PROGRESS">EN PROGRESSO</option>
+            <option value="FINISHED">FINALIZADO</option>
+            <option value="POSTPONED">POSPUESTO</option>
+            <option value="CANCELLED">CANCELADO</option>
+            <option value="ABANDONED">ABANDONADO</option>
+            <option value="TO_BE_SCHEDULED">POR PROGRAMAR</option>
+          </select>
+        </div>
+
+        <div class="w-full">
+          <label class="block mb-2 text-sm font-medium text-white opacity-0 dark:text-white">.</label>
+          <button (click)="setFormType('GOAL')"
+            class="w-full text-white inline-flex items-center bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center transition-colors duration-100">
+            <svg class="mr-1 -ml-1 w-6 h-6" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+              <path fill-rule="evenodd"
+                d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z"
+                clip-rule="evenodd">
+              </path>
+            </svg>
+            Añadir gol
+          </button>
+        </div>
+
+        <div class="w-full">
+          <label class="block mb-2 text-sm font-medium text-white opacity-0 dark:text-white">.</label>
+
+          <button (click)="setFormType('CARD')"
+            class="w-full text-white inline-flex items-center bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center transition-colors duration-100">
+            <svg class="mr-1 -ml-1 w-6 h-6" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+              <path fill-rule="evenodd"
+                d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z"
+                clip-rule="evenodd">
+              </path>
+            </svg>
+            Añadir trajeta
+          </button>
+        </div>
+
+        <div class="w-full">
+          <label class="block mb-2 text-sm font-medium text-white opacity-0 dark:text-white">.</label>
+
+          <button (click)="setFormType('FOUL')"
+            class="w-full text-white inline-flex items-center bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center transition-colors duration-100">
+            <svg class="mr-1 -ml-1 w-6 h-6" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+              <path fill-rule="evenodd"
+                d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z"
+                clip-rule="evenodd">
+              </path>
+            </svg>
+            Añadir falta
+          </button>
+        </div>
+      </div>
+
+      @if(wichFormIsActive() === 'GOAL'){ <app-add-goal></app-add-goal> }
+      @else if(wichFormIsActive() === 'CARD'){ <app-add-card></app-add-card> }
+      @else if(wichFormIsActive() === 'FOUL'){ <app-add-foul></app-add-foul> }
 
 
     </div>
 
 
+    <article class="flex flex-col gap-8 w-full justify-center my-8">
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 items-center">
+
+        <div class="flex flex-col gap-6 justify-center items-center">
+          <img src="/assets/icons/team_placeholder1.svg" alt="Team logo placeholder"
+            class="size-48 border-2 border-white rounded-full text-primary-700 shadow-md shadow-primary-700">
+          <div class="flex flex-col gap-2 items-center">
+            <h5>Nombre del equipo</h5>
+            <p class="text-4xl font-bold text-gray-900  rounded-lg max-w-24 text-center">2</p>
+          </div>
+
+
+        </div>
+
+
+        <div class="flex flex-col gap-6 justify-center items-center">
+          <img src="/assets/icons/team_placeholder2.svg" alt="Team logo placeholder"
+            class="size-48 border-2 border-white rounded-full text-primary-700 shadow-md shadow-primary-700">
+          <div class="flex flex-col gap-2 items-center">
+            <h5>Nombre del equipo</h5>
+            <p class="text-4xl font-bold text-gray-900  rounded-lg max-w-24 text-center">0</p>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="grid grid-cols-2 gap-4 justify-center items-center">
+
+        <div class="flex flex-col gap-0 items-center justify-center m-auto">
+          <h5 class="font-bold mb-4">JUGADORES</h5>
+          <div
+            class="flex flex-row gap-2 justify-start items-center px-4 py-2 w-full rounded-lg hover:cursor-pointer hover:text-gray-800 hover:bg-gray-100">
+            <img src="/assets/icons/star_solid.svg" alt="Star icon" class="size-6 text-yellow-300">
+            <p class="text-gray-800 text-sm">Carlos Santana Giménez</p>
+          </div>
+
+          <div
+            class="flex flex-row gap-2 justify-start items-center px-4 py-2 w-full rounded-lg hover:cursor-pointer hover:text-gray-800 hover:bg-gray-100">
+            <img src="/assets/icons/star_outline.svg" alt="Star icon" class="size-6 text-primary-700">
+            <p class="text-gray-800 text-sm">Diego Martínez</p>
+          </div>
+
+          <div
+            class="flex flex-row gap-2 justify-start items-center px-4 py-2 w-full rounded-lg hover:cursor-pointer hover:text-gray-800 hover:bg-gray-100">
+            <img src="/assets/icons/star_solid.svg" alt="Star icon" class="size-6 text-primary-700">
+            <p class="text-gray-800 text-sm"> Juan Carlos</p>
+          </div>
+
+        </div>
+
+        <div class="flex flex-col gap-0 items-center justify-center m-auto">
+          <h5 class="font-bold mb-4">JUGADORES</h5>
+          <div
+            class="flex flex-row gap-2 justify-start items-center px-4 py-2 w-full rounded-lg hover:cursor-pointer hover:text-gray-800 hover:bg-gray-100">
+            <img src="/assets/icons/star_solid.svg" alt="Star icon" class="size-6 text-yellow-200">
+            <p class="text-gray-800 text-sm">Carlos Santana Giménezas</p>
+          </div>
+
+          <div
+            class="flex flex-row gap-2 justify-start items-center px-4 py-2 w-full rounded-lg hover:cursor-pointer hover:text-gray-800 hover:bg-gray-100">
+            <img src="/assets/icons/star_outline.svg" alt="Star icon" class="size-6 text-primary-700">
+            <p class="text-gray-800 text-sm">Diego Martínez</p>
+          </div>
+
+          <div
+            class="flex flex-row gap-2 justify-start items-center px-4 py-2 w-full rounded-lg hover:cursor-pointer hover:text-gray-800 hover:bg-gray-100">
+            <img src="/assets/icons/star_solid.svg" alt="Star icon" class="size-6 text-primary-700">
+            <p class="text-gray-800 text-sm"> Juan Carlos</p>
+          </div>
+
+        </div>
+      </div>
+
+
+
+
+    </article>
 
   </div>
 </div>
