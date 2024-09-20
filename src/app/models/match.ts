@@ -47,11 +47,13 @@ export interface MatchWithDetails
 }
 
 export interface LocalTeam {
+  id_team: number;
   name: string;
   avatar: string;
 }
 
 export interface VisitorTeam {
+  id_team: number;
   name: string;
   avatar: string;
 }
