@@ -4,6 +4,14 @@ import { GenericApiService } from './generic-api.service';
 import { Observable } from 'rxjs';
 import { getAllResponse } from '../../models/api';
 
+interface GetGoalsParams {
+  q: string;
+  page: string;
+  user_id: number;
+  match_id: number;
+  id_goal: number;
+}
+
 @Injectable({
   providedIn: 'root',
 })
@@ -13,7 +21,7 @@ export class GoalService {
 
   constructor() {}
 
-  getGoals(): Observable<getAllResponse<any>> {
+  getGoals(params?: Partial<GetGoalsParams>): Observable<getAllResponse<any>> {
     return this.genericService.getAll<getAllResponse<any>>(this.apiUrl);
   }
 
