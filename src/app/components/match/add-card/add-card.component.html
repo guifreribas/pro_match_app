@@ -1,1 +1,82 @@
-<p>add-card works!</p>
+<div class="p-8 rounded-lg shadow-md m-6 h-fit block">
+  <h3 class="text-xl font-bold mb-8 border-b w-fit">Añadiendo trajeta</h3>
+
+  <form action="" class="w-full grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4" [formGroup]="cardForm"
+    (submit)="onSubmit($event)">
+
+
+    <div class="w-full">
+      <label for="team" class="block mb-2 text-sm font-medium text-gray-900 ">
+        Equipo
+      </label>
+      <select id="team" formControlName="team"
+        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-700 focus:border-primary-700 block w-full p-2.5 ">
+        <option value="{{localTeam?.id_team}}" selected>{{localTeam?.name}}</option>
+        <option value="{{visitorTeam?.id_team}}">{{visitorTeam?.name}}</option>
+      </select>
+    </div>
+
+    <div class="w-full">
+      <label for="player" class="block mb-2 text-sm font-medium text-gray-900 ">
+        Jugador
+      </label>
+      <select id="player" formControlName="player"
+        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-700 focus:border-primary-700 block w-full p-2.5 ">
+        <option value="" selected>Selecciona un jugador</option>
+        @if(whatTeamIsSelected === 'LOCAL_TEAM'){
+        @for(player of localPlayers; track player.player_id){
+        <option value="{{player.player_id}}">{{player.player?.name}}</option>
+        }
+        }
+        @else{
+        @for(player of visitorPlayers; track player.player_id){
+        <option value="{{player.player_id}}">{{player.player?.name}}</option>
+        }
+        }
+      </select>
+    </div>
+
+    <div class="w-full">
+      <label for="card" class="block mb-2 text-sm font-medium text-gray-900 ">
+        Tarjeta
+      </label>
+      <select id="card" formControlName="card"
+        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-700 focus:border-primary-700 block w-full p-2.5 ">
+        <option value="YELLOW" selected>amarilla</option>
+        <option value="RED">roja</option>
+        <option value="BLUE">azul</option>
+      </select>
+    </div>
+
+    <div class="w-full">
+      <label for="minute" class="block mb-2 text-sm font-medium text-gray-900 ">
+        Minuto
+      </label>
+      <input type="number" id="minute" formControlName="minute"
+        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-700 focus:border-primary-700 block w-full p-2.5 ">
+    </div>
+
+    <div class="w-full">
+      <label for="part" class="block mb-2 text-sm font-medium text-gray-900 ">
+        Parte
+      </label>
+      <select id="part" formControlName="part"
+        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-700 focus:border-primary-700 block w-full p-2.5 ">
+        <option value="" selected>Escoge una opción</option>
+        <option value="FIRST_HALF" selected>Primera parte</option>
+        <option value="SECOND_HALF">Segunda parte</option>
+        <option value="EXTRA_TIME_FIRST_HALF">Primera parte tiempo extra</option>
+        <option value="EXTRA_TIME_SECOND_HALF">Segunda parte tiempo extra</option>
+        <option value="PENALTIES">Penaltis</option>
+      </select>
+    </div>
+
+    <div class="w-full col-span-1 lg:col-span-3"></div>
+
+
+    <button type="submit"
+      class="col-span-1 lg:col-span-3  w-full text-white inline-flex items-center bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center my-2 transition-colors duration-100">Añadir</button>
+    <button
+      class="col-span-1 w-full text-primary-700 inline-flex items-center border border-white bg-white hover:border hover:border-primary-800 hover:text-primary-800 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center my-2 transition-colors duration-100">Cancelar</button>
+  </form>
+</div>
