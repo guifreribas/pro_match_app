@@ -10,6 +10,7 @@ interface GetGoalsParams {
   user_id: number;
   match_id: number;
   id_goal: number;
+  limit: number;
 }
 
 @Injectable({
