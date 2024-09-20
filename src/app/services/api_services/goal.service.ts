@@ -2,7 +2,7 @@ import { inject, Injectable } from '@angular/core';
 import { config } from '../../config/config';
 import { GenericApiService } from './generic-api.service';
 import { Observable } from 'rxjs';
-import { getAllResponse } from '../../models/api';
+import { getAllResponse, postResponse } from '../../models/api';
 
 interface GetGoalsParams {
   q: string;
@@ -30,8 +30,8 @@ export class GoalService {
     return this.genericService.getOne<getAllResponse<any>>(this.apiUrl, id);
   }
 
-  createGoal(goal: any): Observable<getAllResponse<any>> {
-    return this.genericService.create<any, getAllResponse<any>>(
+  createGoal(goal: any): Observable<postResponse<any>> {
+    return this.genericService.create<any, postResponse<any>>(
       this.apiUrl,
       goal
     );
