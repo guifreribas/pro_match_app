@@ -4,10 +4,10 @@
     (submit)="onSubmit($event)">
 
     <div class="w-full">
-      <label for="countries" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+      <label for="team" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
         Equipo
       </label>
-      <select id="countries" formControlName="team"
+      <select id="team" formControlName="team"
         class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-700 focus:border-primary-700 block w-full p-2.5 ">
         <option value="{{this.localTeam?.id_team}}" selected>{{this.localTeam?.name}}</option>
         <option value="{{this.visitorTeam?.id_team}}">{{this.visitorTeam?.name}}</option>
@@ -15,10 +15,10 @@
     </div>
 
     <div class="w-full">
-      <label for="countries" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+      <label for="player" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
         Jugador
       </label>
-      <select id="countries" formControlName="player"
+      <select id="player" formControlName="player"
         class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-700 focus:border-primary-700 block w-full p-2.5 ">
         <option value="" selected>Selecciona un jugador</option>
         @if(this.whatTeamIsSelected === 'LOCAL_TEAM'){
@@ -36,7 +36,7 @@
     </div>
 
     <div class="w-full">
-      <label for="countries" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+      <label for="minute" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
         Minuto
       </label>
       <input type="number" id="minute" formControlName="minute"
@@ -44,10 +44,10 @@
     </div>
 
     <div class="w-full">
-      <label for="countries" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+      <label for="part" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
         Part
       </label>
-      <select id="countries" formControlName="part"
+      <select id="part" formControlName="part"
         class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-700 focus:border-primary-700 block w-full p-2.5 ">
         <option value="" selected>Escoge una opción</option>
         <option value="FIRST_HALF" selected>Primera parte</option>
