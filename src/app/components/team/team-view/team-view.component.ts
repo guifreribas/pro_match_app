@@ -83,22 +83,24 @@ export class TeamViewComponent implements OnInit {
     }, 100);
 
     this._teamId = this._route.snapshot.params['id'] ?? null;
-    const getTeamPlayersParams = {
-      team_id: this._teamId,
-      page: '1',
-      limit: 50,
-      sortBy: 'player_number',
-      sortOrder: 'asc',
-    };
-    this._teamPlayersService.getTeamPlayers(getTeamPlayersParams).subscribe({
-      next: (res) => {
-        this.teamPlayers.set(res.data.items);
-      },
-      error: (err) => {
-        console.log(err);
-        throw err;
-      },
-    });
+    if (this._teamId) {
+      const getTeamPlayersParams = {
+        team_id: this._teamId,
+        page: '1',
+        limit: 50,
+        sortBy: 'player_number',
+        sortOrder: 'asc',
+      };
+      this._teamPlayersService.getTeamPlayers(getTeamPlayersParams).subscribe({
+        next: (res) => {
+          this.teamPlayers.set(res.data.items);
+        },
+        error: (err) => {
+          console.log(err);
+          throw err;
+        },
+      });
+    }
 
     this._searchSubject
       .pipe(
