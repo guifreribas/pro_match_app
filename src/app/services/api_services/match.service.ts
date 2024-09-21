@@ -2,7 +2,7 @@ import { inject, Injectable } from '@angular/core';
 import { config } from '../../config/config';
 import { GenericApiService } from './generic-api.service';
 import { Observable } from 'rxjs';
-import { getAllResponse, postResponse } from '../../models/api';
+import { getAllResponse, postResponse, updateResponse } from '../../models/api';
 import { Match, MatchStatus, MatchWithDetails } from '../../models/match';
 import { urlParser } from '@app/utils/utils';
 
@@ -47,8 +47,11 @@ export class MatchService {
     );
   }
 
-  updateMatch(match: Match, id: number): Observable<getAllResponse<Match>> {
-    return this.genericService.update<Match, getAllResponse<Match>>(
+  updateMatch(
+    match: Partial<Match>,
+    id: number
+  ): Observable<updateResponse<Match>> {
+    return this.genericService.update<Match, updateResponse<Match>>(
       this.apiUrl,
       id,
       match
