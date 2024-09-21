@@ -6,12 +6,13 @@ export type FoulPart =
   | 'PENALTIES';
 
 export interface Foul {
-  id_foul: number;
+  id_foul?: number;
   minute: number;
   part: FoulPart;
   player_id: number;
   team_id: number;
   match_id: number;
+  user_id: number;
   created_at?: Date;
   updated_at?: Date;
 }
