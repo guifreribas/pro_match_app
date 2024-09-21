@@ -1,6 +1,4 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
-import { OrganizationCardComponent } from '../../components/organization-card/organization-card.component';
-import { PlayerCardComponent } from '../../components/player-card/player-card.component';
 import { DashboardPanelLayoutComponent } from '../../layouts/dashboard-panel-layout/dashboard-panel-layout.component';
 import { RouterLink } from '@angular/router';
 import { OverviewService } from '@app/services/api_services/overview.service';
@@ -10,12 +8,7 @@ import { UserStateService } from '@app/services/global_states/user-state.service
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [
-    OrganizationCardComponent,
-    PlayerCardComponent,
-    DashboardPanelLayoutComponent,
-    RouterLink,
-  ],
+  imports: [DashboardPanelLayoutComponent, RouterLink],
   templateUrl: './home.component.html',
   styleUrl: './home.component.scss',
 })
