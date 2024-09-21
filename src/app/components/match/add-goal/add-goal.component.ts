@@ -77,10 +77,14 @@ export class AddGoalComponent {
       })
       .subscribe({
         next: (res) => {
-          console.log(res);
           const playerName = this.getNameOfPlayer(
             Number(this.goalForm.value.player)
           );
+          const goals = this._matchState.match()?.goals || [];
+          this._matchState.updateMatch({
+            ...this._matchState.match(),
+            goals: [...goals, res.data],
+          });
           this._globalModalService.openModal(
             'Gol en el campo!',
             `Ha marcado ${playerName}!`
