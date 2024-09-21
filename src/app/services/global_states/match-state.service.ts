@@ -1,4 +1,5 @@
 import { Injectable, signal } from '@angular/core';
+import { Card } from '@app/models/card';
 import { MatchWithDetails } from '@app/models/match';
 import { MatchPlayerWithDetails } from '@app/models/matchPlayer';
 import { Team } from '@app/models/team';
@@ -12,7 +13,7 @@ interface MatchCompletedData {
   localPlayers: TeamPlayerWithDetails[];
   visitorPlayers: TeamPlayerWithDetails[];
   matchPlayers: MatchPlayerWithDetails[];
-  matchPlayersIds: number[];
+  cards: Card[];
 }
 
 @Injectable({
