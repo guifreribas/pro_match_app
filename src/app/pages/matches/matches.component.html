@@ -57,7 +57,8 @@
 
             <!-- Lista de jugadores -->
             @for(match of matches(); track match.id_match){
-            <tr class="border-b dark:border-gray-700">
+            <tr class="border-b"
+              [ngClass]="{ 'bg-primary-200': match.status === 'FINISHED', 'bg-blue-200': match.status === 'IN_PROGRESS', 'bg-red-200': match.status === 'CANCELLED'}">
               <td class="px-4 py-3">{{match.local_team.name}}</td>
               <td class="px-4 py-3">{{match.visitor_team.name}}</td>
               <td class="px-4 py-3">{{match.competition.name}}</td>
