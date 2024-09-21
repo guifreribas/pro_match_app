@@ -17,6 +17,8 @@ interface GetCardsParams {
   page: string;
   user_id: number;
   limit: number;
+  match_id: number;
+  team_id: number;
 }
 
 @Injectable({
