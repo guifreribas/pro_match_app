@@ -22,6 +22,7 @@ import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { Match, MatchStatus } from '@app/models/match';
 import { MatchService } from '@app/services/api_services/match.service';
 import { distinctUntilChanged, Subscription } from 'rxjs';
+import { config } from '@app/config/config';
 
 type FormType = 'GOAL' | 'CARD' | 'FOUL' | null;
 
@@ -61,6 +62,7 @@ type FormType = 'GOAL' | 'CARD' | 'FOUL' | null;
   ],
 })
 export class MatchEditComponent implements OnInit, OnDestroy {
+  public imgUrl = config.IMG_URL;
   public whichFormIsActive = signal<FormType>(null);
   public localTeam: Team | null = null;
   public visitorTeam: Team | null = null;

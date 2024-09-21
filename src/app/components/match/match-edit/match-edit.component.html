@@ -90,8 +90,14 @@
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 items-center">
 
         <div class="flex flex-col gap-6 justify-center items-center">
-          <img src="/assets/icons/team_placeholder1.svg" alt="Team logo placeholder"
+          @if(localTeam?.avatar){
+          <img src="{{imgUrl + localTeam?.avatar}}" alt="{{localTeam?.name}}"
             class="size-48 border-2 border-white rounded-full text-primary-700 shadow-md shadow-primary-700">
+          }
+          @else {
+          <img src="/assets/icons/team_placeholder1.svg" alt="{{localTeam?.name}}"
+            class="size-48 border-2 border-white rounded-full text-primary-700 shadow-md shadow-primary-700">
+          }
           <div class="flex flex-col gap-2 items-center">
             <h5 class="font-bold text-xl uppercase text-gray-700">{{localTeam?.name}}</h5>
             <p class="text-4xl font-bold text-gray-900  rounded-lg max-w-24 text-center">{{localGoals.length}}</p>
@@ -102,8 +108,14 @@
 
 
         <div class="flex flex-col gap-6 justify-center items-center">
-          <img src="/assets/icons/team_placeholder2.svg" alt="Team logo placeholder"
+          @if(visitorTeam?.avatar){
+          <img src="{{imgUrl + visitorTeam?.avatar}}" alt="{{visitorTeam?.name}}"
             class="size-48 border-2 border-white rounded-full text-primary-700 shadow-md shadow-primary-700">
+          }
+          @else {
+          <img src="/assets/icons/team_placeholder2.svg" alt="{{visitorTeam?.name}}"
+            class="size-48 border-2 border-white rounded-full text-primary-700 shadow-md shadow-primary-700">
+          }
           <div class="flex flex-col gap-2 items-center">
             <h5 class="font-bold text-xl uppercase text-gray-700">{{visitorTeam?.name}}</h5>
             <p class="text-4xl font-bold text-gray-900  rounded-lg max-w-24 text-center">{{visitorGoals.length}}</p>
