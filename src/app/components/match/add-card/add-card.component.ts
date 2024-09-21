@@ -83,6 +83,11 @@ export class AddCardComponent {
           const playerName = this.getNameOfPlayer(
             Number(this.cardForm.value.player)
           );
+          const cards = this._matchState.match()?.cards || [];
+          this._matchState.updateMatch({
+            ...this._matchState.match(),
+            cards: [...cards, res.data],
+          });
           this._globalModalService.openModal(
             'Tarjeta en el campo!',
             `Tarjeta para ${playerName}!`
