@@ -5,6 +5,7 @@ import { DashboardPanelLayoutComponent } from '@app/layouts/dashboard-panel-layo
 import { MatchWithDetails } from '@app/models/match';
 import { FoulService } from '@app/services/api_services/foul.service';
 import { GoalService } from '@app/services/api_services/goal.service';
+import { MatchPlayerService } from '@app/services/api_services/match-player.service';
 import { MatchService } from '@app/services/api_services/match.service';
 import { TeamPlayerService } from '@app/services/api_services/team-player.service';
 import { TeamService } from '@app/services/api_services/team.service';
@@ -35,6 +36,7 @@ export class MatchComponent {
   private _teamPlayerService = inject(TeamPlayerService);
   private _goalService = inject(GoalService);
   private _foulService = inject(FoulService);
+  private _matchPlayerService = inject(MatchPlayerService);
 
   private _hasFetchedInitData = false;
 
@@ -57,12 +59,19 @@ export class MatchComponent {
     userId: number;
     matchId: number;
   }) {
-    const [match, goals] = await Promise.all([
+    const [match, goals, matchPlayers] = await Promise.all([
       firstValueFrom(
         this._matchService.getMatches({ id_match: matchId, user_id: userId })
       ),
       firstValueFrom(
         this._goalService.getGoals({
+          match_id: matchId,
+          user_id: userId,
+          limit: 30,
+        })
+      ),
+      firstValueFrom(
+        this._matchPlayerService.getMatchPlayers({
           match_id: matchId,
           user_id: userId,
           limit: 30,
@@ -106,6 +115,7 @@ export class MatchComponent {
       visitorTeam: visitorTeam.data.items[0],
       localPlayers: localPlayers.data.items,
       visitorPlayers: visitorPlayers.data.items,
+      matchPlayers: matchPlayers.data.items,
     });
 
     console.log({
@@ -115,6 +125,10 @@ export class MatchComponent {
       visitorTeam: visitorTeam.data.items[0],
       localPlayers: localPlayers.data.items,
       visitorPlayers: visitorPlayers.data.items,
+      matchPlayers: matchPlayers.data.items,
+      matchPlayersIds: matchPlayers.data.items.map(
+        (matchPlayer) => matchPlayer.player_id
+      ),
     });
 
     // console.log(team);
