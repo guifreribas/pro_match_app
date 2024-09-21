@@ -93,8 +93,8 @@
           <img src="/assets/icons/team_placeholder1.svg" alt="Team logo placeholder"
             class="size-48 border-2 border-white rounded-full text-primary-700 shadow-md shadow-primary-700">
           <div class="flex flex-col gap-2 items-center">
-            <h5>Nombre del equipo</h5>
-            <p class="text-4xl font-bold text-gray-900  rounded-lg max-w-24 text-center">2</p>
+            <h5 class="font-bold text-xl uppercase text-gray-700">{{localTeam?.name}}</h5>
+            <p class="text-4xl font-bold text-gray-900  rounded-lg max-w-24 text-center">{{localGoals.length}}</p>
           </div>
 
 
@@ -105,56 +105,47 @@
           <img src="/assets/icons/team_placeholder2.svg" alt="Team logo placeholder"
             class="size-48 border-2 border-white rounded-full text-primary-700 shadow-md shadow-primary-700">
           <div class="flex flex-col gap-2 items-center">
-            <h5>Nombre del equipo</h5>
-            <p class="text-4xl font-bold text-gray-900  rounded-lg max-w-24 text-center">0</p>
+            <h5 class="font-bold text-xl uppercase text-gray-700">{{visitorTeam?.name}}</h5>
+            <p class="text-4xl font-bold text-gray-900  rounded-lg max-w-24 text-center">{{visitorGoals.length}}</p>
           </div>
         </div>
 
       </div>
 
-      <div class="grid grid-cols-2 gap-4 justify-center items-center">
+      <div class="grid grid-cols-2 gap-4  my-2">
 
-        <div class="flex flex-col gap-0 items-center justify-center m-auto">
-          <h5 class="font-bold mb-4">JUGADORES</h5>
-          <div
+        <div class="flex flex-col gap-0 items-center justify-start m-auto h-full ">
+          <h5 class="font-semibold text-sm mb-2">JUGADORES</h5>
+          @for(player of localPlayers; track player.player_id){
+          <div (click)="onTogglePlayer(player)"
             class="flex flex-row gap-2 justify-start items-center px-4 py-2 w-full rounded-lg hover:cursor-pointer hover:text-gray-800 hover:bg-gray-100">
-            <img src="/assets/icons/star_solid.svg" alt="Star icon" class="size-6 text-yellow-300">
-            <p class="text-gray-800 text-sm">Carlos Santana Giménez</p>
+            @if(matchPlayersIds.includes(player.player_id)){
+            <img @starAnimation src="/assets/icons/star_solid.svg" alt="Star icon" class="size-6 text-yellow-300">
+            }
+            @else{
+            <img @starAnimation src="/assets/icons/star_outline.svg" alt="Star icon" class="size-6 text-primary-700">
+            } <p class="text-gray-800 text-sm">{{player.player?.name}} {{player.player?.last_name}}</p>
           </div>
-
-          <div
-            class="flex flex-row gap-2 justify-start items-center px-4 py-2 w-full rounded-lg hover:cursor-pointer hover:text-gray-800 hover:bg-gray-100">
-            <img src="/assets/icons/star_outline.svg" alt="Star icon" class="size-6 text-primary-700">
-            <p class="text-gray-800 text-sm">Diego Martínez</p>
-          </div>
-
-          <div
-            class="flex flex-row gap-2 justify-start items-center px-4 py-2 w-full rounded-lg hover:cursor-pointer hover:text-gray-800 hover:bg-gray-100">
-            <img src="/assets/icons/star_solid.svg" alt="Star icon" class="size-6 text-primary-700">
-            <p class="text-gray-800 text-sm"> Juan Carlos</p>
-          </div>
-
+          }
         </div>
 
-        <div class="flex flex-col gap-0 items-center justify-center m-auto">
-          <h5 class="font-bold mb-4">JUGADORES</h5>
-          <div
+        <div class="flex flex-col gap-0 items-center justify-start m-auto h-full">
+          <h5 class="font-semibold text-sm mb-2">JUGADORES</h5>
+          @for(player of visitorPlayers; track player.player_id){
+          <div (click)="onTogglePlayer(player)"
             class="flex flex-row gap-2 justify-start items-center px-4 py-2 w-full rounded-lg hover:cursor-pointer hover:text-gray-800 hover:bg-gray-100">
-            <img src="/assets/icons/star_solid.svg" alt="Star icon" class="size-6 text-yellow-200">
-            <p class="text-gray-800 text-sm">Carlos Santana Giménezas</p>
+            @if(matchPlayersIds.includes(player.player_id)){
+            <img @starAnimation src="/assets/icons/star_solid.svg" alt="Star icon" class="size-6 text-yellow-300">
+            }
+            @else{
+            <img @starAnimation src="/assets/icons/star_outline.svg" alt="Star icon" class="size-6 text-primary-700">
+            }
+            <p class="text-gray-800 text-sm">{{player.player?.name}} {{player.player?.last_name}}</p>
           </div>
+          }
 
-          <div
-            class="flex flex-row gap-2 justify-start items-center px-4 py-2 w-full rounded-lg hover:cursor-pointer hover:text-gray-800 hover:bg-gray-100">
-            <img src="/assets/icons/star_outline.svg" alt="Star icon" class="size-6 text-primary-700">
-            <p class="text-gray-800 text-sm">Diego Martínez</p>
-          </div>
-
-          <div
-            class="flex flex-row gap-2 justify-start items-center px-4 py-2 w-full rounded-lg hover:cursor-pointer hover:text-gray-800 hover:bg-gray-100">
-            <img src="/assets/icons/star_solid.svg" alt="Star icon" class="size-6 text-primary-700">
-            <p class="text-gray-800 text-sm"> Juan Carlos</p>
-          </div>
+          <!-- <img src="/assets/icons/star_solid.svg" alt="Star icon" class="size-6 text-yellow-200">
+            <img src="/assets/icons/star_outline.svg" alt="Star icon" class="size-6 text-primary-700"> -->
 
         </div>
       </div>
