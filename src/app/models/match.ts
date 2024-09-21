@@ -1,3 +1,4 @@
+import { MatchPlayerWithDetails } from './matchPlayer';
 import { Team } from './team';
 
 export type MatchPart =
@@ -44,6 +45,7 @@ export interface MatchWithDetails
   competition: Competition;
   category: Category;
   organization: Organization;
+  matchPlayers: MatchPlayerWithDetails[];
 }
 
 export interface LocalTeam {
