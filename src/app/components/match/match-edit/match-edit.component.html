@@ -8,7 +8,7 @@
         <div class="w-full">
           <label for="countries" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Estado del
             partido:</label>
-          <select id="countries"
+          <select id="countries" [formControl]="matchStatus"
             class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-700 focus:border-primary-700 block w-full p-2.5 ">
             <option value="SCHEDULED" selected>PROGRAMADO</option>
             <option value="IN_PROGRESS">EN PROGRESSO</option>
@@ -68,15 +68,15 @@
         </div>
       </div>
 
-      @if(wichFormIsActive() === 'GOAL'){
+      @if(whichFormIsActive() === 'GOAL'){
       <div [@contentAnimation]>
         <app-add-goal></app-add-goal>
       </div>}
-      @else if(wichFormIsActive() === 'CARD'){
+      @else if(whichFormIsActive() === 'CARD'){
       <div [@contentAnimation]>
         <app-add-card></app-add-card>
       </div> }
-      @else if(wichFormIsActive() === 'FOUL'){
+      @else if(whichFormIsActive() === 'FOUL'){
       <div [@contentAnimation]>
         <app-add-foul></app-add-foul>
       </div>}

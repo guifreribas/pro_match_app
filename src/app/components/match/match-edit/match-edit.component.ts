@@ -1,4 +1,12 @@
-import { Component, effect, inject, Input, signal } from '@angular/core';
+import {
+  Component,
+  effect,
+  inject,
+  Input,
+  OnDestroy,
+  OnInit,
+  signal,
+} from '@angular/core';
 import { AddGoalComponent } from '../add-goal/add-goal.component';
 import { AddCardComponent } from '../add-card/add-card.component';
 import { AddFoulComponent } from '../add-foul/add-foul.component';
@@ -10,13 +18,23 @@ import { TeamPlayerWithDetails } from '@app/models/team-player';
 import { Goal } from '@app/models/goal';
 import { MatchPlayerService } from '@app/services/api_services/match-player.service';
 import { MatchPlayerWithDetails } from '@app/models/matchPlayer';
+import { FormControl, ReactiveFormsModule } from '@angular/forms';
+import { Match, MatchStatus } from '@app/models/match';
+import { MatchService } from '@app/services/api_services/match.service';
+import { distinctUntilChanged, Subscription } from 'rxjs';
 
 type FormType = 'GOAL' | 'CARD' | 'FOUL' | null;
 
 @Component({
   selector: 'app-match-edit',
   standalone: true,
-  imports: [AddGoalComponent, AddCardComponent, AddFoulComponent, CommonModule],
+  imports: [
+    AddGoalComponent,
+    AddCardComponent,
+    AddFoulComponent,
+    CommonModule,
+    ReactiveFormsModule,
+  ],
   templateUrl: './match-edit.component.html',
   styleUrl: './match-edit.component.scss',
   animations: [
@@ -42,8 +60,8 @@ type FormType = 'GOAL' | 'CARD' | 'FOUL' | null;
     ]),
   ],
 })
-export class MatchEditComponent {
-  public wichFormIsActive = signal<FormType>(null);
+export class MatchEditComponent implements OnInit, OnDestroy {
+  public whichFormIsActive = signal<FormType>(null);
   public localTeam: Team | null = null;
   public visitorTeam: Team | null = null;
   public localPlayers: TeamPlayerWithDetails[] = [];
@@ -54,8 +72,12 @@ export class MatchEditComponent {
   public matchPlayers: MatchPlayerWithDetails[] = [];
   public matchPlayersIds: number[] = [];
 
-  private _matchState = inject(MatchStateService);
+  public matchStatus: FormControl = new FormControl(null);
+
   private _matchPlayerService = inject(MatchPlayerService);
+  private _matchService = inject(MatchService);
+  private _matchState = inject(MatchStateService);
+  private _subscriptions: Subscription = new Subscription();
 
   constructor() {
     effect(() => {
@@ -76,28 +98,45 @@ export class MatchEditComponent {
         this.matchPlayersIds = matchData.matchPlayers.map(
           (matchPlayer) => matchPlayer.player_id
         );
+
+        this.matchStatus.setValue(matchData.match.status, { emitEvent: false });
       }
     });
   }
 
+  ngOnInit(): void {
+    const matchStatusSub = this.matchStatus.valueChanges
+      .pipe(distinctUntilChanged())
+      .subscribe((value) => {
+        const matchId = this._matchState.match()?.match.id_match;
+        if (matchId && value)
+          this.updateMatch({ status: value as MatchStatus }, matchId);
+      });
+    this._subscriptions.add(matchStatusSub);
+  }
+
+  ngOnDestroy(): void {
+    this._subscriptions.unsubscribe();
+  }
+
   setFormType(formType: FormType): string | null {
-    if (this.wichFormIsActive() === formType) {
-      this.wichFormIsActive.set(null);
+    if (this.whichFormIsActive() === formType) {
+      this.whichFormIsActive.set(null);
       return formType;
     }
-    if (this.wichFormIsActive() !== null) {
-      this.wichFormIsActive.set(null);
+    if (this.whichFormIsActive() !== null) {
+      this.whichFormIsActive.set(null);
       setTimeout(() => {
-        this.wichFormIsActive.set(formType);
+        this.whichFormIsActive.set(formType);
       }, 350);
       return formType;
     }
-    this.wichFormIsActive.set(formType);
+    this.whichFormIsActive.set(formType);
     return formType;
   }
 
   getButtonClasses(type: FormType) {
-    if (this.wichFormIsActive() === type) {
+    if (this.whichFormIsActive() === type) {
       return {
         'bg-primary-900': true,
         'ring-primary-300': true,
@@ -120,9 +159,8 @@ export class MatchEditComponent {
       ?.matchPlayers.find(
         (matchPlayer) => matchPlayer.player_id === player.player_id
       );
-    console.log(matchPlayer);
     if (!matchPlayer?.id_match_player) return;
-    this._matchPlayerService
+    const deleteMatchPlayerSub = this._matchPlayerService
       .deleteMatchPlayer(matchPlayer.id_match_player)
       .subscribe({
         next: (res) => {
@@ -139,11 +177,11 @@ export class MatchEditComponent {
           console.log(err);
         },
       });
-    return;
+    this._subscriptions.add(deleteMatchPlayerSub);
   }
 
   private createMatchPlayer(player: TeamPlayerWithDetails) {
-    this._matchPlayerService
+    const createMatchPlayerSub = this._matchPlayerService
       .createMatchPlayer({
         match_id: Number(this._matchState.match()?.match.id_match),
         player_id: player.player_id,
@@ -163,5 +201,26 @@ export class MatchEditComponent {
           console.log(err);
         },
       });
+    this._subscriptions.add(createMatchPlayerSub);
+  }
+
+  private updateMatch(params: Partial<Match>, matchId: number) {
+    const updateMatchSub = this._matchService
+      .updateMatch(params, matchId)
+      .subscribe({
+        next: (res) => {
+          this._matchState.updateMatch({
+            ...this._matchState.match(),
+            match: {
+              ...this._matchState.match()?.match,
+              ...params,
+            },
+          });
+        },
+        error: (err) => {
+          console.log(err);
+        },
+      });
+    this._subscriptions.add(updateMatchSub);
   }
 }
