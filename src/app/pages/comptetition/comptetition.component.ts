@@ -67,7 +67,6 @@ export class ComptetitionComponent implements OnInit {
               console.log({ competitions: res.data.items });
               this.competitionsResponse.set(res);
               this._competitionState.setCompetition(res.data.items[0]);
-              // this.competitions = res.data.items;
             },
             error: (err) => {
               console.log(err);
@@ -81,17 +80,13 @@ export class ComptetitionComponent implements OnInit {
       const user = this._userState.me();
       if (user?.id_user && this._hasFetchedOrganizations === false) {
         this._organizationService
-          .getOrganizations({
-            user_id: this._userState.me()!.id_user,
-          })
+          .getOrganizations({ user_id: this._userState.me()!.id_user })
           .subscribe({
             next: (res) => {
               console.log('organizations Response!', res);
               this.organizations.set(res.data.items);
             },
-            error: (err) => {
-              console.log(err);
-            },
+            error: (err) => console.log(err),
           });
         this._hasFetchedOrganizations = true;
       }
