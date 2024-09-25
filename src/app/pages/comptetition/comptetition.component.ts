@@ -119,18 +119,5 @@ export class ComptetitionComponent implements OnInit {
   ngOnInit(): void {
     const status = this._route.snapshot.queryParams['status'];
     this.competitionViewState.set(status);
-    // this.competitionId = this._route.snapshot.params['id'] || '';
-    // if (this.competitionId) {
-    //   this._competitionService
-    //     .getCompetition(Number(this.competitionId))
-    //     .subscribe({
-    //       next: (res) => {
-    //         this._competitionState.setCompetition(res.data);
-    //       },
-    //       error: (err) => {
-    //         console.log(err);
-    //       },
-    //     });
-    // }
   }
 }
