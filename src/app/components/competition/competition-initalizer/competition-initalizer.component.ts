@@ -190,7 +190,6 @@ export class CompetitionInitalizerComponent implements OnInit {
   initStandingsForEachTeam(teams: Team[]) {
     console.log('INIT STANDINGS FOR EACH TEAM', this.competition());
     teams.forEach((team) => {
-      console.log('TEAM', team);
       this.initStandings(team);
     });
   }
@@ -203,6 +202,14 @@ export class CompetitionInitalizerComponent implements OnInit {
         competition_category_id: this.competition()?.competitionCategory
           .competition_category_id as number,
         user_id: this._userState.me()?.id_user as number,
+        matches_played: 0,
+        victories: 0,
+        draws: 0,
+        losses: 0,
+        goals_for: 0,
+        goals_against: 0,
+        goals_difference: 0,
+        points: 0,
       })
       .subscribe({
         next: (res) => {
