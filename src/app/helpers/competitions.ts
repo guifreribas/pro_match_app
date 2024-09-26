@@ -5,7 +5,7 @@ type Match = {
   away: Team;
 };
 
-type Round = {
+export type Round = {
   dates: Date[];
   matches: { date: Date; match: Match }[];
 };

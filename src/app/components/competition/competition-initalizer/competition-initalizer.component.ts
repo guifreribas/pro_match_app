@@ -1,27 +1,19 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject, OnInit, signal } from '@angular/core';
+import { Component, effect, inject, OnInit, signal } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { DatepickerComponent } from '@app/components/atom/datepicker/datepicker.component';
 import { config } from '@app/config/config';
-import { generateLeagueCalendar } from '@app/helpers/competitions';
-import { getAllResponse, getOneResponse } from '@app/models/api';
+import { generateLeagueCalendar, Round } from '@app/helpers/competitions';
+
 import { CompetitionWithDetails } from '@app/models/competition';
 import { Team, TeamsGetResponse } from '@app/models/team';
-import { CompetitionTeamService } from '@app/services/api_services/competition-team.service';
 import { CompetitionService } from '@app/services/api_services/competition.service';
 import { MatchService } from '@app/services/api_services/match.service';
+import { StandingsService } from '@app/services/api_services/standings.service';
 import { TeamService } from '@app/services/api_services/team.service';
 import { UserStateService } from '@app/services/global_states/user-state.service';
 import { SearchServiceService } from '@app/services/search-service.service';
-import {
-  catchError,
-  debounceTime,
-  distinctUntilChanged,
-  of,
-  Subject,
-  switchMap,
-} from 'rxjs';
 
 interface CompetitionDays {
   index: number;
@@ -71,33 +63,40 @@ export class CompetitionInitalizerComponent implements OnInit {
 
   private _competitionService = inject(CompetitionService);
   private _teamService = inject(TeamService);
-  private _competitionTeamService = inject(CompetitionTeamService);
   private _searchService = inject(SearchServiceService);
   private _matchService = inject(MatchService);
+  private _standingsService = inject(StandingsService);
   private _userState = inject(UserStateService);
   private _route = inject(ActivatedRoute);
 
-  constructor() {}
+  constructor() {
+    effect(() => {
+      const user = this._userState.me();
+      const userId = user?.id_user;
+      if (userId) {
+        this._competitionService
+          .getCompetitions({
+            user_id: userId,
+            includeCompetitionType: true,
+            includeOrganization: true,
+            includeCompetitionCategory: true,
+            id_competition: this.competitionId,
+          })
+          .subscribe({
+            next: (res) => {
+              console.log({ competitionWithDetails: res });
+              this.competition.set(res.data.items[0]);
+            },
+            error: (err) => {
+              console.error(err);
+            },
+          });
+      }
+    });
+  }
 
   ngOnInit(): void {
     this.competitionId = this._route.snapshot.params['id'];
-    this._competitionService
-      .getCompetitions({
-        user_id: this._userState.me()!.id_user,
-        includeCompetitionType: true,
-        includeOrganization: true,
-        includeCompetitionCategory: true,
-        id_competition: this.competitionId,
-      })
-      .subscribe({
-        next: (res) => {
-          console.log({ competitionWithDetails: res });
-          this.competition.set(res.data.items[0]);
-        },
-        error: (err) => {
-          console.error(err);
-        },
-      });
 
     this._searchService
       .search(this.teamsSearchInput.valueChanges, (query) =>
@@ -176,7 +175,6 @@ export class CompetitionInitalizerComponent implements OnInit {
     discardedDays,
   }: InitalizeCompetitionParams) {
     const competitionDaysIndex = competitionDays.map((day) => day.index + 1);
-
     const leagueCalendar = generateLeagueCalendar({
       teams,
       startDate,
@@ -186,6 +184,37 @@ export class CompetitionInitalizerComponent implements OnInit {
       userId: this._userState.me()!.id_user,
     });
 
+    this.initStandingsForEachTeam(teams);
+  }
+
+  initStandingsForEachTeam(teams: Team[]) {
+    console.log('INIT STANDINGS FOR EACH TEAM', this.competition());
+    teams.forEach((team) => {
+      console.log('TEAM', team);
+      this.initStandings(team);
+    });
+  }
+
+  initStandings(team: Team) {
+    this._standingsService
+      .createStanding({
+        competition_id: this.competitionId,
+        team_id: team.id_team as number,
+        competition_category_id: this.competition()?.competitionCategory
+          .competition_category_id as number,
+        user_id: this._userState.me()?.id_user as number,
+      })
+      .subscribe({
+        next: (res) => {
+          console.log(res);
+        },
+        error: (err) => {
+          console.log(err);
+        },
+      });
+  }
+
+  createMatches(leagueCalendar: Round[]) {
     for (const round of leagueCalendar) {
       for (const match of round.matches) {
         this._matchService
