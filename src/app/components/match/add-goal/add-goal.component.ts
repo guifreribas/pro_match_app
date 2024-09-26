@@ -1,5 +1,11 @@
 import { CommonModule } from '@angular/common';
-import { Component, effect, inject } from '@angular/core';
+import {
+  Component,
+  effect,
+  inject,
+  Input,
+  WritableSignal,
+} from '@angular/core';
 import {
   FormControl,
   FormGroup,
@@ -14,6 +20,8 @@ import { GlobalModalService } from '@app/services/global-modal.service';
 import { MatchStateService } from '@app/services/global_states/match-state.service';
 import { UserStateService } from '@app/services/global_states/user-state.service';
 
+type FormType = 'GOAL' | 'CARD' | 'FOUL' | null;
+
 @Component({
   selector: 'app-add-goal',
   standalone: true,
@@ -22,6 +30,7 @@ import { UserStateService } from '@app/services/global_states/user-state.service
   styleUrl: './add-goal.component.scss',
 })
 export class AddGoalComponent {
+  @Input() whichFormIsActive!: WritableSignal<FormType>;
   public goalForm = new FormGroup({
     team: new FormControl('', [Validators.required]),
     player: new FormControl('', [Validators.required]),
@@ -110,5 +119,10 @@ export class AddGoalComponent {
       );
     }
     return player?.player?.name;
+  }
+
+  onCancel(e: Event) {
+    e.preventDefault();
+    this.whichFormIsActive.set(null);
   }
 }
