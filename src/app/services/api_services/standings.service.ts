@@ -12,7 +12,7 @@ import {
 } from '@app/models/api';
 import { Standings } from '@app/models/standings';
 
-interface GetStandingsParams {
+export interface GetStandingsParams {
   q: string;
   page: string;
   user_id: number;
@@ -20,6 +20,13 @@ interface GetStandingsParams {
   team_id: number;
   competition_category_id: number;
   competition_id: number;
+  victories: number;
+  draws: number;
+  losses: number;
+  goals_for: number;
+  goals_against: number;
+  goals_difference?: number;
+  points: number;
 }
 
 @Injectable({
@@ -35,7 +42,7 @@ export class StandingsService {
     params: Partial<GetStandingsParams>
   ): Observable<getAllResponse<Standings>> {
     const url = urlParser(params, this.apiUrl);
-    return this._genericServices.getAll<getAllResponse<Standings>>(this.apiUrl);
+    return this._genericServices.getAll<getAllResponse<Standings>>(url);
   }
 
   getStanding(id: number): Observable<getOneResponse<Standings>> {
