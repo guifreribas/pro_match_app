@@ -4,6 +4,14 @@ export interface Standings {
   team_id: number;
   competition_category_id: number;
   user_id: number;
+  matches_played: number;
+  victories: number;
+  draws: number;
+  losses: number;
+  goals_for: number;
+  goals_against: number;
+  goals_difference?: number;
+  points: number;
   created_at?: Date;
   updated_at?: Date;
 }
