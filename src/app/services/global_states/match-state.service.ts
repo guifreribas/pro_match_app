@@ -5,7 +5,7 @@ import { MatchPlayerWithDetails } from '@app/models/matchPlayer';
 import { Team } from '@app/models/team';
 import { TeamPlayerWithDetails } from '@app/models/team-player';
 
-interface MatchCompletedData {
+export interface MatchCompletedData {
   match: MatchWithDetails;
   goals: any[];
   localTeam: Team;
