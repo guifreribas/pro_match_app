@@ -113,6 +113,9 @@ export class MatchEditComponent implements OnInit, OnDestroy {
         const matchId = this._matchState.match()?.match.id_match;
         if (matchId && value)
           this.updateMatch({ status: value as MatchStatus }, matchId);
+        if (value === 'GOAL') {
+          console.log('GOAL');
+        }
       });
     this._subscriptions.add(matchStatusSub);
   }

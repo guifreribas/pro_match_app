@@ -70,15 +70,15 @@
 
       @if(whichFormIsActive() === 'GOAL'){
       <div [@contentAnimation]>
-        <app-add-goal></app-add-goal>
+        <app-add-goal [whichFormIsActive]="whichFormIsActive"></app-add-goal>
       </div>}
       @else if(whichFormIsActive() === 'CARD'){
       <div [@contentAnimation]>
-        <app-add-card></app-add-card>
+        <app-add-card [whichFormIsActive]="whichFormIsActive"> </app-add-card>
       </div> }
       @else if(whichFormIsActive() === 'FOUL'){
       <div [@contentAnimation]>
-        <app-add-foul></app-add-foul>
+        <app-add-foul [whichFormIsActive]="whichFormIsActive"></app-add-foul>
       </div>}
 
 
