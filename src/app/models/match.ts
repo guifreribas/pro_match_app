@@ -66,6 +66,7 @@ export interface CompetitionCategory {
 }
 
 export interface Competition {
+  id_competition: number;
   name: string;
   format: string;
   is_initialized: number;
