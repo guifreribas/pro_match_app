@@ -3,6 +3,7 @@ import { config } from '../../config/config';
 import { GenericApiService } from './generic-api.service';
 import { Observable } from 'rxjs';
 import { getAllResponse, postResponse } from '../../models/api';
+import { urlParser } from '@app/utils/utils';
 
 interface GetGoalsParams {
   q: string;
@@ -23,7 +24,8 @@ export class GoalService {
   constructor() {}
 
   getGoals(params?: Partial<GetGoalsParams>): Observable<getAllResponse<any>> {
-    return this.genericService.getAll<getAllResponse<any>>(this.apiUrl);
+    const url = urlParser(params, this.apiUrl);
+    return this.genericService.getAll<getAllResponse<any>>(url);
   }
 
   getGoal(id: number): Observable<getAllResponse<any>> {
