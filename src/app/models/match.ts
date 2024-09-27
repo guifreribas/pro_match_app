@@ -83,52 +83,17 @@ export interface Organization {
   logo: string;
 }
 
-export interface MatchGetResponse {
-  success: boolean;
-  message: string;
-  data: Match;
-  timestamp: string;
-}
-
-export interface MatchesGetResponse {
-  success: boolean;
-  message: string;
-  data: {
-    items: Match[];
-    itemCount: number;
-    totalItems: number;
-    currentPage: number;
-    pageSize: number;
-    totalPages: number;
-    hasNextPage: boolean;
-    hasPreviousPage: boolean;
-  };
-  links: {
-    self: string;
-    first: string;
-    last: string;
-    next: string;
-    previous: string;
-  };
-  timestamp: string;
-}
-
-export interface MatchCreateResponse {
-  success: boolean;
-  message: string;
-  data: Match;
-  timestamp: string;
-}
-
-export interface MatchUpdateResponse {
-  success: boolean;
-  message: string;
-  data: Match;
-  timestamp: string;
-}
-
-export interface MatchDeleteResponse {
-  success: boolean;
-  message: string;
-  timestamp: string;
+export interface GetMatchesParams {
+  q: string;
+  page: string;
+  limit: number;
+  id_match: number;
+  status: MatchStatus;
+  local_team: number;
+  visitor_team: number;
+  date: Date;
+  dateBefore: Date;
+  dateAfter: Date;
+  competition_category_id: number;
+  user_id: number;
 }
