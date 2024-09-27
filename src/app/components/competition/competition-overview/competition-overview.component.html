@@ -1,0 +1,114 @@
+<!-- <div class="`relative w-full max-w-[1200px] flex flex-col gap-8 p-12
+    sm:rounded-lg bg-white  shadow-md  overflow-hidden`"> -->
+
+<section class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+  <div class="flex flex-row gap-2 items-center">
+    <svg xmlns="http://www.w3.org/2000/svg" class="text-gray-600 size-8" viewBox="0 0 24 24" stroke-width="1.5"
+      stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M8 21l8 0" />
+      <path d="M12 17l0 4" />
+      <path d="M7 4l10 0" />
+      <path d="M17 4v8a5 5 0 0 1 -10 0v-8" />
+      <path d="M5 9m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0" />
+      <path d="M19 9m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0" />
+    </svg>
+    <div class="flex flex-col ">
+      <p class="text-md font-bold text-gray-800">TIPO DE COMPETICIÓN</p>
+      <p class="text-md font-semibold text-gray-600">{{competitionType()}}</p>
+    </div>
+  </div>
+
+  <div class="flex flex-row gap-2 items-center">
+    <svg xmlns="http://www.w3.org/2000/svg" class="text-gray-600 size-8" viewBox="0 0 24 24" stroke-width="1.5"
+      stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M9 7m-4 0a4 4 0 1 0 8 0a4 4 0 1 0 -8 0" />
+      <path d="M3 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" />
+      <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+      <path d="M21 21v-2a4 4 0 0 0 -3 -3.85" />
+    </svg>
+    <div class="flex flex-col ">
+      <p class="text-md font-bold text-gray-800">CATEGORÍA</p>
+      <p class="text-md font-semibold text-gray-600">{{competition()?.competitionCategory?.category?.name}}</p>
+    </div>
+  </div>
+
+  <div class="flex flex-row gap-2 items-center">
+    <svg xmlns="http://www.w3.org/2000/svg" class="text-gray-600 size-8" viewBox="0 0 24 24" stroke-width="1.5"
+      stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M11.5 21h-5.5a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v6" />
+      <path d="M16 3v4" />
+      <path d="M8 3v4" />
+      <path d="M4 11h16" />
+      <path d="M15 19l2 2l4 -4" />
+    </svg>
+    <div class="flex flex-col ">
+      <p class="text-md font-bold text-gray-800">TEMPORADA</p>
+      <p class="text-md font-semibold text-gray-600">{{competition()?.competitionCategory?.season}}</p>
+    </div>
+  </div>
+
+  <div class="flex flex-row gap-2 items-center">
+    <svg xmlns="http://www.w3.org/2000/svg" class="text-gray-600 size-8" viewBox="0 0 24 24" stroke-width="1.5"
+      stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M9 7m-4 0a4 4 0 1 0 8 0a4 4 0 1 0 -8 0" />
+      <path d="M3 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" />
+      <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+      <path d="M21 21v-2a4 4 0 0 0 -3 -3.85" />
+    </svg>
+    <div class="flex flex-col ">
+      <p class="text-md font-bold text-gray-800">GÉNERO</p>
+      <p class="text-md font-semibold text-gray-600">{{getGenre(competition()?.competitionCategory?.category?.gender)}}
+      </p>
+    </div>
+  </div>
+
+  <div class="flex flex-row gap-2 items-center">
+    <svg xmlns="http://www.w3.org/2000/svg" class="text-gray-600 size-8" viewBox="0 0 24 24" stroke-width="1.5"
+      stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M3 7l6 -3l6 3l6 -3v13l-6 3l-6 -3l-6 3v-13" />
+      <path d="M9 4v13" />
+      <path d="M15 7v13" />
+    </svg>
+    <div class="flex flex-col ">
+      <p class="text-md font-bold text-gray-800">CENTRO</p>
+      <p class="text-md font-semibold text-gray-600">{{competition()?.organization?.name}}</p>
+    </div>
+  </div>
+
+  <div class="flex flex-row gap-2 items-center">
+    <svg xmlns="http://www.w3.org/2000/svg" class="text-gray-600 size-8" viewBox="0 0 24 24" stroke-width="1.5"
+      stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M21 17l-18 0" />
+      <path d="M6 10l-3 -3l3 -3" />
+      <path d="M3 7l18 0" />
+      <path d="M18 20l3 -3l-3 -3" />
+    </svg>
+    <div class="flex flex-col ">
+      <p class="text-md font-bold text-gray-800">FORMATO</p>
+      <p class="text-md font-semibold text-gray-600">{{getFormat(competition()?.format)}}</p>
+    </div>
+  </div>
+
+  <!-- <div class="flex flex-row gap-2 items-center">
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-gray-600 size-8">
+      <path
+        d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z" />
+      <path d="M12 22V2" />
+    </svg>
+    <div class="flex flex-col ">
+      <p class="text-md font-bold text-gray-800">Nº Equipos</p>
+      <p class="text-md font-semibold text-gray-600">{{competition()?.}}</p>
+    </div>
+  </div> -->
+
+
+
+</section>
+<!-- </div> -->
