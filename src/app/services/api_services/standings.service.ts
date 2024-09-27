@@ -10,53 +10,44 @@ import {
   postResponse,
   updateResponse,
 } from '@app/models/api';
-import { Standings } from '@app/models/standings';
-
-export interface GetStandingsParams {
-  q: string;
-  page: string;
-  user_id: number;
-  limit: number;
-  team_id: number;
-  competition_category_id: number;
-  competition_id: number;
-  victories: number;
-  draws: number;
-  losses: number;
-  goals_for: number;
-  goals_against: number;
-  goals_difference?: number;
-  points: number;
-}
+import {
+  GetStandingsParams,
+  GetStandingsResponse,
+  Standings,
+  StandingsCreateDto,
+} from '@app/models/standings';
+import { buildHttpParams } from '@app/utils/http-utils';
 
 @Injectable({
   providedIn: 'root',
 })
 export class StandingsService {
-  private apiUrl = `${config.apiUrl}/standings`;
+  private static readonly API_URL = `${config.apiUrl}/standings`;
   private _genericServices = inject(GenericApiService);
 
   constructor() {}
 
   getStandings(
     params: Partial<GetStandingsParams>
-  ): Observable<getAllResponse<Standings>> {
-    const url = urlParser(params, this.apiUrl);
-    return this._genericServices.getAll<getAllResponse<Standings>>(url);
+  ): Observable<getAllResponse<GetStandingsResponse>> {
+    const httpParams = buildHttpParams(params);
+    return this._genericServices.getAll<getAllResponse<GetStandingsResponse>>(
+      StandingsService.API_URL,
+      { params: httpParams }
+    );
   }
 
   getStanding(id: number): Observable<getOneResponse<Standings>> {
     return this._genericServices.getOne<getOneResponse<Standings>>(
-      this.apiUrl,
+      StandingsService.API_URL,
       id
     );
   }
 
-  createStanding(standing: Standings): Observable<postResponse<Standings>> {
-    return this._genericServices.create<Standings, postResponse<Standings>>(
-      this.apiUrl,
-      standing
-    );
+  createStanding(
+    standing: StandingsCreateDto
+  ): Observable<postResponse<Standings>> {
+    return this._genericServices.create(StandingsService.API_URL, standing);
   }
 
   updateStanding(
@@ -64,13 +55,16 @@ export class StandingsService {
     id: number
   ): Observable<updateResponse<Standings>> {
     return this._genericServices.update<Standings, updateResponse<Standings>>(
-      this.apiUrl,
+      StandingsService.API_URL,
       id,
       standing
     );
   }
 
   deleteStanding(id: number): Observable<deleteResponse> {
-    return this._genericServices.delete<deleteResponse>(this.apiUrl, id);
+    return this._genericServices.delete<deleteResponse>(
+      StandingsService.API_URL,
+      id
+    );
   }
 }
