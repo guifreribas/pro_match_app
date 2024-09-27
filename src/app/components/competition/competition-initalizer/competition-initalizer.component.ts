@@ -7,6 +7,7 @@ import { config } from '@app/config/config';
 import { generateLeagueCalendar, Round } from '@app/helpers/competitions';
 
 import { CompetitionWithDetails } from '@app/models/competition';
+import { Match } from '@app/models/match';
 import { Team, TeamsGetResponse } from '@app/models/team';
 import { CompetitionService } from '@app/services/api_services/competition.service';
 import { MatchService } from '@app/services/api_services/match.service';
@@ -14,6 +15,7 @@ import { StandingsService } from '@app/services/api_services/standings.service';
 import { TeamService } from '@app/services/api_services/team.service';
 import { UserStateService } from '@app/services/global_states/user-state.service';
 import { SearchServiceService } from '@app/services/search-service.service';
+import { firstValueFrom } from 'rxjs';
 
 interface CompetitionDays {
   index: number;
@@ -168,7 +170,7 @@ export class CompetitionInitalizerComponent implements OnInit {
     }
   }
 
-  handleInitializeCompetition({
+  async handleInitializeCompetition({
     teams,
     competitionDays,
     startDate,
@@ -184,19 +186,32 @@ export class CompetitionInitalizerComponent implements OnInit {
       userId: this._userState.me()!.id_user,
     });
 
-    this.initStandingsForEachTeam(teams);
+    console.log('LEAGUE CALENDAR', leagueCalendar);
+    try {
+      await Promise.all([
+        this.createMatches(leagueCalendar),
+        this.initStandingsForEachTeam(teams),
+      ]);
+      console.log('MATCHES AND STANDINGS CREATED');
+    } catch (error) {
+      console.error('Error creating matches and standings: ', error);
+    }
   }
 
-  initStandingsForEachTeam(teams: Team[]) {
-    console.log('INIT STANDINGS FOR EACH TEAM', this.competition());
-    teams.forEach((team) => {
-      this.initStandings(team);
-    });
+  async initStandingsForEachTeam(teams: Team[]) {
+    const standingsPromises = teams.map((team) => this.initStandingsTeam(team));
+    try {
+      const response = await Promise.all(standingsPromises);
+      console.log('STANDINGS CREATED', response);
+    } catch (error) {
+      console.error('Error creating standings: ', error);
+    }
   }
 
-  initStandings(team: Team) {
-    this._standingsService
-      .createStanding({
+  initStandingsTeam(team: Team) {
+    console.log('INIT STANDINGS', team);
+    return firstValueFrom(
+      this._standingsService.createStanding({
         competition_id: this.competitionId,
         team_id: team.id_team as number,
         competition_category_id: this.competition()?.competitionCategory
@@ -208,24 +223,35 @@ export class CompetitionInitalizerComponent implements OnInit {
         losses: 0,
         goals_for: 0,
         goals_against: 0,
-        goals_difference: 0,
         points: 0,
       })
-      .subscribe({
-        next: (res) => {
-          console.log(res);
-        },
-        error: (err) => {
-          console.log(err);
-        },
-      });
+    );
   }
 
-  createMatches(leagueCalendar: Round[]) {
+  getMatchesData(leagueCalendar: Round[]) {
+    const matchesData: Match[] = [];
     for (const round of leagueCalendar) {
       for (const match of round.matches) {
-        this._matchService
-          .createMatch({
+        matchesData.push({
+          status: 'TO_BE_SCHEDULED',
+          local_team: match.match.home.id_team as number,
+          visitor_team: match.match.away.id_team as number,
+          date: match.date,
+          competition_category_id: Number(
+            this.competition()?.competitionCategory.competition_category_id
+          ),
+          user_id: this._userState.me()?.id_user as number,
+        });
+      }
+    }
+    return matchesData;
+  }
+
+  async createMatches(leagueCalendar: Round[]) {
+    const matchCreationPromises = leagueCalendar.flatMap((round) =>
+      round.matches.map((match) =>
+        firstValueFrom(
+          this._matchService.createMatch({
             status: 'TO_BE_SCHEDULED',
             local_team: Number(match.match.home.id_team),
             visitor_team: Number(match.match.away.id_team),
@@ -235,34 +261,31 @@ export class CompetitionInitalizerComponent implements OnInit {
             ),
             user_id: this._userState.me()!.id_user,
           })
-          .subscribe({
-            next: (res) => {
-              console.log(res);
-              this.updateComptetition();
-            },
-            error: (err) => {
-              console.log(err);
-            },
-          });
-      }
+        )
+      )
+    );
+
+    try {
+      const results = await Promise.all(matchCreationPromises);
+      console.log('MATCH CREATION RESULTS', results);
+      await this.updateComptetition();
+    } catch (error) {
+      console.error('Error crateing matches: ', error);
     }
   }
 
-  updateComptetition() {
-    this._competitionService
-      .updateCompetition(
-        {
-          is_initialized: true,
-        },
-        this.competitionId
-      )
-      .subscribe({
-        next: (res) => {
-          console.log(res);
-        },
-        error: (err) => {
-          console.log(err);
-        },
-      });
+  async updateComptetition() {
+    try {
+      const response = await firstValueFrom(
+        this._competitionService.updateCompetition(
+          { is_initialized: true },
+          this.competitionId
+        )
+      );
+      console.log('UPDATED COMPETITION', response);
+    } catch (error) {
+      console.error('Error updating competition: ', error);
+      throw error;
+    }
   }
 }
