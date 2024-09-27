@@ -20,16 +20,11 @@ import { RouterLink } from '@angular/router';
 import { DatepickerComponent } from '@app/components/atom/datepicker/datepicker.component';
 import { DashboardPanelLayoutComponent } from '@app/layouts/dashboard-panel-layout/dashboard-panel-layout.component';
 import { getAllResponse } from '@app/models/api';
-import {
-  Match,
-  MatchesGetResponse,
-  MatchStatus,
-  MatchWithDetails,
-} from '@app/models/match';
+import { Match, MatchStatus, MatchWithDetails } from '@app/models/match';
 import { MatchService } from '@app/services/api_services/match.service';
 import { UserStateService } from '@app/services/global_states/user-state.service';
 import { initFlowbite } from 'flowbite';
-import { filter, Subject } from 'rxjs';
+import { Subject } from 'rxjs';
 import { trigger, transition, style, animate } from '@angular/animations';
 
 type DateFilterType = 'DATE' | 'RANGE_DATE';
