@@ -3,22 +3,13 @@ import { config } from '../../config/config';
 import { GenericApiService } from './generic-api.service';
 import { Observable } from 'rxjs';
 import { getAllResponse, postResponse, updateResponse } from '../../models/api';
-import { Match, MatchStatus, MatchWithDetails } from '../../models/match';
+import {
+  GetMatchesParams,
+  Match,
+  MatchStatus,
+  MatchWithDetails,
+} from '../../models/match';
 import { urlParser } from '@app/utils/utils';
-
-interface GetMatchesParams {
-  q?: string;
-  page?: string;
-  id_match?: number;
-  status: MatchStatus;
-  local_team: number;
-  visitor_team: number;
-  date: Date;
-  dateBefore: Date;
-  dateAfter: Date;
-  competition_category_id: number;
-  user_id: number;
-}
 
 @Injectable({
   providedIn: 'root',
