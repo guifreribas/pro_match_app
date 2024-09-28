@@ -23,6 +23,7 @@ export class CompetitionResultsComponent {
   @Input() matches!: MatchWithDetails[];
 
   public match: MatchCompletedData | null = null;
+  public hasFinishedMatches = false;
   private _matchState = inject(MatchStateService);
 
   constructor() {
@@ -30,5 +31,11 @@ export class CompetitionResultsComponent {
       const match = this._matchState.match();
       this.match = match;
     });
+  }
+
+  ngOnInit(): void {
+    this.hasFinishedMatches = this.matches.some(
+      (match) => match.status === 'FINISHED'
+    );
   }
 }
