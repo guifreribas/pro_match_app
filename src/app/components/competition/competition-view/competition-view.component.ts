@@ -54,6 +54,7 @@ import { CompetitionMatchResultComponent } from '../competition-match-result/com
 import { MatchStateService } from '@app/services/global_states/match-state.service';
 import { GoalService } from '@app/services/api_services/goal.service';
 import { Goal } from '@app/models/goal';
+import { CompetitionStatsComponent } from '../competition-stats/competition-stats.component';
 
 @Component({
   selector: 'app-competition-view',
@@ -66,6 +67,7 @@ import { Goal } from '@app/models/goal';
     CompetitionOverviewComponent,
     CompetitionClassificationComponent,
     CompetitionResultsComponent,
+    CompetitionStatsComponent,
   ],
   templateUrl: './competition-view.component.html',
   styleUrl: './competition-view.component.scss',

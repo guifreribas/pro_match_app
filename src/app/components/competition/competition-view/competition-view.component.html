@@ -31,8 +31,20 @@
       <li role="presentation">
         <button
           class="inline-block p-4 border-b-2 rounded-t-lg hover:text-gray-600 hover:border-gray-300 dark:hover:text-gray-300"
-          id="stats-tab" data-tabs-target="#stats" type="button" role="tab" aria-controls="stats"
-          aria-selected="false">Estadísticas</button>
+          id="scorers-tab" data-tabs-target="#scorers" type="button" role="tab" aria-controls="scorers"
+          aria-selected="false">Goleadores</button>
+      </li>
+      <li role="presentation">
+        <button
+          class="inline-block p-4 border-b-2 rounded-t-lg hover:text-gray-600 hover:border-gray-300 dark:hover:text-gray-300"
+          id="cards-tab" data-tabs-target="#cards" type="button" role="tab" aria-controls="cards"
+          aria-selected="false">Tarjetas</button>
+      </li>
+      <li role="presentation">
+        <button
+          class="inline-block p-4 border-b-2 rounded-t-lg hover:text-gray-600 hover:border-gray-300 dark:hover:text-gray-300"
+          id="playerStats-tab" data-tabs-target="#playerStats" type="button" role="tab" aria-controls="playerStats"
+          aria-selected="false">Estadísticas de jugadores</button>
       </li>
     </ul>
   </div>
@@ -49,45 +61,30 @@
     </div>
 
     <div class="hidden p-4 rounded-lg" id="calendar" role="tabpanel" aria-labelledby="calendar-tab">
-      <!-- <div
-          class="relative w-full max-w-[1200px] flex flex-col gap-8 p-12 sm:rounded-lg bg-white  shadow-md  overflow-hidden"> -->
-
       <full-calendar *ngIf='calendarVisible()' [options]='calendarOptions()' #fullCalendar>
         <ng-template #eventContent let-arg>
           <b>{{ arg.timeText }}</b>
           <i>{{ arg.event.title }}</i>
         </ng-template>
       </full-calendar>
-
-      <!-- </div> -->
     </div>
 
     <div class="hidden p-4 rounded-lg" id="results" role="tabpanel" aria-labelledby="results-tab">
       <app-competition-results [matches]="matchesResponse()?.data?.items || []"></app-competition-results>
     </div>
+
     <div class="hidden p-4 rounded-lg" id="stats" role="tabpanel" aria-labelledby="stats-tab">
-      <p class="text-sm text-gray-500 dark:text-gray-400">Estadísticas</p>
+      <app-competition-stats [matches]="matchesResponse()?.data?.items || []"></app-competition-stats>
+    </div>
+
+    <div class="hidden p-4 rounded-lg" id="scorers" role="tabpanel" aria-labelledby="scorers-tab">
+      <p>scorers works!</p>
+    </div>
+
+    <div class="hidden p-4 rounded-lg" id="cards" role="tabpanel" aria-labelledby="cards-tab">
+      <p>cards works!</p>
+    </div>
+    <div class="hidden p-4 rounded-lg" id="playerStats" role="tabpanel" aria-labelledby="playerStats-tab">
+      <p>playerStats works!</p>
     </div>
   </div>
-  <!-- </div> -->
-
-
-  <!-- <div class="min-h-fit relative flex flex-col gap-4 w-full justify-center">
-
-
-
-
-  <app-competition-classification [competition]="competition"></app-competition-classification>
-
-  <div class="`relative w-full max-w-[1200px] flex flex-col gap-8 p-12
-    sm:rounded-lg bg-white  shadow-md  overflow-hidden`">
-
-    <full-calendar *ngIf='calendarVisible()' [options]='calendarOptions()'>
-      <ng-template #eventContent let-arg>
-        <b>{{ arg.timeText }}</b>
-        <i>{{ arg.event.title }}</i>
-      </ng-template>
-    </full-calendar>
-
-  </div>
-</div> -->
