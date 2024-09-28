@@ -1,15 +1,15 @@
 import { Injectable, signal } from '@angular/core';
-import { GetStandingsResponse, Standings } from '../../models/standings';
+import { StandingsWithDetails, Standings } from '../../models/standings';
 
 @Injectable({
   providedIn: 'root',
 })
 export class StandingsStateService {
-  public readonly standings = signal<GetStandingsResponse[]>([]);
+  public readonly standings = signal<StandingsWithDetails[]>([]);
 
   constructor() {}
 
-  setStandings(standings: GetStandingsResponse[]) {
+  setStandings(standings: StandingsWithDetails[]) {
     this.standings.set(standings);
   }
 
