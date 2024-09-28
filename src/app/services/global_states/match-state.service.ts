@@ -20,7 +20,7 @@ export interface MatchCompletedData {
   providedIn: 'root',
 })
 export class MatchStateService {
-  public match = signal<MatchCompletedData | null>(null);
+  public readonly match = signal<MatchCompletedData | null>(null);
 
   constructor() {}
 
@@ -39,7 +39,7 @@ export class MatchStateService {
     });
   }
 
-  clearMatch() {
+  clearMatch(): void {
     this.match.set(null);
   }
 }
