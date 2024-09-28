@@ -5,8 +5,11 @@ import {
   inject,
   OnInit,
   signal,
+  ViewChild,
 } from '@angular/core';
-import { FullCalendarModule } from '@fullcalendar/angular';
+import { ActivatedRoute, RouterLink, RouterModule } from '@angular/router';
+import { CommonModule } from '@angular/common';
+
 import {
   CalendarOptions,
   DateSelectArg,
@@ -14,35 +17,62 @@ import {
   EventClickArg,
   EventInput,
 } from '@fullcalendar/core';
+import {
+  FullCalendarComponent,
+  FullCalendarModule,
+} from '@fullcalendar/angular';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import timeGridPlugin from '@fullcalendar/timegrid';
 import listPlugin from '@fullcalendar/list';
 import interactionPlugin from '@fullcalendar/interaction';
-import { createEventId, INITIAL_EVENTS } from '@app/utils/event-utils';
-import { CommonModule } from '@angular/common';
-import { UserStateService } from '@app/services/global_states/user-state.service';
-import { MatchService } from '@app/services/api_services/match.service';
-import { Match, MatchWithDetails } from '@app/models/match';
-import { config } from '@app/config/config';
-import { getAllResponse } from '@app/models/api';
 import dayjs from 'dayjs';
-import { CompetitionWithDetails } from '@app/models/competition';
-import {
-  ActivatedRoute,
-  Router,
-  RouterLink,
-  RouterModule,
-} from '@angular/router';
+
 import { CompetitionService } from '@app/services/api_services/competition.service';
+import { MatchService } from '@app/services/api_services/match.service';
+import { UserStateService } from '@app/services/global_states/user-state.service';
+
+import { CompetitionWithDetails } from '@app/models/competition';
+import { GetMatchesParams, Match, MatchWithDetails } from '@app/models/match';
+import { getAllResponse } from '@app/models/api';
+
+import { config } from '@app/config/config';
+import { createEventId } from '@app/utils/event-utils';
+
+import { CompetitionOverviewComponent } from '../competition-overview/competition-overview.component';
+import { CompetitionClassificationComponent } from '../competition-classification/competition-classification.component';
+import { initFlowbite } from 'flowbite';
+import { StandingsService } from '@app/services/api_services/standings.service';
+import { firstValueFrom } from 'rxjs';
+import {
+  GetStandingsParams,
+  StandingsWithDetails,
+  Standings,
+} from '@app/models/standings';
+import { StandingsStateService } from '@app/services/global_states/standings-state.service';
+import { CompetitionResultsComponent } from '../competition-results/competition-results.component';
+import { CompetitionMatchResultComponent } from '../competition-match-result/competition-match-result.component';
+import { MatchStateService } from '@app/services/global_states/match-state.service';
+import { GoalService } from '@app/services/api_services/goal.service';
+import { Goal } from '@app/models/goal';
 
 @Component({
   selector: 'app-competition-view',
   standalone: true,
-  imports: [CommonModule, FullCalendarModule, RouterModule, RouterLink],
+  imports: [
+    CommonModule,
+    FullCalendarModule,
+    RouterModule,
+    RouterLink,
+    CompetitionOverviewComponent,
+    CompetitionClassificationComponent,
+    CompetitionResultsComponent,
+  ],
   templateUrl: './competition-view.component.html',
   styleUrl: './competition-view.component.scss',
 })
 export class CompetitionViewComponent implements OnInit {
+  @ViewChild('fullCalendar') fullCalendar!: FullCalendarComponent;
+
   public imgUrl = config.IMG_URL;
   public formatMap: Record<string, string> = {
     SINGLE_ROUND: 'Doble vuelta',
@@ -62,6 +92,8 @@ export class CompetitionViewComponent implements OnInit {
   public matchesResponse = signal<getAllResponse<MatchWithDetails> | null>(
     null
   );
+  public goals = signal<Goal[]>([]);
+  public standings = signal<Standings[]>([]);
   public matchesEvents = signal<EventInput[]>([]);
   public calendarVisible = signal(true);
   public calendarOptions = signal<CalendarOptions>({
@@ -91,35 +123,72 @@ export class CompetitionViewComponent implements OnInit {
   public currentEvents = signal<EventApi[]>([]);
   private _hasFetchedMatches = false;
   private _hasFetchedCompetition = false;
+  private _hasFetchedStaindings = false;
   private _matchService = inject(MatchService);
-  private _userState = inject(UserStateService);
   private _competitionService = inject(CompetitionService);
+  private _standingsService = inject(StandingsService);
+  private _goalService = inject(GoalService);
+  private _userState = inject(UserStateService);
+  private _standingsState = inject(StandingsStateService);
   private _route = inject(ActivatedRoute);
 
   constructor(private changeDetector: ChangeDetectorRef) {
     effect(() => {
-      const user = this._userState.me();
-      if (user?.id_user && this._hasFetchedMatches === false) {
+      const userId = this._userState.me()?.id_user;
+      if (!userId) return;
+      if (this._hasFetchedMatches === false) {
         const competitionId = this._route.snapshot.params['id'];
-        this.getCompetition(competitionId, user.id_user);
+        this.getCompetition(competitionId, userId);
         this._hasFetchedMatches = true;
       }
 
       if (
-        user?.id_user &&
         this.competitionCategoryId() &&
         this._hasFetchedCompetition === false
       ) {
         this.getMatches({
-          user_id: user.id_user,
+          user_id: userId,
           competition_category_id: this.competitionCategoryId() as number,
+          limit: 200, // In 20 teams league with double rounds, has total of 190 matches
         });
         this._hasFetchedCompetition = true;
       }
+
+      if (this._hasFetchedStaindings === false) {
+        this.getStandings({
+          user_id: userId,
+          competition_id: this.competitionId as number,
+          limit: 20,
+        });
+        this._hasFetchedStaindings = true;
+      }
     });
+
+    // effect(() => {
+    //   const matches = this.matchesResponse()?.data?.items || [];
+    //   const getMatchGoals = matches.map((match) => {
+    //     return firstValueFrom(
+    //       this._goalService.getGoals({
+    //         match_id: match.id_match,
+    //         user_id: this._userState.me()?.id_user,
+    //         limit: 30,
+    //       })
+    //     );
+    //   });
+    //   Promise.all(getMatchGoals).then((goalsResponse) => {
+    //     console.log('GOALS', goalsResponse);
+    //     this.goals.update((prev) => {
+    //       if (!prev) return prev;
+    //       return [...prev,...goalsResponse.data.items];
+    //   });
+    // });
   }
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    setTimeout(() => {
+      initFlowbite();
+    }, 100);
+  }
 
   getCompetition(competitionId: number, userId: number) {
     this._competitionService
@@ -193,7 +262,7 @@ export class CompetitionViewComponent implements OnInit {
     // this.changeDetector.detectChanges(); // workaround for pressionChangedAfterItHasBeenCheckedError
   }
 
-  getMatches(params?: Partial<Match>) {
+  getMatches(params?: Partial<GetMatchesParams>) {
     this._matchService.getMatches(params).subscribe({
       next: (res) => {
         console.log('MATCHES', res);
@@ -222,9 +291,40 @@ export class CompetitionViewComponent implements OnInit {
     });
   }
 
+  async getStandings(
+    params: Partial<GetStandingsParams>
+  ): Promise<getAllResponse<StandingsWithDetails> | null> {
+    try {
+      const response = await firstValueFrom(
+        this._standingsService.getStandings(params)
+      );
+      console.log('STANDINGS', response);
+      // this.standings.set(response.data.items);
+      this._standingsState.setStandings(response.data.items);
+      return response || null;
+    } catch (error) {
+      console.error('Error getting standings: ', error);
+      return null;
+    }
+  }
+
   getFormat(format: string | undefined): string {
     console.log('FORMAT', format);
     // if (!format) return '';
     return this.formatMap['LEAGUE'];
+  }
+
+  updateCalendarSize() {
+    console.log('UPDATE CALENDAR SIZE');
+    if (this.fullCalendar) {
+      this.fullCalendar.getApi().updateSize();
+    }
+  }
+
+  onCalendarTabClick() {
+    setTimeout(() => {
+      this.updateCalendarSize();
+      this.changeDetector.detectChanges();
+    }, 0);
   }
 }
