@@ -1,0 +1,42 @@
+<article class="max-w-md mx-auto bg-white shadow-lg rounded-lg overflow-hidden">
+  <header class="px-6 py-4">
+    <!-- <h1 class="text-xl leading-tight font-semibold text-center">Resultado del Partido</h1> -->
+    <time datetime="2024-09-28" class="block text-center text-gray-600">Fecha: {{match.date | date:'dd/MM/yyyy'}}</time>
+
+  </header>
+  <section class="px-6 py-4">
+    <div class="mt-4 flex items-center justify-between">
+
+      <div class="flex items-center">
+        @if(match.local_team.avatar){
+        <img class="h-12 w-12 rounded-full shadow-md object-center" src="{{imgUrl + match.local_team.avatar}}"
+          alt="{{match.local_team.name}} logo">
+        }
+        @else {
+        <img class="h-12 w-12 rounded-full shadow-md" src="assets/icons/team_placeholder1.svg"
+          alt="Logo de l'Equip Local">
+        }
+        <h3 class="ml-4 text-lg font-medium">{{match.local_team.name}}</h3>
+        <!-- <span class="ml-4 text-lg font-medium">Equipo Local</span> -->
+      </div>
+
+      <div class="text-3xl font-bold text-nowrap">{{localTeamGoals}} - {{visitorTeamGoals}}</div>
+
+      <div class="flex items-center">
+        <h3 class="mr-4 text-lg font-medium">{{match.visitor_team.name}} </h3>
+        @if(match.visitor_team.avatar){
+        <img class="h-12 w-12 rounded-full shadow-md object-center" src="{{imgUrl + match.visitor_team.avatar}}"
+          alt="{{match.visitor_team.name}} logo">
+        }
+        @else {
+        <img class="h-12 w-12 rounded-full shadow-md" src="assets/icons/team_placeholder2.svg"
+          alt="Logo de l'Equip Visitant">
+        }
+      </div>
+
+    </div>
+  </section>
+  <footer class="px-6 py-4">
+    <!-- <time datetime="2024-09-28" class="block text-center text-gray-600">Fecha: 28 de setembre de 2024</time> -->
+  </footer>
+</article>
