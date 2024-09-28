@@ -10,6 +10,7 @@ interface GetGoalsParams {
   page: string;
   user_id: number;
   match_id: number;
+  team_id: number;
   id_goal: number;
   limit: number;
 }
