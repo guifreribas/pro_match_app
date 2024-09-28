@@ -12,7 +12,7 @@ import {
 } from '@app/models/api';
 import {
   GetStandingsParams,
-  GetStandingsResponse,
+  StandingsWithDetails,
   Standings,
   StandingsCreateDto,
 } from '@app/models/standings';
@@ -29,9 +29,9 @@ export class StandingsService {
 
   getStandings(
     params: Partial<GetStandingsParams>
-  ): Observable<getAllResponse<GetStandingsResponse>> {
+  ): Observable<getAllResponse<StandingsWithDetails>> {
     const httpParams = buildHttpParams(params);
-    return this._genericServices.getAll<getAllResponse<GetStandingsResponse>>(
+    return this._genericServices.getAll<getAllResponse<StandingsWithDetails>>(
       StandingsService.API_URL,
       { params: httpParams }
     );
