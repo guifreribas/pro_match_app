@@ -1,3 +1,8 @@
 <app-dashboard-panel-layout>
+  @if(matchViewState() === 'VIEW'){
+  <app-match-view></app-match-view>
+  }
+  @else {
   <app-match-edit></app-match-edit>
+  }
 </app-dashboard-panel-layout>

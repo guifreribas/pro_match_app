@@ -1,6 +1,7 @@
 import { Component, effect, inject, signal } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { MatchEditComponent } from '@app/components/match/match-edit/match-edit.component';
+import { MatchViewComponent } from '@app/components/match/match-view/match-view.component';
 import { DashboardPanelLayoutComponent } from '@app/layouts/dashboard-panel-layout/dashboard-panel-layout.component';
 import { MatchWithDetails } from '@app/models/match';
 import { CardService } from '@app/services/api_services/card.service';
@@ -17,7 +18,11 @@ import { firstValueFrom } from 'rxjs';
 @Component({
   selector: 'app-match',
   standalone: true,
-  imports: [DashboardPanelLayoutComponent, MatchEditComponent],
+  imports: [
+    DashboardPanelLayoutComponent,
+    MatchViewComponent,
+    MatchEditComponent,
+  ],
   templateUrl: './match.component.html',
   styleUrl: './match.component.scss',
 })
@@ -29,6 +34,7 @@ export class MatchComponent {
   public visitorTeam = signal<any>(null);
   public localPlayers = signal<any[]>([]);
   public visitorPlayers = signal<any[]>([]);
+  public matchViewState = signal<string>('VIEW');
 
   private _matchService = inject(MatchService);
   private _route = inject(ActivatedRoute);
@@ -46,13 +52,24 @@ export class MatchComponent {
   constructor() {
     effect(() => {
       const matchId = this._route.snapshot.params['id'];
-      console.log('MATCH ID', matchId);
       const user = this._userState.me();
       if (user?.id_user && this._hasFetchedInitData === false) {
         this.getAllInitData({ userId: user.id_user, matchId: Number(matchId) });
         this._hasFetchedInitData = true;
       }
     });
+  }
+
+  ngAfterViewInit(): void {
+    const params = this._route.snapshot.queryParams;
+    const isEdit = params['edit'] === 'true';
+    const isView = params['view'] === 'true';
+
+    if (isEdit) {
+      this.matchViewState.set('EDIT');
+    } else if (isView) {
+      this.matchViewState.set('VIEW');
+    }
   }
 
   async getAllInitData({
