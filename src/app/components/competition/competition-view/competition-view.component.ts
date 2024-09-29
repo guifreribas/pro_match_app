@@ -7,7 +7,12 @@ import {
   signal,
   ViewChild,
 } from '@angular/core';
-import { ActivatedRoute, RouterLink, RouterModule } from '@angular/router';
+import {
+  ActivatedRoute,
+  Router,
+  RouterLink,
+  RouterModule,
+} from '@angular/router';
 import { CommonModule } from '@angular/common';
 
 import {
@@ -50,11 +55,8 @@ import {
 } from '@app/models/standings';
 import { StandingsStateService } from '@app/services/global_states/standings-state.service';
 import { CompetitionResultsComponent } from '../competition-results/competition-results.component';
-import { CompetitionMatchResultComponent } from '../competition-match-result/competition-match-result.component';
-import { MatchStateService } from '@app/services/global_states/match-state.service';
 import { GoalService } from '@app/services/api_services/goal.service';
 import { Goal } from '@app/models/goal';
-import { CompetitionStatsComponent } from '../competition-stats/competition-stats.component';
 
 @Component({
   selector: 'app-competition-view',
@@ -67,7 +69,6 @@ import { CompetitionStatsComponent } from '../competition-stats/competition-stat
     CompetitionOverviewComponent,
     CompetitionClassificationComponent,
     CompetitionResultsComponent,
-    CompetitionStatsComponent,
   ],
   templateUrl: './competition-view.component.html',
   styleUrl: './competition-view.component.scss',
@@ -133,6 +134,7 @@ export class CompetitionViewComponent implements OnInit {
   private _userState = inject(UserStateService);
   private _standingsState = inject(StandingsStateService);
   private _route = inject(ActivatedRoute);
+  private router = inject(Router);
 
   constructor(private changeDetector: ChangeDetectorRef) {
     effect(() => {
@@ -250,16 +252,22 @@ export class CompetitionViewComponent implements OnInit {
   }
 
   handleEventClick(clickInfo: EventClickArg) {
-    if (
-      confirm(
-        `Are you sure you want to delete the event '${clickInfo.event.title}'`
-      )
-    ) {
-      clickInfo.event.remove();
+    console.log(clickInfo.event);
+    const matchId = clickInfo.event.id;
+    if (matchId) {
+      this.router.navigate(['/matches', matchId]);
     }
+    // if (
+    //   confirm(
+    //     `Are you sure you want to delete the event '${clickInfo.event.title}'`
+    //   )
+    // ) {
+    //   clickInfo.event.remove();
+    // }
   }
 
   handleEvents(events: EventApi[]) {
+    // const matchId = events.eve;
     // this.currentEvents.set(events);
     // this.changeDetector.detectChanges(); // workaround for pressionChangedAfterItHasBeenCheckedError
   }
