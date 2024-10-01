@@ -25,11 +25,11 @@ export class OrganizationComponent {
   public organizationViewState = signal<string>('VIEW');
   public isEditing = false;
 
-  private route = inject(ActivatedRoute);
+  private _route = inject(ActivatedRoute);
   private _organizationService = inject(OrganizationService);
 
   ngOnInit(): void {
-    this.organizationId = this.route.snapshot.params['id'];
+    this.organizationId = this._route.snapshot.params['id'];
     if (this.organizationId) {
       this._organizationService.getOrganization(this.organizationId).subscribe({
         next: (res) => {
@@ -40,6 +40,16 @@ export class OrganizationComponent {
           console.log(err);
         },
       });
+    }
+
+    const params = this._route.snapshot.queryParams;
+    const isEdit = params['edit'] === 'true';
+    const isView = params['view'] === 'true';
+
+    if (isEdit) {
+      this.organizationViewState.set('EDIT');
+    } else if (isView) {
+      this.organizationViewState.set('VIEW');
     }
   }
 }
