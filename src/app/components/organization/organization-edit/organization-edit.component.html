@@ -1,1 +1,76 @@
-<p>organization-edit works!</p>
+<div class="relative p-4 bg-white rounded-lg shadow sm:p-5" [hidden]="this.isUpdatingOrganization()">
+  <!-- Modal header -->
+  <div class="flex justify-between items-center pb-4 mb-4 rounded-t border-b sm:mb-5 ">
+    <h3 class="text-lg font-semibold text-gray-900 ">
+      Editar centro
+    </h3>
+
+    @if(this.organization()?.logo){
+    <img src="{{imgUrl + this.organization()?.logo}}" alt="{{this.organization()?.name}}"
+      class="w-12 h-12 rounded-lg border object-cover">
+    }
+    @else {
+    <img src="/assets/icons/avatar.svg" alt="{{this.organization()?.name}}"
+      class="w-12 h-12 rounded-lg border object-cover">
+    }
+
+  </div>
+  <!-- Modal body -->
+  <form [formGroup]="organizationForm" (submit)=" onSubmit($event)">
+    <div class="grid gap-4 mb-4 sm:grid-cols-2 ">
+      <div class="relative">
+        <label for="name" class="block mb-2 text-sm font-medium text-gray-900">
+          Nombre
+        </label>
+        <input type="text" name="name" id="name" formControlName="name" autocomplete="name"
+          class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-700 focus:border-primary-700 block w-full p-2.5 "
+          [ngClass]="{ 'border-red-500 border-2': (organizationForm.get('name')?.errors?.['required'] || organizationForm.get('name')?.errors?.['name']) && (isSubmitted || organizationForm.get('name')?.touched)}"
+          placeholder="Añade el nombre" required="">
+        @if(organizationForm.get('name')?.errors?.['required'] && (isSubmitted ||
+        organizationForm.get('name')?.touched)){
+        <p id="outlined_error_help" class="mt-2 text-xs text-red-600 absolute -top-1.5 right-0"><span
+            class="font-medium">Ops!</span> Nombre es requerido</p>
+        }
+      </div>
+
+      <div class="relative">
+        <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white" for="logo">
+          Sube una imagen
+        </label>
+        <input type="file" name="logo" id="logo" formControlName="logo" (change)="onLogoChange($event)"
+          class="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 focus:outline-none"
+          aria-describedby="user_logo_help" accept=".png, .jpg, .jpeg">
+        <p class="absolute -bottom-4 left-0 text-xs font-light text-gray-600">{{organization()?.logo}}</p>
+      </div>
+
+      <div class="relative sm:col-span-2">
+        <label for="brand" class="block mb-2 text-sm font-medium text-gray-900 ">
+          Dirección
+        </label>
+        <textarea type="text" name="address" id="address" formControlName="address"
+          class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-700 focus:border-primary-700 block w-full p-2.5 resize-none"
+          [ngClass]="{ 'border-red-500 border-2': (organizationForm.get('address')?.errors?.['required'] || organizationForm.get('address')?.errors?.['address']) && (isSubmitted || organizationForm.get('address')?.touched)}"
+          placeholder="calle, número, ciudad" required=""> </textarea>
+        @if(organizationForm.get('address')?.errors?.['required'] && (isSubmitted ||
+        organizationForm.get('address')?.touched)){
+        <p id="outlined_error_help" class="mt-2 text-xs text-red-600 absolute -top-1.5 right-0"><span
+            class="font-medium">Ops!</span> La dirección es requerida</p>
+        }
+      </div>
+
+
+
+
+
+    </div>
+    <button type="submit"
+      class="text-white inline-flex items-center bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center mt-2">
+      <svg class="mr-1 -ml-1 w-6 h-6" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+        <path fill-rule="evenodd"
+          d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" clip-rule="evenodd">
+        </path>
+      </svg>
+      Editar centro
+    </button>
+  </form>
+</div>
