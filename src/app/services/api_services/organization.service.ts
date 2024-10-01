@@ -50,7 +50,7 @@ export class OrganizationService {
   }
 
   updateOrganization(
-    organization: Organization,
+    organization: Partial<Organization>,
     id: number
   ): Observable<updateResponse<Organization>> {
     return this.genericService.update<
