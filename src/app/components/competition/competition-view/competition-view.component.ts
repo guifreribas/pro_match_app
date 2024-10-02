@@ -57,6 +57,9 @@ import { StandingsStateService } from '@app/services/global_states/standings-sta
 import { CompetitionResultsComponent } from '../competition-results/competition-results.component';
 import { GoalService } from '@app/services/api_services/goal.service';
 import { Goal } from '@app/models/goal';
+import { CompetitionCardsComponent } from '../competition-cards/competition-cards.component';
+import { CompetitionPlayerStatsComponent } from '../competition-player-stats/competition-player-stats.component';
+import { CompetitionScorersComponent } from '../competition-scorers/competition-scorers.component';
 
 @Component({
   selector: 'app-competition-view',
@@ -69,6 +72,10 @@ import { Goal } from '@app/models/goal';
     CompetitionOverviewComponent,
     CompetitionClassificationComponent,
     CompetitionResultsComponent,
+    CompetitionCardsComponent,
+    CompetitionPlayerStatsComponent,
+    CompetitionScorersComponent,
+    CompetitionPlayerStatsComponent,
   ],
   templateUrl: './competition-view.component.html',
   styleUrl: './competition-view.component.scss',
@@ -308,8 +315,6 @@ export class CompetitionViewComponent implements OnInit {
       const response = await firstValueFrom(
         this._standingsService.getStandings(params)
       );
-      console.log('STANDINGS', response);
-      // this.standings.set(response.data.items);
       this._standingsState.setStandings(response.data.items);
       return response || null;
     } catch (error) {

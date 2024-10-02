@@ -52,6 +52,7 @@
   <div id="default-tab-content">
 
     <div class="hidden p-4 rounded-lg" id="overview" role="tabpanel" aria-labelledby="overview-tab">
+      <!-- <app-competition-player-stats></app-competition-player-stats> -->
       <app-competition-overview [competition]="competition"
         [competitionType]="competitionType"></app-competition-overview>
     </div>
@@ -74,15 +75,15 @@
     </div>
 
 
-
     <div class="hidden p-4 rounded-lg" id="scorers" role="tabpanel" aria-labelledby="scorers-tab">
-      <p>scorers works!</p>
+      <app-competition-scorers></app-competition-scorers>
     </div>
 
     <div class="hidden p-4 rounded-lg" id="cards" role="tabpanel" aria-labelledby="cards-tab">
-      <p>cards works!</p>
+      <app-competition-cards></app-competition-cards>
     </div>
     <div class="hidden p-4 rounded-lg" id="playerStats" role="tabpanel" aria-labelledby="playerStats-tab">
-      <p>playerStats works!</p>
+      <app-competition-player-stats [competition]="competition">
+      </app-competition-player-stats>
     </div>
   </div>
