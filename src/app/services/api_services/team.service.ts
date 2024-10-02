@@ -3,15 +3,8 @@ import { config } from '../../config/config';
 import { GenericApiService } from './generic-api.service';
 import { Observable } from 'rxjs';
 import { getAllResponse, getOneResponse } from '../../models/api';
-import { Team } from '../../models/team';
+import { GetTeamsParams, Team } from '../../models/team';
 import { urlParser } from '@app/utils/utils';
-
-interface GetTeamsParams {
-  q: string;
-  page: string;
-  user_id: number;
-  id_team: number;
-}
 
 @Injectable({
   providedIn: 'root',
