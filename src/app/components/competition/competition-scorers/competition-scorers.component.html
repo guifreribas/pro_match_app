@@ -1,0 +1,94 @@
+<div class="relative overflow-x-auto shadow-md sm:rounded-lg">
+  <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+    <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+      <tr>
+        <th scope="col" class="px-6 py-3">
+          Posición
+        </th>
+        <th scope="col" class="px-6 py-3">
+          Avatar
+        </th>
+        <th scope="col" class="px-6 py-3">
+          Jugador/a
+        </th>
+        <th scope="col" class="px-6 py-3">
+          Equipo
+        </th>
+        <th scope="col" class="px-6 py-3">
+          Goles
+        </th>
+        <th scope="col" class="px-6 py-3">
+          PJ
+        </th>
+        <th scope="col" class="px-6 py-3">
+          G/PJ
+        </th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr class="odd:bg-white odd:dark:bg-gray-900 even:bg-gray-50 even:dark:bg-gray-800 border-b dark:border-gray-700">
+        <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+          1
+        </th>
+        <td class="px-6 py-4">
+          @if(this.playerAvatar()){
+          <img src="{{imgUrl + this.playerAvatar()}}" alt="{{this.playerAvatar()}}"
+            class="w-8 h-8 rounded-lg border object-cover">
+          }
+          @else {
+          <img src="/assets/icons/avatar.svg" alt="{{this.playerAvatar()}}"
+            class="w-8 h-8 rounded-lg border object-cover">
+          }
+        </td>
+        <td class="px-6 py-4">
+          Laia Juncar
+        </td>
+        <td class="px-6 py-4">
+          Lacer
+        </td>
+        <td class="px-6 py-4">
+          10
+        </td>
+        <td class="px-6 py-4">
+          3
+        </td>
+        <td class="px-6 py-4">
+          3.33
+        </td>
+
+      </tr>
+      <tr class="odd:bg-white odd:dark:bg-gray-900 even:bg-gray-50 even:dark:bg-gray-800 border-b dark:border-gray-700">
+        <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+          1
+        </th>
+        <td class="px-6 py-4">
+          @if(this.playerAvatar()){
+          <img src="{{imgUrl + this.playerAvatar()}}" alt="{{this.playerAvatar()}}"
+            class="w-8 h-8 rounded-lg border object-cover">
+          }
+          @else {
+          <img src="/assets/icons/avatar.svg" alt="{{this.playerAvatar()}}"
+            class="w-8 h-8 rounded-lg border object-cover">
+          }
+        </td>
+        <td class="px-6 py-4">
+          Laia Juncar
+        </td>
+        <td class="px-6 py-4">
+          Lacer
+        </td>
+        <td class="px-6 py-4">
+          10
+        </td>
+        <td class="px-6 py-4">
+          3
+        </td>
+        <td class="px-6 py-4">
+          3.33
+        </td>
+
+      </tr>
+
+    </tbody>
+  </table>
+</div>
