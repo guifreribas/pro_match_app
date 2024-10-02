@@ -1,7 +1,7 @@
 import { inject, Injectable } from '@angular/core';
 import { config } from '@app/config/config';
 import { GenericApiService } from './generic-api.service';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { urlParser } from '@app/utils/utils';
 import {
   deleteResponse,
@@ -13,11 +13,13 @@ import {
 import {
   CompetitionTeam,
   CompetitionTeamCreateResponse,
+  CompetitionTeamWithDetails,
 } from '@app/models/competitionTeam';
 import { Observable } from 'rxjs';
+import { buildHttpParams } from '@app/utils/http-utils';
 
 interface CompetitionTeamParams {
-  competition_id: number;
+  competition_category_id: number;
   team_id: number;
 }
 
@@ -25,48 +27,49 @@ interface CompetitionTeamParams {
   providedIn: 'root',
 })
 export class CompetitionTeamService {
-  private apiUrl = `${config.apiUrl}/competition-teams`;
-  private genericService = inject(GenericApiService);
-  private http = inject(HttpClient);
+  private static readonly apiUrl = `${config.apiUrl}/competition-teams`;
+  private _genericService = inject(GenericApiService);
 
   constructor() {}
 
   getCompetitionTeams(
-    params: CompetitionTeamParams
-  ): Observable<getAllResponse<CompetitionTeam>> {
-    const url = urlParser(params, this.apiUrl);
-    return this.genericService.getAll<getAllResponse<CompetitionTeam>>(url);
+    params: Partial<CompetitionTeamParams>
+  ): Observable<getAllResponse<CompetitionTeamWithDetails>> {
+    const HttpParams = buildHttpParams(params);
+    return this._genericService.getAll<
+      getAllResponse<CompetitionTeamWithDetails>
+    >(CompetitionTeamService.apiUrl, { params: HttpParams });
   }
 
   getCompetitionTeam(
     competitionTeamId: number
   ): Observable<getOneResponse<CompetitionTeam>> {
-    return this.genericService.getOne<getOneResponse<CompetitionTeam>>(
-      this.apiUrl,
+    return this._genericService.getOne<getOneResponse<CompetitionTeam>>(
+      CompetitionTeamService.apiUrl,
       competitionTeamId
     );
   }
 
   createCompetitionTeam(
-    competitionTeam: CompetitionTeam
+    competitionTeam: Partial<CompetitionTeam>
   ): Observable<postResponse<CompetitionTeam>> {
-    return this.genericService.create<
-      CompetitionTeam,
+    return this._genericService.create<
+      Partial<CompetitionTeam>,
       postResponse<CompetitionTeam>
-    >(this.apiUrl, competitionTeam);
+    >(CompetitionTeamService.apiUrl, competitionTeam);
   }
 
   updateCompetitionTeam(
     competitionTeam: CompetitionTeam,
     id: number
   ): Observable<updateResponse<CompetitionTeam>> {
-    return this.genericService.update<
+    return this._genericService.update<
       CompetitionTeam,
       updateResponse<CompetitionTeam>
-    >(this.apiUrl, id, competitionTeam);
+    >(CompetitionTeamService.apiUrl, id, competitionTeam);
   }
 
   deleteCompetitionTeam(id: number): Observable<deleteResponse> {
-    return this.genericService.delete<any>(this.apiUrl, id);
+    return this._genericService.delete<any>(CompetitionTeamService.apiUrl, id);
   }
 }
