@@ -85,6 +85,9 @@ export class AddCardComponent {
         player_id: Number(this.cardForm.value.player),
         team_id: Number(this.cardForm.value.team),
         user_id: Number(this._userState.me()?.id_user),
+        competition_id: Number(
+          this._matchState.match()?.match.competition.id_competition
+        ),
       })
       .subscribe({
         next: (res) => {
