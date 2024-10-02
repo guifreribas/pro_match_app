@@ -1,0 +1,176 @@
+<form class="w-full grid grid-cols-1 sm:grid-cols-2 gap-2 md:gap-4 mb-4" [formGroup]="selectorForm">
+
+  <section
+    class="w-full flex flex-col gap-2 px-5 py-2.5 bg-white border border-gray-300 text-gray-900 text-sm rounded-lg">
+    <h3 class="w-full max-w-sm mx-auto text-lg font-bold mb-2">Añadir un jugador</h3>
+
+    <section class="w-full max-w-sm mx-auto">
+      <label for="teamOne" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+        Selecciona un equipo
+      </label>
+      <select id="teamOne" formControlName="teamOne"
+        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+        <option value="" selected>Equipos</option>
+        @for(team of teams; track team.team.id_team){
+        <option value="{{team.team.id_team}}">{{team.team.name}}</option>
+        }
+      </select>
+    </section>
+
+    @if(selectorForm.value.teamOne){
+    <section class="w-full max-w-sm mx-auto">
+      <label for="playerOne" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+        Selecciona un jugador
+      </label>
+      <select id="playerOne" formControlName="playerOne"
+        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+        <option selected>Jugadores</option>
+        @for(player of playersTeam1(); track player.player_id){
+        <option value="{{player.player_id}}">{{player.player?.name}}</option>
+        }
+      </select>
+    </section>
+    }
+  </section>
+
+  <section
+    class="w-full flex flex-col gap-2 px-5 py-2.5 bg-white border border-gray-300 text-gray-900 text-sm rounded-lg">
+    <h3 class="w-full max-w-sm mx-auto text-lg font-bold mb-2">Añadir un jugador</h3>
+
+    <section class="w-full max-w-sm mx-auto">
+      <label for="teamTwo" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+        Selecciona un equipo
+      </label>
+      <select id="teamTwo" formControlName="teamTwo"
+        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+        <option value="" selected>Equipos</option>
+        @for(team of teams; track team.team.id_team){
+        <option value="{{team.team.id_team}}">{{team.team.name}}</option>
+        }
+      </select>
+    </section>
+
+    @if(selectorForm.value.teamTwo){
+    <section class="w-full max-w-sm mx-auto">
+      <label for="playerTwo" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+        Selecciona un jugador
+      </label>
+      <select id="playerTwo" formControlName="playerTwo"
+        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+        <option selected>Jugadores</option>
+        @for(player of playersTeam2(); track player.player_id){
+        <option value="{{player.player_id}}">{{player.player?.name}}</option>
+        }
+      </select>
+    </section>
+    }
+  </section>
+
+</form>
+
+<article class="text-white relative overflow-hidden w-full rounded-lg text-center border-2 min-h-[600px] h-auto p-8">
+
+  <div class="absolute inset-0 bg-cover bg-no-repeat filter blur-[2px]"
+    style="background-image: url('assets/images/football_field2.jpg');"></div>
+  <div class="absolute inset-0 bg-gradient-to-b from-black/0 to-black/80"></div>
+
+  <div class=" z-10 p-4 text-white grid grid-cols-1 xl:grid-cols-3 gap-4 lg:gap-8 w-full h-full">
+    <div #playerOneAvatar class="p-2 w-full h-full relative flex flex-col items-center xl:items-start">
+      <div class="w-64 h-64 relative mb-2 rounded-lg shadow-sm shadow-gray-600">
+        @if(playerOne()?.player?.avatar){
+        <img src="{{imgUrl + playerOne()?.player?.avatar}}" alt="{{playerOne()?.player?.name}}"
+          class="rounded-lg aspect-square object-cover"
+          style="mask-image: linear-gradient(to bottom, rgba(0,0,0,1), rgba(0,0,0,0.7));" />
+        }
+        @else {
+        <img src="/assets/icons/avatar.svg" alt="{{playerOne()?.player?.name}}"
+          class="rounded-lg aspect-square object-cover"
+          style="mask-image: linear-gradient(to bottom, rgba(0,0,0,1), rgba(0,0,0,0.7));" />
+        }
+
+      </div>
+      <div class="w-full">
+        <p class="text-lg font-bold ">{{playerOne()?.player?.name}}</p>
+        <p class="text-sm text-gray-200 uppercase">{{playerOne()?.team?.name}}</p>
+      </div>
+    </div>
+
+    @if(playerOne() || playerTwo()){
+    <div class="z-10 text-white flex flex-col gap-2 items-center justify-center w-full max-w-96 mx-auto h-full">
+      <h3 class="text-xl font-bold mb-4 uppercase">{{competition()?.name}}</h3>
+      <div class="stats flex flex-row gap-2 items-center  shadow-sm shadow-gray-600 rounded-md w-full">
+        <p class="bg-gray-900 py-2.5 px-5 rounded-md rounded-r-none">{{playerOneMatches().length}}</p>
+        <p class="font-bold filter drop-shadow-xl w-full">Partidos</p>
+        @if(playerTwo()){
+        <p class="bg-gray-900 py-2.5 px-5 rounded-md rounded-l-none">{{playerTwoMatches().length}}</p>
+        }
+      </div>
+      <div class="stats flex flex-row gap-2 items-center  shadow-sm shadow-gray-600 rounded-md w-full">
+        <p class="bg-gray-900 py-2.5 px-5 rounded-md rounded-r-none">{{playerOneGoals().length}}</p>
+        <p class="font-bold filter drop-shadow-xl w-full">Goles</p>
+        @if(playerTwo()){
+        <p class="bg-gray-900 py-2.5 px-5 rounded-md rounded-l-none">{{playerTwoGoals().length}}</p>
+        }
+      </div>
+      <div class="stats flex flex-row gap-2 items-center  shadow-sm shadow-gray-600 rounded-md w-full">
+        <p class="bg-gray-900 py-2.5 px-5 rounded-md rounded-r-none">{{playerOneCards().length}}</p>
+        <p class="font-bold filter drop-shadow-xl w-full">Tarjetas</p>
+        @if(playerTwo()){
+        <p class="bg-gray-900 py-2.5 px-5 rounded-md rounded-l-none">{{playerTwoCards().length}}</p>
+        }
+      </div>
+      <div class="stats flex flex-row gap-2 items-center  shadow-sm shadow-gray-600 rounded-md w-full">
+        <p class="bg-gray-900 py-2.5 px-5 rounded-md rounded-r-none">{{playerOneStandings()?.victories || 0}}</p>
+        <p class="font-bold filter drop-shadow-xl w-full">Victorias</p>
+        @if(playerTwo()){
+        <p class="bg-gray-900 py-2.5 px-5 rounded-md rounded-l-none">{{playerTwoStandings()?.victories || 0}}</p>
+        }
+      </div>
+      <div class="stats flex flex-row gap-2 items-center  shadow-sm shadow-gray-600 rounded-md w-full">
+        <p class="bg-gray-900 py-2.5 px-5 rounded-md rounded-r-none">{{playerOneStandings()?.draws || 0}}</p>
+        <p class="font-bold filter drop-shadow-xl w-full">Empates</p>
+        @if(playerTwo()){
+        <p class="bg-gray-900 py-2.5 px-5 rounded-md rounded-l-none">{{playerTwoStandings()?.draws || 0}}</p>
+        }
+      </div>
+      <div class="stats flex flex-row gap-2 items-center  shadow-sm shadow-gray-600 rounded-md w-full">
+        <p class="bg-gray-900 py-2.5 px-5 rounded-md rounded-r-none">{{playerOneStandings()?.losses || 0}}</p>
+        <p class="font-bold filter drop-shadow-xl w-full">Derrotas</p>
+        @if(playerTwo()){
+        <p class="bg-gray-900 py-2.5 px-5 rounded-md rounded-l-none">{{playerTwoStandings()?.losses || 0}}</p>
+        }
+      </div>
+    </div>
+    }
+    @else {
+    <div class="z-10 text-white flex flex-col gap-2 items-center justify-center w-full max-w-96 mx-auto h-full"></div>
+    }
+
+    @if(playerTwo()){
+    <div #playerTwoAvatar class="player p-2 w-full h-full relative flex flex-col items-center xl:items-end">
+      <div class="w-64 h-64 relative mb-2 rounded-lg shadow-sm shadow-gray-600">
+        @if(playerTwo()?.player?.avatar){
+        <img src="{{imgUrl + playerTwo()?.player?.avatar}}" alt="{{playerTwo()?.player?.name}}"
+          class="rounded-lg aspect-square object-cover"
+          style="mask-image: linear-gradient(to bottom, rgba(0,0,0,1), rgba(0,0,0,0.7));" />
+        }
+        @else {
+        <img src="/assets/icons/avatar.svg" alt="{{playerTwo()?.player?.name}}"
+          class="rounded-lg aspect-square object-cover"
+          style="mask-image: linear-gradient(to bottom, rgba(0,0,0,1), rgba(0,0,0,0.7));" />
+        }
+      </div>
+
+      <div class="w-full">
+        <p class="text-lg font-bold ">{{playerTwo()?.player?.name}}</p>
+        <p class="text-sm text-gray-200 uppercase">{{playerTwo()?.team?.name}}</p>
+      </div>
+    </div>
+    }
+
+  </div>
+
+
+  <app-radar [dataSets]="datasets"></app-radar>
+  <h1 class="text-white">heeelooo</h1>
+</article>
