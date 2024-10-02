@@ -101,8 +101,9 @@ export class AddGoalComponent {
           part: part,
           player_id: Number(player),
           team_id: Number(team),
-          match_id: this._matchState.match()?.match.id_match,
+          match_id: match?.match.id_match,
           user_id: this._userState.me()?.id_user,
+          competition_id: match?.match.competition.id_competition,
         })
       );
 
@@ -128,12 +129,15 @@ export class AddGoalComponent {
       if (competitionId && localTeamId && visitorTeamId) {
         //Get Id and Update Local Team Standings
         const standingsLocalTeam = await this.getStandings(localTeamId, match);
+        console.log('STANDINGS LOCAL TEAM', standingsLocalTeam);
         const standingLocalTeam = standingsLocalTeam.data.items[0];
         const standingIdLocalTeam = standingLocalTeam.id_standings;
         if (!standingIdLocalTeam) return;
-        this._standingsService.updateStanding(
-          { goals_for: localTeamGoals, goals_against: visitorTeamGoals },
-          standingIdLocalTeam
+        await firstValueFrom(
+          this._standingsService.updateStanding(
+            { goals_for: localTeamGoals, goals_against: visitorTeamGoals },
+            standingIdLocalTeam
+          )
         );
         //Get Id and Update Visitor Team Standings
         const standingsVisitorTeam = await this.getStandings(
@@ -143,9 +147,11 @@ export class AddGoalComponent {
         const standingVisitorTeam = standingsVisitorTeam.data.items[0];
         const standingIdVisitorTeam = standingVisitorTeam.id_standings;
         if (!standingIdVisitorTeam) return;
-        this._standingsService.updateStanding(
-          { goals_for: visitorTeamGoals, goals_against: localTeamGoals },
-          standingIdVisitorTeam
+        await firstValueFrom(
+          this._standingsService.updateStanding(
+            { goals_for: visitorTeamGoals, goals_against: localTeamGoals },
+            standingIdVisitorTeam
+          )
         );
       }
 
