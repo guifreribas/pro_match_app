@@ -56,6 +56,15 @@ dependencies:
   '@fullcalendar/timegrid':
     specifier: ^6.1.15
     version: 6.1.15(@fullcalendar/core@6.1.15)
+  '@types/chart.js':
+    specifier: ^2.9.41
+    version: 2.9.41
+  '@types/chartjs':
+    specifier: ^0.0.31
+    version: 0.0.31
+  chart.js:
+    specifier: ^4.4.4
+    version: 4.4.4
   dayjs:
     specifier: ^1.11.12
     version: 1.11.12
@@ -65,6 +74,9 @@ dependencies:
   moment:
     specifier: ^2.30.1
     version: 2.30.1
+  ng2-charts:
+    specifier: ^6.0.1
+    version: 6.0.1(@angular/cdk@18.2.1)(@angular/common@18.1.0)(@angular/core@18.1.0)(@angular/platform-browser@18.1.0)(chart.js@4.4.4)(rxjs@7.8.1)
   rxjs:
     specifier: ~7.8.0
     version: 7.8.1
@@ -2391,6 +2403,10 @@ packages:
       tslib: 2.6.3
     dev: true
 
+  /@kurkle/color@0.3.2:
+    resolution: {integrity: sha512-fuscdXJ9G1qb7W8VdHi+IwRqij3lBkosAm4ydQtEmbY58OzHXqQhvlxqEkoz0yssNVn38bcpRWgA9PP+OGoisw==}
+    dev: false
+
   /@leichtgewicht/ip-codec@2.0.5:
     resolution: {integrity: sha512-Vo+PSpZG2/fmgmiNzYK9qWRh8h/CHrwD0mo1h1DzL4yzHNSfWYujGTYsWGreD000gcgmZ7K4Ys6Tx9TxtsKdDw==}
     dev: true
@@ -3021,6 +3037,17 @@ packages:
     dependencies:
       '@types/node': 20.14.11
     dev: true
+
+  /@types/chart.js@2.9.41:
+    resolution: {integrity: sha512-3dvkDvueckY83UyUXtJMalYoH6faOLkWQoaTlJgB4Djde3oORmNP0Jw85HtzTuXyliUHcdp704s0mZFQKio/KQ==}
+    dependencies:
+      moment: 2.30.1
+    dev: false
+
+  /@types/chartjs@0.0.31:
+    resolution: {integrity: sha512-eF1AgrIO0qP9KJYwM2dTKL2pczTjiLa0hfmZdQfKiqFq5WIvFTKPn1gkgADitF5sT4byEyq4EFdMVvuPIk6zeQ==}
+    deprecated: '''@types/chartjs'' is now ''@types/chart.js'''
+    dev: false
 
   /@types/connect-history-api-fallback@1.5.4:
     resolution: {integrity: sha512-n6Cr2xS1h4uAulPRdlw6Jl6s1oG8KrVilPN2yUITEs+K48EzMJJ3W1xy8K5eWuFvjp3R74AOIGSmp2UfBJ8HFw==}
@@ -3751,6 +3778,13 @@ packages:
   /chardet@0.7.0:
     resolution: {integrity: sha512-mT8iDcrh03qDGRRmoA2hmBJnxpllMR+0/0qlzjqZES6NdiWDcZkCNAk4rPFZ9Q85r27unkiNNg8ZOiwZXBHwcA==}
     dev: true
+
+  /chart.js@4.4.4:
+    resolution: {integrity: sha512-emICKGBABnxhMjUjlYRR12PmOXhJ2eJjEHL2/dZlWjxRAZT1D8xplLFq5M0tMQK8ja+wBS/tuVEJB5C6r7VxJA==}
+    engines: {pnpm: '>=8'}
+    dependencies:
+      '@kurkle/color': 0.3.2
+    dev: false
 
   /chokidar@3.6.0:
     resolution: {integrity: sha512-7VT13fmjotKpGipCW9JEQAusEPE+Ei8nl6/g4FBAmIm0GOOLMua9NDDo/DWp0ZAxCr3cPq5ZpBqmPAQgDda2Pw==}
@@ -5628,6 +5662,10 @@ packages:
       p-locate: 6.0.0
     dev: true
 
+  /lodash-es@4.17.21:
+    resolution: {integrity: sha512-mKnC+QJ9pWVzv+C4/U3rRsHapFfHvQFoFB92e52xeyGMcX6/OlIl78je1u8vePzYZSkkogMPJ2yjxxsb89cxyw==}
+    dev: false
+
   /lodash.debounce@4.0.8:
     resolution: {integrity: sha512-FT1yDzDYEoYWhnSGnpE/4Kj1fLZkDFyqRb7fNt6FdYOSxlUWAtp42Eh6Wb0rGIv/m9Bgo7x4GhQbm5Ys4SG5ow==}
     dev: true
@@ -5999,6 +6037,26 @@ packages:
   /neo-async@2.6.2:
     resolution: {integrity: sha512-Yd3UES5mWCSqR+qNT93S3UoYUkqAZ9lLg8a7g9rimsWmYGK8cVToA4/sF3RrshdyV3sAGMXVUmpMYOw+dLpOuw==}
     dev: true
+
+  /ng2-charts@6.0.1(@angular/cdk@18.2.1)(@angular/common@18.1.0)(@angular/core@18.1.0)(@angular/platform-browser@18.1.0)(chart.js@4.4.4)(rxjs@7.8.1):
+    resolution: {integrity: sha512-pO7evbvHqjiKB7zqE12tCKWQI9gmQ8DVOEaWBBLlxJabc4fLGk7o9t4jC4+Q9pJiQrTtQkugm0dIPQ4PFHUaWA==}
+    peerDependencies:
+      '@angular/cdk': '>=17.0.0'
+      '@angular/common': '>=17.0.0'
+      '@angular/core': '>=17.0.0'
+      '@angular/platform-browser': '>=17.0.0'
+      chart.js: ^3.4.0 || ^4.0.0
+      rxjs: ^6.5.3 || ^7.4.0
+    dependencies:
+      '@angular/cdk': 18.2.1(@angular/common@18.1.0)(@angular/core@18.1.0)(rxjs@7.8.1)
+      '@angular/common': 18.1.0(@angular/core@18.1.0)(rxjs@7.8.1)
+      '@angular/core': 18.1.0(rxjs@7.8.1)(zone.js@0.14.7)
+      '@angular/platform-browser': 18.1.0(@angular/animations@18.1.0)(@angular/common@18.1.0)(@angular/core@18.1.0)
+      chart.js: 4.4.4
+      lodash-es: 4.17.21
+      rxjs: 7.8.1
+      tslib: 2.6.3
+    dev: false
 
   /nice-napi@1.0.2:
     resolution: {integrity: sha512-px/KnJAJZf5RuBGcfD+Sp2pAKq0ytz8j+1NehvgIGFkvtvFrDM3T8E4x/JJODXK9WZow8RRGrbA9QQ3hs+pDhA==}
