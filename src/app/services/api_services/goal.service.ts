@@ -4,16 +4,7 @@ import { GenericApiService } from './generic-api.service';
 import { Observable } from 'rxjs';
 import { getAllResponse, postResponse } from '../../models/api';
 import { urlParser } from '@app/utils/utils';
-
-interface GetGoalsParams {
-  q: string;
-  page: string;
-  user_id: number;
-  match_id: number;
-  team_id: number;
-  id_goal: number;
-  limit: number;
-}
+import { GetGoalsParams } from '@app/models/goal';
 
 @Injectable({
   providedIn: 'root',
