@@ -12,6 +12,20 @@ export interface Goal {
   player_id: number;
   team_id: number;
   match_id: number;
+  user_id: number;
+  competition_id: number;
   created_at?: Date;
   updated_at?: Date;
+}
+
+export interface GetGoalsParams {
+  q: string;
+  page: string;
+  user_id: number;
+  match_id: number;
+  player_id: number;
+  team_id: number;
+  competition_id: number;
+  id_goal: number;
+  limit: number;
 }
