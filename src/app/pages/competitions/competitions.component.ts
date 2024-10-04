@@ -15,12 +15,14 @@ import {
   Competition,
   CompetitionsGetResponse,
   CompetitionWithDetails,
+  GetCompetitionsParams,
 } from '@app/models/competition';
 import { Organization } from '@app/models/organization';
 import { CompetitionService } from '@app/services/api_services/competition.service';
 import { OrganizationService } from '@app/services/api_services/organization.service';
 import { UserStateService } from '@app/services/global_states/user-state.service';
 import { initFlowbite } from 'flowbite';
+import { firstValueFrom } from 'rxjs';
 
 @Component({
   selector: 'app-competitions',
@@ -72,6 +74,7 @@ export class CompetitionsComponent {
             includeCompetitionType: true,
             includeOrganization: true,
             includeCompetitionCategory: true,
+            page: '1',
           })
           .subscribe({
             next: (res) => {
@@ -92,9 +95,21 @@ export class CompetitionsComponent {
   ngOnInit(): void {}
 
   ngAfterViewInit(): void {
+    this.reInitFlowbite();
+  }
+
+  reInitFlowbite() {
     setTimeout(() => {
       initFlowbite();
     }, 100);
+  }
+
+  async getCompetitions(params: Partial<GetCompetitionsParams>) {
+    const response = await firstValueFrom(
+      this._competitionService.getCompetitions(params)
+    );
+    this.competitionsResponse.set(response);
+    this.competitions = response.data.items;
   }
 
   onCreateCompetitionModal() {
@@ -130,5 +145,27 @@ export class CompetitionsComponent {
 
   getRowClass(competition: CompetitionWithDetails) {
     return { 'bg-gray-100': !competition.is_initialized };
+  }
+
+  goOnPage(page: number) {
+    this.getCompetitions({
+      user_id: this._userState.me()?.id_user,
+      includeCompetitionType: true,
+      includeOrganization: true,
+      includeCompetitionCategory: true,
+      page: page.toString(),
+    });
+  }
+
+  goPreviousPage() {
+    const currentPage = this.competitionsResponse()?.data?.currentPage ?? 0;
+    const previusPage = currentPage - 1 > 0 ? currentPage - 1 : 1;
+    this.goOnPage(previusPage);
+  }
+
+  goNextPage() {
+    const currentPage = this.competitionsResponse()?.data?.currentPage ?? 0;
+    if (currentPage === this.competitionsResponse()?.data?.totalPages) return;
+    this.goOnPage(currentPage + 1);
   }
 }
