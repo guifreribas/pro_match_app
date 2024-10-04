@@ -6,6 +6,14 @@ export interface CompetitionTeam {
   updated_at?: Date;
 }
 
+export interface CompetitionTeamWithDetails extends CompetitionTeam {
+  team: {
+    id_team: number;
+    name: string;
+    avatar: string;
+  };
+}
+
 export interface CompetitionTeamGetResponse {
   success: boolean;
   message: string;
