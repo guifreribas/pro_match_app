@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import {
   FormControl,
   FormGroup,
@@ -30,6 +30,7 @@ export class CreateTeamModalComponent {
     avatar: new FormControl('', []),
   });
   public isSubmitted = false;
+  public isCreatingTeam = signal(false);
 
   private _teamService = inject(TeamService);
   private _resourceService = inject(ResourceService);
@@ -41,16 +42,15 @@ export class CreateTeamModalComponent {
 
   async onSubmit(e: SubmitEvent) {
     e.preventDefault();
+    this.isSubmitted = true;
+    this.isCreatingTeam.set(true);
+    if (this.teamForm.invalid) return;
 
     let team: Team = {
       ...this.teamForm.value,
       user_id: this._userState.me()?.id_user,
     };
 
-    if (this.teamForm.invalid) {
-      console.log('invalid');
-      return;
-    }
     let resource: ResourceCreateResponse | null = null;
     if (this._avatar) {
       resource = await this.createResource(this._avatar, this._avatar.name);
@@ -61,6 +61,8 @@ export class CreateTeamModalComponent {
     const teamCreateResponse = await this.createTeam(team);
     console.log(teamCreateResponse);
     this.teamForm.reset();
+    this.isCreatingTeam.set(false);
+    this.isSubmitted = false;
   }
 
   async createTeam(team: Team): Promise<postResponse<TeamsCreateResponse>> {
@@ -74,6 +76,7 @@ export class CreateTeamModalComponent {
           .pipe(
             catchError((err) => {
               console.log(err);
+              this.isCreatingTeam.set(false);
               throw err;
             })
           )
@@ -95,6 +98,7 @@ export class CreateTeamModalComponent {
         next: (res: ResourceCreateResponse) => resolve(res),
         error: (err) => {
           console.log(err);
+          this.isCreatingTeam.set(false);
           reject(err);
         },
       });
