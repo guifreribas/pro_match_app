@@ -7,6 +7,13 @@ export interface Team {
   updated_at?: Date;
 }
 
+export interface GetTeamsParams {
+  q: string;
+  page: string;
+  user_id: number;
+  id_team: number;
+}
+
 export interface TeamsGetResponse {
   success: boolean;
   message: string;

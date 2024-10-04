@@ -31,8 +31,11 @@ export class TeamService {
     );
   }
 
-  updateTeam(team: Team, id: number): Observable<getAllResponse<Team>> {
-    return this.genericService.update<Team, getAllResponse<Team>>(
+  updateTeam(
+    team: Partial<Team>,
+    id: number
+  ): Observable<getAllResponse<Team>> {
+    return this.genericService.update<Partial<Team>, getAllResponse<Team>>(
       this.apiUrl,
       id,
       team
