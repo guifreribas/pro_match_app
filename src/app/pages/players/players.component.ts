@@ -87,8 +87,6 @@ export class PlayersComponent implements AfterViewInit {
   private _getPlayers(action: Action = 'GO_ON_PAGE', page: string = '1') {
     this._playerService.getPlayers({ page }).subscribe({
       next: (res) => {
-        console.log(res);
-        console.log({ players: res.data.items });
         this.playersResponse.set(res);
         this.players = res.data.items;
         this.reInitFlowbite();
@@ -111,6 +109,7 @@ export class PlayersComponent implements AfterViewInit {
 
   goNextPage() {
     const currentPage = this.playersResponse()?.data?.currentPage ?? 0;
+    if (currentPage === this.playersResponse()?.data?.totalPages) return;
     this._getPlayers('NEXT', String(currentPage + 1));
   }
 
