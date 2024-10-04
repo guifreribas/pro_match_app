@@ -25,6 +25,7 @@ export class TeamComponent implements OnInit {
   public teamId: number | null = null;
   public teamViewState = signal<TeamViewState>('VIEW');
   public _isEditing = false;
+  public isViewing = false;
 
   private route = inject(ActivatedRoute);
   private _teamService = inject(TeamService);
@@ -32,7 +33,9 @@ export class TeamComponent implements OnInit {
   ngOnInit(): void {
     this.teamId = this.route.snapshot.params['id'];
     this._isEditing = this.route.snapshot.queryParams['edit'];
+    this.isViewing = this.route.snapshot.queryParams['view'];
     if (this._isEditing) this.teamViewState.set('EDIT');
+    if (this.isViewing) this.teamViewState.set('VIEW');
     if (this.teamId) {
       this._teamService.getTeam(this.teamId).subscribe({
         next: (res) => {
