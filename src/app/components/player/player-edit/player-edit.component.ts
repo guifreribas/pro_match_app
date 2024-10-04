@@ -170,7 +170,7 @@ export class PlayerEditComponent {
       return firstValueFrom(
         this._genericService
           .create<Player, postResponse<PlayerCreateResponse>>(
-            this._playerService.apiUrl,
+            PlayerService.apiUrl,
             player
           )
           .pipe(
