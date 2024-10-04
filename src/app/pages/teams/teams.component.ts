@@ -17,12 +17,22 @@ import { initFlowbite } from 'flowbite';
 import dayjs from 'dayjs';
 import { config } from '@app/config/config';
 import { UserStateService } from '@app/services/global_states/user-state.service';
-import { firstValueFrom } from 'rxjs';
+import {
+  debounceTime,
+  distinctUntilChanged,
+  firstValueFrom,
+  Observable,
+  switchMap,
+} from 'rxjs';
+import { FormControl, ReactiveFormsModule } from '@angular/forms';
+import { HttpClient } from '@angular/common/http';
+import { getAllResponse } from '@app/models/api';
 
 @Component({
   selector: 'app-teams',
   standalone: true,
   imports: [
+    ReactiveFormsModule,
     DashboardPanelLayoutComponent,
     RouterModule,
     CreateTeamModalComponent,
@@ -38,31 +48,53 @@ export class TeamsComponent implements OnInit, AfterViewInit {
   public createdAt: Date | null = null;
   public dayjs = dayjs;
   public IMG_URL = config.IMG_URL;
+  public searchInput = new FormControl('');
+  public teams$!: Observable<getAllResponse<Team>>;
 
   private _teamService = inject(TeamService);
   private _userState = inject(UserStateService);
   private _hasFetchedTeams = false;
+  private _http = inject(HttpClient);
 
   constructor() {
     effect(() => {
       const user = this._userState.me();
       if (user?.id_user && this._hasFetchedTeams === false) {
-        this.getTeams({ userId: user.id_user, page: '1' });
+        this.getTeams({ user_id: user.id_user, page: '1' });
         this.reInitFlowbite();
         this._hasFetchedTeams = true;
       }
     });
   }
 
-  async getTeams({ userId, page = '1' }: { userId: number; page: string }) {
-    const response = await firstValueFrom(
-      this._teamService.getTeams({ user_id: userId, page })
-    );
+  async getTeams(
+    params: Partial<GetTeamsParams>
+  ): Promise<getAllResponse<Team>> {
+    const response = await firstValueFrom(this._teamService.getTeams(params));
     this.teamsResponse.set(response);
     this.teams = response.data.items;
+    return response;
   }
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    this.searchInput.valueChanges
+      .pipe(
+        debounceTime(300),
+        distinctUntilChanged(),
+        switchMap((query) => {
+          const params: Partial<GetTeamsParams> = {
+            user_id: this._userState.me()?.id_user,
+            page: '1',
+            ...(query && { q: query }),
+          };
+          return this.getTeams(params);
+        })
+      )
+      .subscribe((res) => {
+        this.teamsResponse.set(res);
+        this.teams = res.data.items;
+      });
+  }
 
   ngAfterViewInit(): void {
     this.reInitFlowbite();
@@ -71,7 +103,7 @@ export class TeamsComponent implements OnInit, AfterViewInit {
   goOnPage(page: number) {
     const userId = this._userState.me()?.id_user;
     if (!userId) return;
-    this.getTeams({ userId, page: page.toString() });
+    this.getTeams({ user_id: userId, page: page.toString() });
   }
 
   goPreviousPage() {
