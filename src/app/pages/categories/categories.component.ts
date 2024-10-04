@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import {
   Component,
+  effect,
   ElementRef,
   inject,
   signal,
@@ -17,6 +18,7 @@ import {
   catchError,
   debounceTime,
   distinctUntilChanged,
+  firstValueFrom,
   Subject,
   switchMap,
 } from 'rxjs';
@@ -27,7 +29,6 @@ interface GetCategoriesParams {
   q?: string;
   page?: string;
   userId?: number;
-  action: Action;
 }
 
 @Component({
@@ -49,10 +50,13 @@ export class CategoriesComponent {
   public categories = signal<any[]>([]);
   public searchedCategories = signal<Category[] | null>(null);
   public isModalOpen = false;
+  public isSubmitted = false;
+  public page = 1;
 
   private _categoryService = inject(CategoryService);
   private _userState = inject(UserStateService);
   private _searchSubject = new Subject<string>();
+  private _hasFetchedCategories = false;
 
   public muckCategories = [
     {
@@ -87,40 +91,60 @@ export class CategoriesComponent {
         console.log(res);
         this.searchedCategories.set(res.data.items);
       });
-  }
 
-  ngOnInit(): void {
-    const firstPage = 1;
-    this._getCategories({
-      userId: this._userState.me()!.id_user,
-      action: 'GO_ON_PAGE',
-      page: firstPage.toString(),
+    effect(() => {
+      const user = this._userState.me();
+      if (user?.id_user && this._hasFetchedCategories === false) {
+        const firstPage = '1';
+        this._getCategories({ userId: user.id_user, page: firstPage });
+        this._hasFetchedCategories = true;
+      }
     });
   }
 
+  ngOnInit(): void {}
+
   ngAfterViewInit(): void {
+    this.reInitFlowbite();
+  }
+
+  reInitFlowbite() {
     setTimeout(() => {
       initFlowbite();
     }, 100);
   }
 
-  private _getCategories(params: GetCategoriesParams) {
-    this._categoryService.getCategories(params).subscribe({
-      next: (res) => {
-        console.log(res);
-        console.log({ categories: res.data.items });
-        this.categoriesResponse.set(res);
-        this.categories.set(res.data.items);
-      },
-      error: (err) => {
-        console.log(err);
-      },
-    });
+  private async _getCategories(params: Partial<GetCategoriesParams>) {
+    const response = await firstValueFrom(
+      this._categoryService.getCategories(params)
+    );
+    this.categoriesResponse.set(response);
+    this.categories.set(response.data.items);
+    this.reInitFlowbite();
   }
 
   onCreateCategoryShowModal() {
     const modal = this.createCategoryModalComponent.getCategoryModal();
     modal.show();
     this.isModalOpen = true;
+  }
+
+  goOnPage(page: number) {
+    this._getCategories({
+      userId: this._userState.me()?.id_user,
+      page: page.toString(),
+    });
+  }
+
+  goPreviousPage() {
+    const currentPage = this.categoriesResponse()?.data?.currentPage ?? 0;
+    const previusPage = currentPage - 1 > 0 ? currentPage - 1 : 1;
+    this.goOnPage(previusPage);
+  }
+
+  goNextPage() {
+    const currentPage = this.categoriesResponse()?.data?.currentPage ?? 0;
+    if (currentPage === this.categoriesResponse()?.data?.totalPages) return;
+    this.goOnPage(currentPage + 1);
   }
 }
