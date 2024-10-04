@@ -1,26 +1,37 @@
-<!-- <div class="bg-white dark:bg-gray-800 relative shadow-md sm:rounded-lg overflow-hidden max-w-6xl">
+<div class="bg-white dark:bg-gray-800 relative shadow-md sm:rounded-lg overflow-hidden max-w-6xl">
   <div class="relative p-4 bg-white rounded-lg shadow sm:p-5">
+
     <div class="flex justify-between items-center pb-4 mb-4 rounded-t border-b sm:mb-5 ">
       <h3 class="text-lg font-semibold text-gray-900 ">
-        Editar equipo
+        Nuevo equipo
       </h3>
+      @if(this.team()?.avatar){
+      <img class="w-10 h-10 rounded-lg object-cover" src="{{imgUrl + this.team()?.avatar}}" alt="{{this.team()?.name}}">
+      }
+      @else {
+      <img class="w-10 h-10 rounded-lg object-cover" src="/assets/icons/avatar.svg" alt="{{this.team()?.name}}">
+      }
 
     </div>
+
+
     <form [formGroup]="teamForm" (submit)="onSubmit($event)">
       <div class="grid gap-4 mb-4 sm:grid-cols-2">
-        <div>
-          <label for="name" class="block mb-2 text-sm font-medium text-gray-900 ">
+        <div class="relative">
+          <label for="name" class="block mb-2 text-sm font-medium text-gray-900">
             Nombre
           </label>
           <input type="text" name="name" id="name" formControlName="name"
             class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-700 focus:border-primary-700 block w-full p-2.5 "
-            placeholder="Añade el nombre" required="">
+            placeholder="Añade el nombre" required=""
+            [ngClass]="{ 'border-red-500 border-2': (teamForm.get('name')?.errors?.['required'] || teamForm.get('name')?.errors?.['name']) && (isSubmitted || teamForm.get('name')?.touched)}">
           @if(teamForm.get('name')?.errors?.['required'] && (isSubmitted || teamForm.get('name')?.touched)){
           <p id="outlined_error_help" class="mt-2 text-xs text-red-600 absolute -top-1.5 right-0"><span
               class="font-medium">Ops!</span> Nombre es requerido</p>
           }
         </div>
-        <div>
+
+        <div class="relative">
           <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white" for="user_avatar">
             Sube una imagen
           </label>
@@ -28,9 +39,6 @@
             class="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 focus:outline-none"
             aria-describedby="user_avatar_help" id="user_avatar" type="file">
         </div>
-
-
-
       </div>
       <button type="submit"
         class="text-white inline-flex items-center bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center mt-2">
@@ -40,10 +48,6 @@
             clip-rule="evenodd">
           </path>
         </svg>
-        Añadir equipo
+        Editar equipo
       </button>
     </form>
-  </div>
-</div> -->
-
-<p>team-edit works!</p>
