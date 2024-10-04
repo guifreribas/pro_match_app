@@ -6,7 +6,6 @@ import { MainLayoutComponent } from './layouts/main-layout/main-layout.component
 import { authGuard } from './auth.guard';
 import { ProfileComponent } from './pages/profile/profile.component';
 import { PlayersComponent } from './pages/players/players.component';
-import { CreatePlayerComponent } from './pages/create-player/create-player.component';
 import { PlayerComponent } from './pages/player/player.component';
 import { MatchesComponent } from './pages/matches/matches.component';
 import { TeamsComponent } from './pages/teams/teams.component';
@@ -46,11 +45,6 @@ export const routes: Routes = [
       {
         path: 'organizations/:id',
         component: OrganizationComponent,
-        canActivate: [authGuard],
-      },
-      {
-        path: 'create-player',
-        component: CreatePlayerComponent,
         canActivate: [authGuard],
       },
       {
