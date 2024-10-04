@@ -14,6 +14,7 @@ import { Team, TeamsCreateResponse } from '@app/models/team';
 import { GenericApiService } from '@app/services/api_services/generic-api.service';
 import { ResourceService } from '@app/services/api_services/resource.service';
 import { TeamService } from '@app/services/api_services/team.service';
+import { TeamStateService } from '@app/services/global_states/team-state.service';
 import { UserStateService } from '@app/services/global_states/user-state.service';
 import { catchError, firstValueFrom } from 'rxjs';
 
@@ -37,6 +38,7 @@ export class CreateTeamModalComponent {
   private _genericService = inject(GenericApiService);
   private _userState = inject(UserStateService);
   private _avatar: File | null = null;
+  private _teamState = inject(TeamStateService);
 
   constructor() {}
 
@@ -60,19 +62,17 @@ export class CreateTeamModalComponent {
 
     const teamCreateResponse = await this.createTeam(team);
     console.log(teamCreateResponse);
+    this._teamState.updateTeams([teamCreateResponse.data]);
     this.teamForm.reset();
     this.isCreatingTeam.set(false);
     this.isSubmitted = false;
   }
 
-  async createTeam(team: Team): Promise<postResponse<TeamsCreateResponse>> {
+  async createTeam(team: Team): Promise<postResponse<Team>> {
     try {
       return firstValueFrom(
         this._genericService
-          .create<Team, postResponse<TeamsCreateResponse>>(
-            this._teamService.apiUrl,
-            team
-          )
+          .create<Team, postResponse<Team>>(this._teamService.apiUrl, team)
           .pipe(
             catchError((err) => {
               console.log(err);

@@ -55,7 +55,7 @@
         <tbody>
 
           <!-- Lista de jugadores -->
-          @for(team of teams; track team.id_team){
+          @for(team of _teamState.teams(); track team.id_team){
           <tr class="border-b dark:border-gray-700">
             <td scope="row" class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap">{{team.name}}</td>
             <td class="px-4 py-3">{{dayjs(team.created_at).format('DD/MM/YYYY')}}</td>

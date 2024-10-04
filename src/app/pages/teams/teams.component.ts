@@ -27,6 +27,7 @@ import {
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { getAllResponse } from '@app/models/api';
+import { TeamStateService } from '@app/services/global_states/team-state.service';
 
 @Component({
   selector: 'app-teams',
@@ -43,13 +44,14 @@ import { getAllResponse } from '@app/models/api';
 })
 export class TeamsComponent implements OnInit, AfterViewInit {
   public teamsResponse = signal<TeamsGetResponse | null>(null);
-  public teams: Team[] = [];
   public page = 1;
   public createdAt: Date | null = null;
   public dayjs = dayjs;
   public IMG_URL = config.IMG_URL;
   public searchInput = new FormControl('');
   public teams$!: Observable<getAllResponse<Team>>;
+
+  public _teamState = inject(TeamStateService);
 
   private _teamService = inject(TeamService);
   private _userState = inject(UserStateService);
@@ -72,7 +74,7 @@ export class TeamsComponent implements OnInit, AfterViewInit {
   ): Promise<getAllResponse<Team>> {
     const response = await firstValueFrom(this._teamService.getTeams(params));
     this.teamsResponse.set(response);
-    this.teams = response.data.items;
+    this._teamState.setTeams(response.data.items);
     return response;
   }
 
@@ -92,7 +94,7 @@ export class TeamsComponent implements OnInit, AfterViewInit {
       )
       .subscribe((res) => {
         this.teamsResponse.set(res);
-        this.teams = res.data.items;
+        this._teamState.setTeams(res.data.items);
       });
   }
 
