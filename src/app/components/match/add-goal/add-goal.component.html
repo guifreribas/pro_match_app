@@ -23,12 +23,12 @@
         <option value="" selected>Selecciona un jugador</option>
         @if(this.whatTeamIsSelected === 'LOCAL_TEAM'){
         @for(player of this.localPlayers; track player.player_id){
-        <option value="{{player.player_id}}">{{player.player?.name}}</option>
+        <option value={{player.player_id}}>{{player.player?.name}}</option>
         }
         }
         @else{
         @for(player of this.visitorPlayers; track player.player_id){
-        <option value="{{player.player_id}}">{{player.player?.name}}</option>
+        <option value={{player.player_id}}>{{player.player?.name}}</option>
         }
         }
 

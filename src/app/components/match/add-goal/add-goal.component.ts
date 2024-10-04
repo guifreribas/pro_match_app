@@ -157,12 +157,11 @@ export class AddGoalComponent {
 
       console.log({ localTeamGoals, visitorTeamGoals });
 
-      const playerName = this.getNameOfPlayer(
-        Number(this.goalForm.value.player)
-      );
+      const playerName = this.getNameOfPlayer(Number(this.goalForm.value));
       this._globalModalService.openModal(
         'Gol en el campo!',
-        `Ha marcado ${playerName}!`
+        ''
+        // `Ha marcado ${playerName}!`
       );
     } catch (error) {
       console.error(error);
@@ -184,9 +183,10 @@ export class AddGoalComponent {
 
   getNameOfPlayer(playerId: number) {
     const allMatchPlayers = [...this.localPlayers, ...this.visitorPlayers];
-    const player = allMatchPlayers.find(
-      (player) => player.player_id === playerId
-    );
+    const player = allMatchPlayers.find((player) => {
+      console.log({ playerId, playerId2: player.player_id });
+      return player.player_id === playerId;
+    });
     return player?.player?.name;
   }
 
