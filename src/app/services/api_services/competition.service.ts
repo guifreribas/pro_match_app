@@ -13,18 +13,9 @@ import {
   Competition,
   CompetitionsGetResponse,
   CompetitionWithDetails,
+  GetCompetitionsParams,
 } from '../../models/competition';
 import { urlParser } from '@app/utils/utils';
-
-interface GetCompetitionsParams {
-  q?: string;
-  page?: string;
-  id_competition?: number;
-  includeCompetitionType?: boolean;
-  includeOrganization?: boolean;
-  includeCompetitionCategory?: boolean;
-  user_id?: number;
-}
 
 @Injectable({
   providedIn: 'root',
@@ -36,7 +27,7 @@ export class CompetitionService {
   constructor() {}
 
   getCompetitions(
-    params?: GetCompetitionsParams
+    params?: Partial<GetCompetitionsParams>
   ): Observable<getAllResponse<CompetitionWithDetails>> {
     const url = urlParser(params, this.apiUrl);
     console.log('url', url);

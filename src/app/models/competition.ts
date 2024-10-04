@@ -33,6 +33,16 @@ export interface CompetitionWithDetails extends Competition {
   competition_category_id: Pick<CompetitionCategory, 'id_competition_category'>;
 }
 
+export interface GetCompetitionsParams {
+  q: string;
+  page: string;
+  id_competition: number;
+  includeCompetitionType: boolean;
+  includeOrganization: boolean;
+  includeCompetitionCategory: boolean;
+  user_id: number;
+}
+
 export interface CompetitionsGetResponse {
   success: boolean;
   message: string;
