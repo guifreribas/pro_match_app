@@ -10,6 +10,13 @@ export interface Category {
   updated_at?: Date;
 }
 
+export interface GetCategoriesParams {
+  q: string;
+  page: string;
+  user_id: number;
+  limit: number;
+}
+
 export interface CategoriesGetResponse {
   success: boolean;
   message: string;

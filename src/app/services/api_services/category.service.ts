@@ -8,16 +8,9 @@ import {
   postResponse,
   updateResponse,
 } from '../../models/api';
-import { Category } from '../../models/category';
+import { Category, GetCategoriesParams } from '../../models/category';
 import { GenericApiService } from './generic-api.service';
 import { urlParser } from '@app/utils/utils';
-
-interface GetCategoriesParams {
-  q?: string;
-  page?: string;
-  user_id?: number;
-  limit?: number;
-}
 
 @Injectable({
   providedIn: 'root',
@@ -29,7 +22,7 @@ export class CategoryService {
   constructor() {}
 
   getCategories(
-    params?: GetCategoriesParams
+    params?: Partial<GetCategoriesParams>
   ): Observable<getAllResponse<Category>> {
     const url = urlParser(params, this.apiUrl);
     return this.genericService.getAll<getAllResponse<Category>>(url);
