@@ -18,11 +18,15 @@ import {
 import { RouterModule } from '@angular/router';
 import { Organization } from '@app/models/organization';
 import { CompetitionService } from '@app/services/api_services/competition.service';
-import { catchError, firstValueFrom } from 'rxjs';
 import { CompetitionTypes } from '../../../config/constants';
 import { CategoryService } from '@app/services/api_services/category.service';
 import { UserStateService } from '@app/services/global_states/user-state.service';
 import { CategoriesGetResponse, Category } from '@app/models/category';
+import { GlobalModalService } from '@app/services/global-modal.service';
+import { firstValueFrom } from 'rxjs';
+import { Competition } from '@app/models/match';
+import { postResponse } from '@app/models/api';
+import { CompetitionWithDetails } from '@app/models/competition';
 
 @Component({
   selector: 'app-create-competition-modal',
@@ -38,6 +42,8 @@ export class CreateCompetitionModalComponent implements OnInit {
   public isSelectDisabled = true;
   public categoriesResponse = signal<CategoriesGetResponse | null>(null);
   public categories = signal<Category[]>([]);
+  public isSubmitted = false;
+  public isCreatingCompetition = signal(false);
 
   public competitionForm: FormGroup = new FormGroup({
     name: new FormControl('', [Validators.required]),
@@ -51,6 +57,7 @@ export class CreateCompetitionModalComponent implements OnInit {
   private _competitionService = inject(CompetitionService);
   private _categoryService = inject(CategoryService);
   private _userState = inject(UserStateService);
+  private _globalModalService = inject(GlobalModalService);
 
   constructor() {}
 
@@ -69,25 +76,21 @@ export class CreateCompetitionModalComponent implements OnInit {
   }
 
   ngAfterViewInit(): void {
-    console.log(
-      'ngAfterViewInit',
-      this.competitionForm.controls['competition'].valueChanges
-    );
     this.formatSelect.nativeElement.disabled =
       this.competitionForm.controls['competition'].value !== '';
   }
 
   async onSubmit(e: SubmitEvent) {
     e.preventDefault();
-    console.log(this.organizations());
-    console.log(this.competitionForm.value);
-    console.log(
-      'Competition type',
-      this.competitionForm.controls['competition'].value
-    );
+    this.isSubmitted = true;
+    this.isCreatingCompetition.set(true);
+    if (this.competitionForm.invalid) {
+      this.isCreatingCompetition.set(false);
+      return;
+    }
+
     const formatControl = this.competitionForm.controls['competition']
       .value as keyof typeof CompetitionTypes;
-    console.log({ formatControl });
     const competitionTypeId = CompetitionTypes[formatControl];
 
     const { organization, ...rest } = this.competitionForm.value;
@@ -101,24 +104,25 @@ export class CreateCompetitionModalComponent implements OnInit {
       ...formWithoutOrganization,
     };
 
-    console.log({ competition });
-    console.log({ competitionTypeId });
-
-    this._competitionService.createCompetitionFull(competition).subscribe({
-      next: (res) => {
-        console.log(res);
-      },
-      error: (err) => {
-        console.log(err);
-      },
-    });
-
-    // const competition = this.competitionForm.value;
-    // const competitionCreateResponse = await this.createCompetition(competition);
-    // console.log(competitionCreateResponse);
+    await this.createCompetition(competition);
+    this._globalModalService.openModal('Competición creada', '');
+    this.competitionForm.reset();
+    this.isCreatingCompetition.set(false);
   }
 
-  // async createCompetition(competition: any): Promise<any> {
+  async createCompetition(
+    competition: any
+  ): Promise<postResponse<CompetitionWithDetails> | null> {
+    try {
+      return await firstValueFrom(
+        this._competitionService.createCompetitionFull(competition)
+      );
+    } catch (error) {
+      console.log(error);
+      this._globalModalService.openModal('Error', 'Ha ocurrido un error');
+      this.isCreatingCompetition.set(false);
 
-  // }
+      return null;
+    }
+  }
 }

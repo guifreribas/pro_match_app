@@ -2,6 +2,26 @@
 <div id="competitionModal" tabindex="-1" aria-hidden="true"
   class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-modal md:h-full">
   <div class="relative p-4 w-full max-w-4xl h-full md:h-auto">
+
+    @if(this.isCreatingCompetition()){
+    <div class="flex items-center relative p-4 bg-white rounded-lg shadow sm:p-5">
+      <div role="status">
+        <svg aria-hidden="true" class="w-4 h-4 me-2 text-gray-200 animate-spin dark:text-gray-600 fill-blue-600"
+          viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path
+            d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z"
+            fill="currentColor" />
+          <path
+            d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z"
+            fill="currentFill" />
+        </svg>
+        <span class="sr-only">Creando...</span>
+      </div>
+      Creando competición
+    </div>
+
+    }
+
     <!-- Modal content -->
     <div class="relative p-4 bg-white rounded-lg shadow sm:p-5">
       <!-- Modal header -->
@@ -25,75 +45,111 @@
       <form [formGroup]="competitionForm" (submit)=" onSubmit($event)">
 
         <div class="grid gap-4 mb-4 sm:grid-cols-2">
-          <div>
+          <div class="relative">
             <label for="name" class="block mb-2 text-sm font-medium text-gray-900">
               Nombre
             </label>
             <input type="text" name="name" id="name" formControlName="name"
               class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-700 focus:border-primary-700 block w-full p-2.5 "
-              placeholder="Añade el nombre" required="">
+              placeholder="Añade el nombre" required=""
+              [ngClass]="{ 'border-red-500 border-2': (competitionForm.get('name')?.errors?.['required'] || competitionForm.get('name')?.errors?.['name']) && (isSubmitted || competitionForm.get('name')?.touched)}">
+            @if(competitionForm.get('name')?.errors?.['required'] && (isSubmitted ||
+            competitionForm.get('name')?.touched)){
+            <p id="outlined_error_help" class="mt-2 text-xs text-red-600 absolute -top-1.5 right-0"><span
+                class="font-medium">Ops!</span> Nombre es requerido</p>
+            }
           </div>
 
-          <div>
+          <div class="relative">
             <label for="organization" class="block mb-2 text-sm font-medium text-gray-900 ">Centro</label>
             <select id="organization" formControlName="organization"
-              class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5">
-              <option selected>Escoge una opción</option>
+              class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5"
+              [ngClass]="{ 'border-red-500 border-2': (competitionForm.get('organization')?.errors?.['required'] || competitionForm.get('organization')?.errors?.['organization']) && (isSubmitted || competitionForm.get('organization')?.touched)}">
+              <option value="" selected>Escoge una opción</option>
               @for(organization of organizations(); track organization.id_organization){
               <option value="{{organization.id_organization}}">{{organization.name}}</option>
               }
             </select>
+            @if(competitionForm.get('organization')?.errors?.['required'] && (isSubmitted ||
+            competitionForm.get('organization')?.touched)){
+            <p id="outlined_error_help" class="mt-2 text-xs text-red-600 absolute -top-1.5 right-0"><span
+                class="font-medium">Ops!</span> Centro es requerido</p>
+            }
           </div>
 
-          <div>
+          <div class="relative">
             <label for="competition" class="block mb-2 text-sm font-medium text-gray-900 ">Tipo de
               competición</label>
             <select id="competition" formControlName="competition"
-              class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5">
-              <option selected>Escoge una opción</option>
+              class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5"
+              [ngClass]="{ 'border-red-500 border-2': (competitionForm.get('competition')?.errors?.['required'] || competitionForm.get('competition')?.errors?.['competition']) && (isSubmitted || competitionForm.get('competition')?.touched)}">
+              <option value="" selected>Escoge una opción</option>
               <option value="LEAGUE">Liga</option>
               <option value="KNOCKOUT">Copa</option>
             </select>
+            @if(competitionForm.get('competition')?.errors?.['required'] && (isSubmitted ||
+            competitionForm.get('competition')?.touched)){
+            <p id="outlined_error_help" class="mt-2 text-xs text-red-600 absolute -top-1.5 right-0"><span
+                class="font-medium">Ops!</span> Tipo de competición es requerido</p>
+            }
           </div>
 
 
 
-          <div>
+          <div class="relative">
             <label for="format" class="block mb-2 text-sm font-medium text-gray-900 ">Tipo
               formato</label>
             <select id="format" formControlName="format" #formatSelect
-              class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5">
-              <option selected>Escoge una opción</option>
+              class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5"
+              [ngClass]="{ 'border-red-500 border-2': (competitionForm.get('format')?.errors?.['required'] || competitionForm.get('format')?.errors?.['format']) && (isSubmitted || competitionForm.get('format')?.touched)}">
+              <option value="" selected>Escoge una opción</option>
               <option value="DOUBLE_ROUND">Doble vuelta</option>
               <option value="SINGLE_ROUND">Sólo ida</option>
               <option value="KNOCKOUT">Knockout</option>
               <option value="KNOCKOUT_SINGLE_ROUND">Liguilla una vuelta más knockout</option>
               <option value="KNOCKOUT_DOUBLE_ROUND">Liguilla dos vueltas más knockout</option>
             </select>
+            @if(competitionForm.get('format')?.errors?.['required'] && (isSubmitted ||
+            competitionForm.get('format')?.touched)){
+            <p id="outlined_error_help" class="mt-2 text-xs text-red-600 absolute -top-1.5 right-0"><span
+                class="font-medium">Ops!</span> Formato es requerido</p>
+            }
           </div>
 
-          <div>
+          <div class="relative">
             <label for="category" class="block mb-2 text-sm font-medium text-gray-900 ">Categoria</label>
             <select id="category" formControlName="category"
-              class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5">
+              class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5"
+              [ngClass]="{ 'border-red-500 border-2': (competitionForm.get('category')?.errors?.['required'] || competitionForm.get('category')?.errors?.['category']) && (isSubmitted || competitionForm.get('category')?.touched)}">
               <option selected>Escoge una opción</option>
               @for(category of categories(); track category.id_category){
               <option value="{{category.id_category}}">{{category.name}} / {{category.gender}}</option>
               }
               <option value="OTHER">Otro</option>
             </select>
+            @if(competitionForm.get('category')?.errors?.['required'] && (isSubmitted ||
+            competitionForm.get('category')?.touched)){
+            <p id="outlined_error_help" class="mt-2 text-xs text-red-600 absolute -top-1.5 right-0"><span
+                class="font-medium">Ops!</span> Categoria es requerido</p>
+            }
           </div>
 
-          <div>
+          <div class="relative">
             <label for="season" class="block mb-2 text-sm font-medium text-gray-900 ">Temporada</label>
             <select id="season" formControlName="season"
-              class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5">
+              class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5"
+              [ngClass]="{ 'border-red-500 border-2': (competitionForm.get('season')?.errors?.['required'] || competitionForm.get('season')?.errors?.['season']) && (isSubmitted || competitionForm.get('season')?.touched)}">
               <option selected>Escoge una opción</option>
               <option value="2024/2025">2024/2025</option>
               <option value="2025/2026">2025/2026</option>
               <option value="2026/2027">2026/2027</option>
               <option value="2027/2028">2027/2028</option>
             </select>
+            @if(competitionForm.get('season')?.errors?.['required'] && (isSubmitted ||
+            competitionForm.get('season')?.touched)){
+            <p id="outlined_error_help" class="mt-2 text-xs text-red-600 absolute -top-1.5 right-0"><span
+                class="font-medium">Ops!</span> Temporada es requerido</p>
+            }
           </div>
 
 
