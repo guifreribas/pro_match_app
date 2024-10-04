@@ -96,4 +96,5 @@ export interface GetMatchesParams {
   dateAfter: Date;
   competition_category_id: number;
   user_id: number;
+  player_id: number;
 }
