@@ -20,7 +20,12 @@ import { RouterLink } from '@angular/router';
 import { DatepickerComponent } from '@app/components/atom/datepicker/datepicker.component';
 import { DashboardPanelLayoutComponent } from '@app/layouts/dashboard-panel-layout/dashboard-panel-layout.component';
 import { getAllResponse } from '@app/models/api';
-import { Match, MatchStatus, MatchWithDetails } from '@app/models/match';
+import {
+  GetMatchesParams,
+  Match,
+  MatchStatus,
+  MatchWithDetails,
+} from '@app/models/match';
 import { MatchService } from '@app/services/api_services/match.service';
 import { UserStateService } from '@app/services/global_states/user-state.service';
 import { initFlowbite } from 'flowbite';
@@ -29,21 +34,6 @@ import { trigger, transition, style, animate } from '@angular/animations';
 
 type DateFilterType = 'DATE' | 'RANGE_DATE';
 type Action = 'NEXT' | 'PREVIOUS' | 'GO_ON_PAGE';
-
-interface GetMatchesParams {
-  q?: string;
-  page?: string;
-  id_match?: number;
-  status: MatchStatus;
-  local_team: number;
-  visitor_team: number;
-  date: Date;
-  dateBefore: Date;
-  dateAfter: Date;
-  competition_category_id: number;
-  user_id: number;
-  action: Action;
-}
 
 @Component({
   selector: 'app-matches',
@@ -85,7 +75,6 @@ export class MatchesComponent implements AfterViewInit {
     null
   );
   public matches = signal<MatchWithDetails[]>([]);
-  public currentPage = 1;
   public searchedMatches = signal<Match[] | null>(null);
   public matchForm = new FormGroup({
     startDate: new FormControl(null, [Validators.required]),
@@ -114,7 +103,6 @@ export class MatchesComponent implements AfterViewInit {
     });
 
     this.matchForm.valueChanges.subscribe(() => {
-      // console.log('MATCH FORM CHANGED', this.matchForm.value);
       const startDate = this.matchForm.controls.startDate.value;
       const finishDate = this.matchForm.controls.finishDate.value;
       const filterType = this.matchForm.controls.dateTypeSelect.value;
@@ -129,7 +117,6 @@ export class MatchesComponent implements AfterViewInit {
         console.log('RANGE DATE', filterType, startDate, finishDate);
         this._getMatches({
           user_id: this._userState.me()?.id_user,
-          // date: startDate,
           dateAfter: startDate,
           dateBefore: finishDate,
         });
@@ -150,10 +137,9 @@ export class MatchesComponent implements AfterViewInit {
   private _getMatches(params?: Partial<GetMatchesParams>) {
     this._matechService.getMatches(params).subscribe({
       next: (res) => {
-        console.log({ res });
-        console.log({ matches: res.data.items });
         this.matchesResponse.set(res);
         this.matches.set(res.data.items);
+        this._reinitFlowbite();
       },
       error: (err) => {
         console.log(err);
@@ -163,7 +149,6 @@ export class MatchesComponent implements AfterViewInit {
 
   goOnPage(page: number) {
     this._getMatches({
-      action: 'GO_ON_PAGE',
       page: page.toString(),
       user_id: this._userState.me()?.id_user,
     });
@@ -171,13 +156,21 @@ export class MatchesComponent implements AfterViewInit {
 
   goPreviousPage() {
     const currentPage = this.matchesResponse()?.data?.currentPage ?? 0;
+    if (currentPage === 1) return;
     const previusPage = currentPage - 1 > 0 ? currentPage - 1 : 1;
-    this._getMatches({ action: 'PREVIOUS', page: String(previusPage) });
+    this._getMatches({
+      page: String(previusPage),
+      user_id: this._userState.me()?.id_user,
+    });
   }
 
   goNextPage() {
     const currentPage = this.matchesResponse()?.data?.currentPage ?? 0;
-    this._getMatches({ action: 'NEXT', page: String(currentPage + 1) });
+    if (currentPage === this.matchesResponse()?.data?.totalPages) return;
+    this._getMatches({
+      page: String(currentPage + 1),
+      user_id: this._userState.me()?.id_user,
+    });
   }
 
   onSearchInput(e: Event) {
