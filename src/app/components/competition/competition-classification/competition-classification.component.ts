@@ -1,4 +1,10 @@
-import { Component, inject, Input, WritableSignal } from '@angular/core';
+import {
+  Component,
+  effect,
+  inject,
+  Input,
+  WritableSignal,
+} from '@angular/core';
 import { config } from '@app/config/config';
 import { CompetitionWithDetails } from '@app/models/competition';
 import { StandingsStateService } from '@app/services/global_states/standings-state.service';
@@ -18,5 +24,9 @@ export class CompetitionClassificationComponent {
   private _standingsState = inject(StandingsStateService);
   public standings = this._standingsState.standings;
 
-  constructor() {}
+  constructor() {
+    effect(() => {
+      console.log('STANDINGS: ', this._standingsState.standings());
+    });
+  }
 }

@@ -61,7 +61,6 @@ export class CreateCategoryModalComponent implements OnChanges {
 
   ngOnChanges(changes: SimpleChanges): void {
     if (this.isModalOpen === true) {
-      console.log('ngOnChanges', changes);
       this.getOrganizations();
     }
   }
@@ -75,7 +74,6 @@ export class CreateCategoryModalComponent implements OnChanges {
       .getOrganizations({ user_id: this._userState.me()!.id_user })
       .subscribe({
         next: (res) => {
-          console.log(res);
           this.organizations.set(res.data.items);
         },
         error: (err) => {
@@ -98,7 +96,6 @@ export class CreateCategoryModalComponent implements OnChanges {
 
     this._categoryService.createCategory(category).subscribe({
       next: (res) => {
-        console.log(res);
         this.isCreatingCategory.set(false);
         this.categoryForm.reset();
       },
@@ -114,7 +111,6 @@ export class CreateCategoryModalComponent implements OnChanges {
   }
 
   public getCategoryModal() {
-    console.log('getCategoryModal', this.categoryModal);
     return this.categoryModal;
   }
 }
