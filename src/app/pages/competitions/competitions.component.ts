@@ -9,10 +9,8 @@ import {
 } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { CreateCompetitionModalComponent } from '@app/components/competition/create-competition-modal/create-competition-modal.component';
-import { CompetitionTypes } from '@app/config/constants';
 import { DashboardPanelLayoutComponent } from '@app/layouts/dashboard-panel-layout/dashboard-panel-layout.component';
 import {
-  Competition,
   CompetitionsGetResponse,
   CompetitionWithDetails,
   GetCompetitionsParams,
