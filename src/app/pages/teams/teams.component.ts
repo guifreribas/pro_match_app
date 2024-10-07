@@ -51,6 +51,8 @@ export class TeamsComponent implements OnInit, AfterViewInit {
   public searchInput = new FormControl('');
   public teams$!: Observable<getAllResponse<Team>>;
 
+  public teams = TeamStateService.teams;
+
   public _teamState = inject(TeamStateService);
 
   private _teamService = inject(TeamService);

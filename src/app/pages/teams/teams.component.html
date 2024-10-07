@@ -55,16 +55,18 @@
         <tbody>
 
           <!-- Lista de jugadores -->
-          @for(team of _teamState.teams(); track team.id_team){
+          @for(team of teams(); track team.id_team){
           <tr class="border-b dark:border-gray-700">
             <td scope="row" class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap">{{team.name}}</td>
             <td class="px-4 py-3">{{dayjs(team.created_at).format('DD/MM/YYYY')}}</td>
             <td class="px-4 py-3 ">
               @if(team.avatar){
-              <img class="w-10 h-10 rounded-lg object-cover" src="{{IMG_URL + team.avatar}}" alt="{{team.name}}">
+              <img class="w-10 h-10 rounded-lg object-cover shadow-md" src="{{IMG_URL + team.avatar}}"
+                alt="{{team.name}}">
               }
               @else {
-              <img class="w-10 h-10 rounded-lg object-cover" src="/assets/icons/avatar.svg" alt="{{team.name}}">
+              <img class="w-10 h-10 rounded-lg object-cover shadow-md" src="/assets/icons/avatar.svg"
+                alt="{{team.name}}">
               }
             </td>
 
