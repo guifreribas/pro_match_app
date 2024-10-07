@@ -1,4 +1,7 @@
-<div class=" p-12 lg:p-12 bg-white relative shadow-md sm:rounded-lg overflow-hidden flex flex-col gap-8 w-fit">
+<div class=" p-12 lg:p-12 bg-white relative shadow-md sm:rounded-lg overflow-hidden flex flex-col gap-8 w-fit ">
+  <img src="/assets/images/messi_shoot.webp" alt="Logo de l'Equip Local"
+    class="absolute inset-0 w-[600px] h-[600px] rounded-lg border object-cover opacity-10 -translate-y-10">
+
   <button class="absolute top-4 right-4 " (click)="this.playerViewState.set('EDIT')">
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
       class="size-6 text-gray-500 hover:cursor-pointer hover:text-gray-800 transition-all duration-100">
@@ -8,55 +11,18 @@
         d="M5.25 5.25a3 3 0 0 0-3 3v10.5a3 3 0 0 0 3 3h10.5a3 3 0 0 0 3-3V13.5a.75.75 0 0 0-1.5 0v5.25a1.5 1.5 0 0 1-1.5 1.5H5.25a1.5 1.5 0 0 1-1.5-1.5V8.25a1.5 1.5 0 0 1 1.5-1.5h5.25a.75.75 0 0 0 0-1.5H5.25Z" />
     </svg>
   </button>
-  <!-- <div class="w-full flex flex-wrap gap-8 py-4 pb-12 border-b">
-    @if(player?.avatar){
-    <img src="{{imgUrl + player?.avatar}}" alt="{{player?.name}} {{player?.last_name}}"
-      class="w-40 h-40 rounded-lg border object-cover">
-    }
-    @else {
-    <img src="/assets/icons/avatar.svg" alt="{{player?.name}} {{player?.last_name}}"
-      class="w-40 h-40 rounded-lg border object-cover">
-    }
-    <section class="flex flex-col gap-1">
-      <h3 class="text-xl font-bold mb-2">{{player?.name}} {{player?.last_name}}</h3>
-      <div class="flex flex-col text-sm gap-1 h-full">
-        <p class="text-gray-800"><span class="font-bold">DNI:</span> {{player?.dni}}</p>
-        <p class="text-gray-800"><span class="font-bold">Edad:</span> {{playerYears}} años</p>
-        <p class="text-gray-800"><span class="font-bold">Nacimiento:</span> {{player?.birthday}}</p>
-      </div>
-    </section>
 
-  </div> -->
-
-  <!-- <section class="flex flex-col gap-4 w-full justify-center">
-
-    <h5 class="text-lg font-semibold text-gray-800 ">Equipos</h5>
-
-
-    @for(team of teamPlayers(); track team.id_team_player){
-    <a routerLink="/teams/{{team?.team_id}}"
-      class="flex flex-row gap-4 p-2 w-full items-center rounded-lg hover:cursor-pointer hover:bg-gray-100 transition-all duration-100">
-      @if(team?.team?.avatar){
-      <img src="{{imgUrl + team?.team?.avatar}}" alt="{{team?.team?.name}}"
-        class="w-10 h-10 rounded-lg border object-cover">
-      }
-      @else {
-      <img src="/assets/icons/avatar.svg" alt="{{team?.team?.name}}" class="w-10 h-10 rounded-lg border object-cover">
-      }
-      <p>{{team?.team?.name}}</p>
-    </a>
-    }
-  </section> -->
-
-  <div class="flex flex-col items-center max-w-md mx-auto bg-white rounded-xl overflow-hidden">
+  <div class="flex flex-col items-center max-w-md mx-auto  rounded-xl overflow-hidden backdrop-blur-sm">
     <div class="player-photo">
       @if(player?.avatar){
       <img src="{{imgUrl + player?.avatar}}" alt="{{player?.name}} {{player?.last_name}}"
-        [style.view-transition-name]="'player-' + player?.id_player" class="w-40 h-40 rounded-lg border object-cover">
+        [style.view-transition-name]="'player-' + player?.id_player"
+        class="w-40 h-40 rounded-lg border object-cover shadow-md">
       }
       @else {
       <img src="/assets/icons/avatar.svg" alt="{{player?.name}} {{player?.last_name}}"
-        [style.view-transition-name]="'player-' + player?.id_player" class="w-40 h-40 rounded-lg border object-cover">
+        [style.view-transition-name]="'player-' + player?.id_player"
+        class="w-40 h-40 rounded-lg border object-cover shadow-md">
       }
     </div>
     <div class="player-info p-6">
@@ -64,9 +30,11 @@
       <p class="text-gray-600 mt-2"><strong>DNI:</strong> {{player?.dni}}</p>
       <p class="text-gray-600"><strong>Edad:</strong> {{playerYears}} años</p>
       <p class="text-gray-600"><strong>Fecha de nacimiento:</strong>{{player?.birthday}}</p>
+      <div class="w-full border-b my-6"></div>
       <div class="player-teams mt-4">
-        <strong class=" text-gray-800">Equips:</strong>
+        <strong class=" text-gray-800">Equipos:</strong>
         <ul class="list-none mt-2 space-y-2">
+          @if(teamPlayers().length > 0){
           @for(team of teamPlayers(); track team.id_team_player){
           <li
             class="bg-gray-100 text-gray-800 p-2 rounded-lg shadow-md  hover:cursor-pointer  hover:bg-gray-50 hover:shadow-none transition-all duration-100">
@@ -94,7 +62,10 @@
               </div>
             </a>
           </li>
-
+          }
+          }
+          @else {
+          <li class="text-gray-600 text-sm p-2 rounded">Todavía no tienes equipos</li>
           }
           <!-- <li class="bg-gray-100 p-2 rounded">Equip 1</li>
           <li class="bg-gray-100 p-2 rounded">Equip 2</li>
