@@ -2,7 +2,11 @@ import { inject, Injectable } from '@angular/core';
 import { config } from '../../config/config';
 import { GenericApiService } from './generic-api.service';
 import { Observable } from 'rxjs';
-import { getAllResponse, getOneResponse } from '../../models/api';
+import {
+  getAllResponse,
+  getOneResponse,
+  updateResponse,
+} from '../../models/api';
 import { GetTeamsParams, Team } from '../../models/team';
 import { urlParser } from '@app/utils/utils';
 
@@ -34,8 +38,8 @@ export class TeamService {
   updateTeam(
     team: Partial<Team>,
     id: number
-  ): Observable<getAllResponse<Team>> {
-    return this.genericService.update<Partial<Team>, getAllResponse<Team>>(
+  ): Observable<updateResponse<Team>> {
+    return this.genericService.update<Partial<Team>, updateResponse<Team>>(
       this.apiUrl,
       id,
       team
