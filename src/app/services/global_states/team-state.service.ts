@@ -5,26 +5,48 @@ import { Team } from '@app/models/team';
   providedIn: 'root',
 })
 export class TeamStateService {
-  readonly teams = signal<Team[]>([]);
+  static readonly teams = signal<Team[]>([]);
+  static readonly activeTeam = signal<Team | null>(null);
 
   constructor() {}
 
+  //Teams methods
   getTeams(): Team[] {
-    return this.teams();
+    return TeamStateService.teams();
   }
 
   setTeams(teams: Team[]) {
-    this.teams.set(teams);
+    TeamStateService.teams.set(teams);
   }
 
   updateTeams(teams: Team[]) {
-    this.teams.update((prev) => {
+    TeamStateService.teams.update((prev) => {
       if (!prev) return prev;
       return [...prev, ...teams];
     });
   }
 
+  //Active team methods
   clearTeams() {
-    this.teams.set([]);
+    TeamStateService.teams.set([]);
+  }
+
+  getActiveTeam(): Team | null {
+    return TeamStateService.activeTeam();
+  }
+
+  setActiveTeam(team: Team | null) {
+    TeamStateService.activeTeam.set(team);
+  }
+
+  updateActiveTeam(team: Team | null) {
+    TeamStateService.activeTeam.update((prev) => {
+      if (!prev) return prev;
+      return team;
+    });
+  }
+
+  clearActiveTeam() {
+    TeamStateService.activeTeam.set(null);
   }
 }
