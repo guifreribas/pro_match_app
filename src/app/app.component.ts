@@ -11,11 +11,17 @@ import { GlobalModalComponent } from './components/atom/global-modal/global-moda
 import { GlobalModalService } from './services/global-modal.service';
 import { GlobalActionModalComponent } from './components/atom/global-action-modal/global-action-modal.component';
 import { GlobalActionModalService } from './services/global-action-modal.service';
+import { GlobalSpinnerComponent } from './components/atom/global-spinner/global-spinner.component';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, GlobalModalComponent, GlobalActionModalComponent],
+  imports: [
+    RouterOutlet,
+    GlobalModalComponent,
+    GlobalActionModalComponent,
+    GlobalSpinnerComponent,
+  ],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss',
 })
