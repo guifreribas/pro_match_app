@@ -146,9 +146,9 @@ export class CompetitionViewComponent implements OnInit {
   constructor(private changeDetector: ChangeDetectorRef) {
     effect(() => {
       const userId = this._userState.me()?.id_user;
+      const competitionId = this._route.snapshot.params['id'];
       if (!userId) return;
       if (this._hasFetchedMatches === false) {
-        const competitionId = this._route.snapshot.params['id'];
         this.getCompetition(competitionId, userId);
         this._hasFetchedMatches = true;
       }
@@ -166,9 +166,10 @@ export class CompetitionViewComponent implements OnInit {
       }
 
       if (this._hasFetchedStaindings === false) {
+        console.log('STANDINGS FETCHED', competitionId);
         this.getStandings({
           user_id: userId,
-          competition_id: this.competitionId as number,
+          competition_id: competitionId,
           limit: 20,
         });
         this._hasFetchedStaindings = true;
@@ -201,33 +202,25 @@ export class CompetitionViewComponent implements OnInit {
     }, 100);
   }
 
-  getCompetition(competitionId: number, userId: number) {
-    this._competitionService
-      .getCompetitions({
+  async getCompetition(competitionId: number, userId: number) {
+    const response = await firstValueFrom(
+      this._competitionService.getCompetitions({
         user_id: userId,
         includeCompetitionType: true,
         includeOrganization: true,
         includeCompetitionCategory: true,
         id_competition: competitionId,
       })
-      .subscribe({
-        next: (res) => {
-          console.log('COMPETITION', res);
-          this.competition.set(res.data.items[0]);
-
-          this.competitionCategoryId.set(
-            res.data.items[0].competitionCategory.competition_category_id
-          );
-          if (res.data.items[0]?.competitionType?.name) {
-            this.competitionType.set(
-              this.competitionTypeMap[res.data.items[0].competitionType.name]
-            );
-          }
-        },
-        error: (err) => {
-          console.log(err);
-        },
-      });
+    );
+    this.competition.set(response.data.items[0]);
+    this.competitionCategoryId.set(
+      response.data.items[0].competitionCategory.competition_category_id
+    );
+    if (response.data.items[0]?.competitionType?.name) {
+      this.competitionType.set(
+        this.competitionTypeMap[response.data.items[0].competitionType.name]
+      );
+    }
   }
 
   handleCalendarToggle() {
@@ -318,19 +311,16 @@ export class CompetitionViewComponent implements OnInit {
       this._standingsState.setStandings(response.data.items);
       return response || null;
     } catch (error) {
-      console.error('Error getting standings: ', error);
       return null;
     }
   }
 
   getFormat(format: string | undefined): string {
-    console.log('FORMAT', format);
     // if (!format) return '';
     return this.formatMap['LEAGUE'];
   }
 
   updateCalendarSize() {
-    console.log('UPDATE CALENDAR SIZE');
     if (this.fullCalendar) {
       this.fullCalendar.getApi().updateSize();
     }
