@@ -30,7 +30,9 @@ import { GenericApiService } from '@app/services/api_services/generic-api.servic
 import { PlayerService } from '@app/services/api_services/player.service';
 import { ResourceService } from '@app/services/api_services/resource.service';
 import { TeamService } from '@app/services/api_services/team.service';
+import { GlobalModalService } from '@app/services/global-modal.service';
 import { UserStateService } from '@app/services/global_states/user-state.service';
+import { SpinnerService } from '@app/services/spinner.service';
 import { validateDni } from '@app/utils/utils';
 import { Datepicker } from 'flowbite';
 import {
@@ -65,15 +67,16 @@ export class PlayerEditComponent {
   public isSubmitted = false;
   public emailTouched = false;
   public datepicker!: Datepicker;
-  public isCreatingPlayer = signal(false);
+  public isEditingPlayer = signal(false);
   public dynamicClasses: { [key: string]: boolean } = {};
   public searchedTeams = signal<TeamsGetResponse | null>(null);
 
-  private _teamService = inject(TeamService);
-  private _playerService = inject(PlayerService);
   private _resourceService = inject(ResourceService);
+  private _teamService = inject(TeamService);
   private _genericService = inject(GenericApiService);
   private _userState = inject(UserStateService);
+  private _spinnerService = inject(SpinnerService);
+  private _globalModalService = inject(GlobalModalService);
   private _avatar: File | null = null;
   private _searchSubject = new Subject<string>();
 
@@ -144,8 +147,9 @@ export class PlayerEditComponent {
     e.preventDefault();
     this.isSubmitted = true;
     if (this.playerForm.invalid) return;
-    this.isCreatingPlayer.set(true);
-    const player: Player = {
+    this._spinnerService.setLoading(true);
+    // this.isEditingPlayer.set(true);
+    let player: Partial<Player> = {
       ...this.playerForm.value,
       user_id: this._userState.me()?.id_user,
     };
@@ -154,31 +158,34 @@ export class PlayerEditComponent {
       resource = await this.createResource(this._avatar, this._avatar.name);
       console.log(resource);
       player.avatar = resource.data.name;
+    } else {
+      const { avatar, ...rest } = player;
+      player = rest;
     }
-    const playerCreateResponse = await this.createPlayer(player);
+
+    const playerCreateResponse = await this.updatePlayer(player);
     console.log(playerCreateResponse);
-    this.isCreatingPlayer.set(false);
+    // this.isEditingPlayer.set(false);
+    this.player.set(playerCreateResponse.data);
     this.playerForm.markAsPristine();
     this.isSubmitted = false;
-    this.playerForm.reset();
+    this._spinnerService.setLoading(false);
+    this._globalModalService.openModal('Jugador actualizado', '');
   }
 
-  async createPlayer(
-    player: Player
-  ): Promise<postResponse<PlayerCreateResponse>> {
+  async updatePlayer(player: Partial<Player>): Promise<postResponse<Player>> {
+    console.log('UPDATE PLAYER', player);
+    const playerId = this.player()?.id_player;
+    if (!playerId) {
+      throw new Error('Player id is required');
+    }
     try {
       return firstValueFrom(
-        this._genericService
-          .create<Player, postResponse<PlayerCreateResponse>>(
-            PlayerService.apiUrl,
-            player
-          )
-          .pipe(
-            catchError((err) => {
-              console.log(err);
-              throw err;
-            })
-          )
+        this._genericService.update<Player, postResponse<Player>>(
+          PlayerService.apiUrl,
+          playerId,
+          player
+        )
       );
     } catch (error) {
       console.log(error);
@@ -199,7 +206,7 @@ export class PlayerEditComponent {
         },
         error: (err) => {
           console.log(err);
-          this.isCreatingPlayer.set(false);
+          this.isEditingPlayer.set(false);
           reject(err);
         },
       });
