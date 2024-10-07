@@ -72,7 +72,7 @@ export class CreateTeamModalComponent {
     try {
       return firstValueFrom(
         this._genericService
-          .create<Team, postResponse<Team>>(this._teamService.apiUrl, team)
+          .create<Team, postResponse<Team>>(TeamService.apiUrl, team)
           .pipe(
             catchError((err) => {
               console.log(err);
