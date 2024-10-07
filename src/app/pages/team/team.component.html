@@ -1,8 +1,8 @@
 <app-dashboard-panel-layout>
   @if(teamViewState() === 'VIEW'){
-  <app-team-view [team]="team()" [teamViewState]="teamViewState"></app-team-view>
+  <app-team-view [teamViewState]="teamViewState"></app-team-view>
   }
   @else{
-  <app-team-edit [team]="team"></app-team-edit>
+  <app-team-edit></app-team-edit>
   }
 </app-dashboard-panel-layout>

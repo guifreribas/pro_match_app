@@ -6,6 +6,7 @@ import { config } from '@app/config/config';
 import { DashboardPanelLayoutComponent } from '@app/layouts/dashboard-panel-layout/dashboard-panel-layout.component';
 import { Team } from '@app/models/team';
 import { TeamService } from '@app/services/api_services/team.service';
+import { TeamStateService } from '@app/services/global_states/team-state.service';
 import { TeamViewState } from '@app/types/team';
 
 @Component({
@@ -21,14 +22,16 @@ import { TeamViewState } from '@app/types/team';
 })
 export class TeamComponent implements OnInit {
   public imgUrl = config.IMG_URL;
-  public team = signal<Team | null>(null);
   public teamId: number | null = null;
   public teamViewState = signal<TeamViewState>('VIEW');
   public _isEditing = false;
   public isViewing = false;
 
+  public team = TeamStateService.activeTeam;
+
   private route = inject(ActivatedRoute);
   private _teamService = inject(TeamService);
+  private _teamState = inject(TeamStateService);
 
   ngOnInit(): void {
     this.teamId = this.route.snapshot.params['id'];
@@ -40,7 +43,7 @@ export class TeamComponent implements OnInit {
       this._teamService.getTeam(this.teamId).subscribe({
         next: (res) => {
           console.log(res);
-          this.team.set(res.data);
+          this._teamState.setActiveTeam(res.data);
         },
         error: (err) => {
           console.log(err);
