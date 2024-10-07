@@ -9,6 +9,7 @@ import { generateLeagueCalendar, Round } from '@app/helpers/competitions';
 import { CompetitionWithDetails } from '@app/models/competition';
 import { Match } from '@app/models/match';
 import { Team, TeamsGetResponse } from '@app/models/team';
+import { CompetitionTeamService } from '@app/services/api_services/competition-team.service';
 import { CompetitionService } from '@app/services/api_services/competition.service';
 import { MatchService } from '@app/services/api_services/match.service';
 import { StandingsService } from '@app/services/api_services/standings.service';
@@ -68,6 +69,7 @@ export class CompetitionInitalizerComponent implements OnInit {
   private _searchService = inject(SearchServiceService);
   private _matchService = inject(MatchService);
   private _standingsService = inject(StandingsService);
+  private _competitionTeamService = inject(CompetitionTeamService);
   private _userState = inject(UserStateService);
   private _route = inject(ActivatedRoute);
 
@@ -192,6 +194,7 @@ export class CompetitionInitalizerComponent implements OnInit {
         this.createMatches(leagueCalendar),
         this.initStandingsForEachTeam(teams),
       ]);
+      this.createCompetitionTeams(teams);
       console.log('MATCHES AND STANDINGS CREATED');
     } catch (error) {
       console.error('Error creating matches and standings: ', error);
@@ -287,5 +290,18 @@ export class CompetitionInitalizerComponent implements OnInit {
       console.error('Error updating competition: ', error);
       throw error;
     }
+  }
+
+  async createCompetitionTeams(teams: Team[]) {
+    const competitionTeams = teams.map(async (team) => {
+      firstValueFrom(
+        this._competitionTeamService.createCompetitionTeam({
+          competition_category_id: this.competition()?.competitionCategory
+            .competition_category_id as number,
+          team_id: team.id_team as number,
+        })
+      );
+    });
+    await Promise.all(competitionTeams);
   }
 }
