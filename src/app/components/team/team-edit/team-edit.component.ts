@@ -28,6 +28,7 @@ import { ResourceService } from '@app/services/api_services/resource.service';
 import { TeamPlayerService } from '@app/services/api_services/team-player.service';
 import { TeamService } from '@app/services/api_services/team.service';
 import { GlobalModalService } from '@app/services/global-modal.service';
+import { TeamPlayerStateService } from '@app/services/global_states/team-player-state.service';
 import { TeamStateService } from '@app/services/global_states/team-state.service';
 import { UserStateService } from '@app/services/global_states/user-state.service';
 import { SpinnerService } from '@app/services/spinner.service';
@@ -72,6 +73,7 @@ export class TeamEditComponent {
   public isSubmitted = false;
 
   private _userState = inject(UserStateService);
+  private _teamPlayerState = inject(TeamPlayerStateService);
   private _teamStateService = inject(TeamStateService);
   private _teamService = inject(TeamService);
   private _resourceService = inject(ResourceService);
