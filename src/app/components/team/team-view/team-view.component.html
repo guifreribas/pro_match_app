@@ -1,11 +1,12 @@
-<div class="min-h-fit relative flex flex-col gap-4 w-full justify-center">
+<div class="relative min-h-fit flex flex-col gap-4 justify-center w-fit">
 
   <div
-    class=" p-12 lg:p-12 bg-white relative shadow-md sm:rounded-lg overflow-hidden flex flex-col gap-8 w-full max-w-[1200px]">
-    <button data-tooltip-target="tooltip-default" type="button" class="absolute top-4 right-4 "
-      (click)="this.teamViewState.set('EDIT')">
+    class=" p-12 lg:p-12 bg-white relative shadow-md sm:rounded-lg overflow-hidden flex flex-col gap-8 w-full max-w-[1200px] ">
+    <img src="/assets/images/team_bg.webp" alt="Logo de l'Equip Local"
+      class="absolute inset-0 w-[700px] h-[700px] rounded-lg border object-cover opacity-10 -translate-y-6">
+    <button type="button" class="absolute top-4 right-4 " (click)="this.teamViewState.set('EDIT')">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
-        class="size-6 text-primary-600 hover:cursor-pointer hover:text-primary-700 transition-all duration-100">
+        class="size-6 text-gray-500 hover:cursor-pointer hover:text-gray-800 transition-all duration-100">
         <path
           d="M21.731 2.269a2.625 2.625 0 0 0-3.712 0l-1.157 1.157 3.712 3.712 1.157-1.157a2.625 2.625 0 0 0 0-3.712ZM19.513 8.199l-3.712-3.712-8.4 8.4a5.25 5.25 0 0 0-1.32 2.214l-.8 2.685a.75.75 0 0 0 .933.933l2.685-.8a5.25 5.25 0 0 0 2.214-1.32l8.4-8.4Z" />
         <path
@@ -13,23 +14,61 @@
       </svg>
     </button>
 
-    <!-- <div id="tooltip-default" role="tooltip"
-      class="absolute z-10 invisible inline-block px-3 py-2 text-sm font-medium text-white transition-opacity duration-500 bg-primary-700 rounded-lg shadow-sm opacity-0 tooltip">
-      Editar equipo
-      <div class="tooltip-arrow" data-popper-arrow></div>
-    </div> -->
 
-    <div class="w-full flex flex-wrap gap-8 py-4">
-      @if(team()?.avatar){
-      <img src="{{imgUrl + team()?.avatar}}" alt="{{team()?.name}}" class="w-40 h-40 rounded-lg border object-cover">
-      }
-      @else {
-      <img src="/assets/icons/avatar.svg" alt="{{team()?.name}}" class="w-40 h-40 rounded-lg border object-cover">
-      }
-      <section class="flex flex-col gap-1">
-        <h3 class="text-xl font-bold mb-2">{{team()?.name}}</h3>
-        <div class="flex flex-col text-sm gap-1 h-full">
-          <p class="text-gray-800"><span class="font-bold">Creado:</span> {{team()?.created_at | date:'dd/MM/yyyy'}}</p>
+    <div class="flex flex-col items-center max-w-md mx-auto  rounded-xl overflow-hidden backdrop-blur-sm">
+
+      <div class="w-full flex flex-wrap gap-8 py-4">
+        @if(team()?.avatar){
+        <img src="{{imgUrl + team()?.avatar}}" alt="{{team()?.name}}" class="w-40 h-40 rounded-lg border object-cover">
+        }
+        @else {
+        <img src="/assets/icons/avatar.svg" alt="{{team()?.name}}" class="w-40 h-40 rounded-lg border object-cover">
+        }
+        <section class="flex flex-col gap-1">
+          <h3 class="text-xl font-bold mb-2">{{team()?.name}}</h3>
+          <div class="flex flex-col text-sm gap-1 h-full">
+            <p class="text-gray-800"><span class="font-bold">Creado:</span> {{team()?.created_at | date:'dd/MM/yyyy'}}
+            </p>
+          </div>
+        </section>
+      </div>
+
+      <div class="w-full border-b my-12"></div>
+
+      <section class="w-full">
+        <h3 class="text-lg font-semibold text-gray-800 mb-4">Jugadores </h3>
+        <div class="flex flex-col gap-2">
+          @if(teamPlayers().length > 0){
+          @for(teamPlayer of teamPlayers(); track teamPlayer.id_team_player){
+          <a routerLink="/players/{{teamPlayer.player_id}}"
+            class="flex flex-row gap-4 p-2 w-full justify-between rounded-lg border-b hover:cursor-pointer hover:bg-gray-100 transition-all duration-100">
+            <div class="flex flex-row gap-2 items-center">
+              <p class="text-gray-800 text-lg font-bold">{{teamPlayer.player_number}}. </p>
+              @if(teamPlayer.player?.avatar){
+              <img src="{{imgUrl + teamPlayer.player?.avatar}}" alt="{{teamPlayer.player?.name}}"
+                class="w-10 h-10 rounded-lg object-cover">
+              }
+              @else {
+              <img src="/assets/icons/avatar.svg" alt="{{teamPlayer.player?.name}}"
+                class="w-10 h-10 rounded-lg object-cover">
+              }
+              <p class="text-gray-800">{{teamPlayer.player?.name}} {{teamPlayer.player?.last_name}}</p>
+            </div>
+            <div class="grid items-center">
+              <svg xmlns="http://www.w3.org/2000/svg" class="size-8 rounded-lg" viewBox="0 0 24 24" stroke-width="1.5"
+                stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                <path
+                  d="M12 9v-3.586a1 1 0 0 1 1.707 -.707l6.586 6.586a1 1 0 0 1 0 1.414l-6.586 6.586a1 1 0 0 1 -1.707 -.707v-3.586h-6v-6h6z" />
+                <path d="M3 9v6" />
+              </svg>
+            </div>
+          </a>
+          }
+          }
+          @else {
+          <p class="text-gray-600 text-sm p-2 rounded">Todavía no tienes jugadores</p>
+          }
         </div>
       </section>
     </div>
