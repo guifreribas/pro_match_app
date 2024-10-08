@@ -5,7 +5,9 @@ import { TeamViewComponent } from '@app/components/team/team-view/team-view.comp
 import { config } from '@app/config/config';
 import { DashboardPanelLayoutComponent } from '@app/layouts/dashboard-panel-layout/dashboard-panel-layout.component';
 import { Team } from '@app/models/team';
+import { TeamPlayerService } from '@app/services/api_services/team-player.service';
 import { TeamService } from '@app/services/api_services/team.service';
+import { TeamPlayerStateService } from '@app/services/global_states/team-player-state.service';
 import { TeamStateService } from '@app/services/global_states/team-state.service';
 import { TeamViewState } from '@app/types/team';
 
@@ -30,8 +32,10 @@ export class TeamComponent implements OnInit {
   public team = TeamStateService.activeTeam;
 
   private route = inject(ActivatedRoute);
-  private _teamService = inject(TeamService);
   private _teamState = inject(TeamStateService);
+  private _teamPlayerState = inject(TeamPlayerStateService);
+  private _teamService = inject(TeamService);
+  private _teamPlayersService = inject(TeamPlayerService);
 
   ngOnInit(): void {
     this.teamId = this.route.snapshot.params['id'];
@@ -47,6 +51,25 @@ export class TeamComponent implements OnInit {
         },
         error: (err) => {
           console.log(err);
+        },
+      });
+    }
+
+    if (this.teamId) {
+      const getTeamPlayersParams = {
+        team_id: this.teamId,
+        page: '1',
+        limit: 50,
+        sortBy: 'player_number',
+        sortOrder: 'asc',
+      };
+      this._teamPlayersService.getTeamPlayers(getTeamPlayersParams).subscribe({
+        next: (res) => {
+          this._teamPlayerState.setTeamPlayers(res.data.items);
+        },
+        error: (err) => {
+          console.log(err);
+          throw err;
         },
       });
     }
