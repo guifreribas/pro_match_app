@@ -27,36 +27,39 @@ interface GetCardsParams {
   providedIn: 'root',
 })
 export class CardService {
-  private apiUrl = `${config.apiUrl}/cards`;
+  private static readonly apiUrl = `${config.apiUrl}/cards`;
   private genericService = inject(GenericApiService);
 
   constructor() {}
 
   getCards(params: Partial<GetCardsParams>): Observable<getAllResponse<Card>> {
-    const url = urlParser(params, this.apiUrl);
+    const url = urlParser(params, CardService.apiUrl);
     return this.genericService.getAll<getAllResponse<Card>>(url);
   }
 
   getCard(id: number): Observable<getOneResponse<Card>> {
-    return this.genericService.getOne<getOneResponse<Card>>(this.apiUrl, id);
+    return this.genericService.getOne<getOneResponse<Card>>(
+      CardService.apiUrl,
+      id
+    );
   }
 
   createCard(card: Card): Observable<postResponse<Card>> {
     return this.genericService.create<Card, postResponse<Card>>(
-      this.apiUrl,
+      CardService.apiUrl,
       card
     );
   }
 
   updateCard(card: Card, id: number): Observable<updateResponse<Card>> {
     return this.genericService.update<Card, updateResponse<Card>>(
-      this.apiUrl,
+      CardService.apiUrl,
       id,
       card
     );
   }
 
   deleteCard(id: number): Observable<deleteResponse> {
-    return this.genericService.delete<deleteResponse>(this.apiUrl, id);
+    return this.genericService.delete<deleteResponse>(CardService.apiUrl, id);
   }
 }
