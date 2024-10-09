@@ -52,16 +52,26 @@ export class AddFoulComponent {
 
   constructor() {
     effect(() => {
-      const matchData = this._matchState.match();
-      if (matchData) {
-        this.localTeam = matchData.localTeam;
-        this.visitorTeam = matchData.visitorTeam;
-        this.localPlayers = matchData.localPlayers;
-        this.visitorPlayers = matchData.visitorPlayers;
-        // this.fouls = matchData.fouls;
-
+      const { localTeam, visitorTeam } = this._matchState;
+      if (localTeam) {
+        this.localTeam = localTeam();
         this.foulForm.controls.team.setValue(String(this.localTeam?.id_team));
       }
+      if (visitorTeam) {
+        this.visitorTeam = visitorTeam();
+      }
+    });
+
+    effect(() => {
+      const localPlayers = this._matchState.localPlayers();
+      const visitorPlayers = this._matchState.visitorPlayers();
+      if (localPlayers) this.localPlayers = localPlayers;
+      if (visitorPlayers) this.visitorPlayers = visitorPlayers;
+    });
+
+    effect(() => {
+      const fouls = this._matchState.fouls();
+      if (fouls) this.fouls = fouls;
     });
 
     this.foulForm.controls.team.valueChanges.subscribe((teamId) => {
@@ -81,7 +91,7 @@ export class AddFoulComponent {
         part: this.foulForm.value.part as FoulPart,
         player_id: Number(this.foulForm.value.player),
         team_id: Number(this.foulForm.value.team),
-        match_id: Number(this._matchState.match()?.match.id_match),
+        match_id: Number(this._matchState.match()?.id_match),
         user_id: Number(this._userState.me()?.id_user),
       })
       .subscribe({
