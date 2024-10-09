@@ -5,6 +5,7 @@ import {
   OnDestroy,
   OnInit,
   signal,
+  WritableSignal,
 } from '@angular/core';
 import { AddGoalComponent } from '../add-goal/add-goal.component';
 import { AddCardComponent } from '../add-card/add-card.component';
@@ -21,9 +22,15 @@ import { Goal, GoalWithPlayer } from '@app/models/goal';
 import { MatchPlayerService } from '@app/services/api_services/match-player.service';
 import { MatchPlayerWithDetails } from '@app/models/matchPlayer';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
-import { Match, MatchStatus } from '@app/models/match';
+import { Match, MatchStatus, MatchWithDetails } from '@app/models/match';
 import { MatchService } from '@app/services/api_services/match.service';
-import { distinctUntilChanged, firstValueFrom, Subscription } from 'rxjs';
+import {
+  distinctUntilChanged,
+  firstValueFrom,
+  Subject,
+  Subscription,
+  takeUntil,
+} from 'rxjs';
 import { config } from '@app/config/config';
 import { StandingsService } from '@app/services/api_services/standings.service';
 import { Standings } from '@app/models/standings';
@@ -33,6 +40,7 @@ import { CardService } from '@app/services/api_services/card.service';
 import { GlobalModalService } from '@app/services/global-modal.service';
 import { SpinnerService } from '@app/services/spinner.service';
 import { getMinute } from '@app/helpers/match';
+import { myAnimations } from '@app/helpers/matchEdit';
 
 type FormType = 'GOAL' | 'CARD' | 'FOUL' | null;
 
@@ -54,39 +62,18 @@ interface GetMatchMinutParams {
   ],
   templateUrl: './match-edit.component.html',
   styleUrl: './match-edit.component.scss',
-  animations: [
-    trigger('contentAnimation', [
-      transition(':enter', [
-        style({ opacity: 0, maxHeight: '0px' }),
-        animate('0.3s ease-in', style({ opacity: 1, maxHeight: '1000px' })),
-      ]),
-      transition(':leave', [
-        style({ opacity: 1, maxHeight: '1000px' }),
-        animate('0.3s ease-in', style({ opacity: 0, maxHeight: '0px' })),
-      ]),
-    ]),
-    trigger('starAnimation', [
-      transition(':enter', [
-        style({ opacity: 0, transform: 'scale(0)' }),
-        animate('0.2s ease-in', style({ opacity: 1, transform: 'scale(1)' })),
-      ]),
-      transition(':leave', [
-        style({ opacity: 1, transform: 'scale(1)' }),
-        animate('0s ease-in', style({ opacity: 0, transform: 'scale(0)' })),
-      ]),
-    ]),
-  ],
+  animations: [myAnimations()],
 })
-export class MatchEditComponent implements OnInit, OnDestroy {
+export class MatchEditComponent implements OnInit {
   public imgUrl = config.IMG_URL;
   public whichFormIsActive = signal<FormType>(null);
   public localTeam: Team | null = null;
   public visitorTeam: Team | null = null;
   public localPlayers: TeamPlayerDetailsAndGoals[] = [];
   public visitorPlayers: TeamPlayerDetailsAndGoals[] = [];
-  public goals: GoalWithPlayer[] = [];
-  public cards: CardWithPlayer[] = [];
-  public fouls: FoulWithPlayer[] = [];
+  public goals: WritableSignal<GoalWithPlayer[]> = signal([]);
+  public cards: WritableSignal<CardWithPlayer[]> = signal([]);
+  public fouls: WritableSignal<FoulWithPlayer[]> = signal([]);
   public localGoals: Goal[] = [];
   public visitorGoals: Goal[] = [];
   public matchPlayers: MatchPlayerWithDetails[] = [];
@@ -103,63 +90,77 @@ export class MatchEditComponent implements OnInit, OnDestroy {
 
   public matchStatus: FormControl = new FormControl(null);
 
+  private _isFirstGoalLoad = true;
   private _matchState = inject(MatchStateService);
   private _globalModal = inject(GlobalModalService);
   private _spinnerService = inject(SpinnerService);
-
   private _matchPlayerService = inject(MatchPlayerService);
   private _matchService = inject(MatchService);
   private _standingsService = inject(StandingsService);
   private _cardService = inject(CardService);
-  private _subscriptions: Subscription = new Subscription();
+  private _subscriptins: Subscription = new Subscription();
+  private destroy$ = new Subject<void>();
 
   constructor() {
-    effect(() => {
-      const matchData = this._matchState.match();
-      if (matchData) {
-        this.localTeam = matchData.localTeam;
-        this.visitorTeam = matchData.visitorTeam;
-        this.localPlayers = matchData.localPlayers;
-        this.visitorPlayers = matchData.visitorPlayers;
-        this.goals = matchData.goals || [];
-        this.cards = matchData.cards || [];
-        this.fouls = matchData.fouls || [];
-        if (matchData.goals.length > 0) {
-          this.goals.forEach((goal) => {
-            if (goal.team_id === this.localTeam?.id_team) {
-              this.localGoals.push(goal);
-              this.localPlayers = this.localPlayers.map((player) => {
-                if (player.player_id === goal.player_id)
-                  return { ...player, goals: [goal] };
-                return player;
-              });
-            } else {
-              this.visitorGoals.push(goal);
-              this.visitorPlayers = this.visitorPlayers.map((player) => {
-                if (player.player_id === goal.player_id)
-                  return { ...player, goals: [goal] };
-                return player;
-              });
-            }
-          });
-        }
-        this.matchPlayers = matchData.matchPlayers;
-        this.matchPlayersIds = matchData.matchPlayers.map(
-          (matchPlayer) => matchPlayer.player_id
-        );
+    this._setupEffects();
+  }
 
-        this.matchStatus.setValue(matchData.match.status, { emitEvent: false });
-        this.prevMatchStatus = matchData.match.status;
+  private _setupEffects() {
+    effect(() => {
+      const localTeam = this._matchState.localTeam();
+      const visitorTeam = this._matchState.visitorTeam();
+      if (localTeam) this.localTeam = localTeam;
+      if (visitorTeam) this.visitorTeam = visitorTeam;
+    });
+    effect(() => {
+      const localPlayers = this._matchState.localPlayers();
+      const visitorPlayers = this._matchState.visitorPlayers();
+      if (localPlayers) this.localPlayers = localPlayers;
+      if (visitorPlayers) this.visitorPlayers = visitorPlayers;
+    });
+
+    effect(() => {
+      const localTeamId = this._matchState.localTeam()?.id_team;
+      this.goals = this._matchState.goals;
+      if (this.goals().length > 0 && localTeamId && this._isFirstGoalLoad) {
+        this.updateGoals(localTeamId);
+        this._isFirstGoalLoad = false;
+      }
+      if (
+        this.goals().length > 0 &&
+        this.localTeam?.id_team &&
+        !this._isFirstGoalLoad
+      ) {
+        this.updateGoals(this.localTeam.id_team);
+      }
+    });
+    effect(() => {
+      this.cards = this._matchState.cards;
+      console.log('CARDS', this.cards());
+    });
+    effect(() => {
+      this.fouls = this._matchState.fouls;
+    });
+    effect(() => {
+      this.matchPlayers = this._matchState.matchPlayers();
+      this.matchPlayersIds = this.matchPlayers.map(
+        (matchPlayer) => matchPlayer.player_id
+      );
+    });
+    effect(() => {
+      const match = this._matchState.match();
+      if (match) {
+        this.matchStatus.setValue(match.status, { emitEvent: false });
+        this.prevMatchStatus = match.status;
       }
     });
   }
 
   ngOnInit(): void {
-    const matchStatusSub = this.matchStatus.valueChanges
-      .pipe(distinctUntilChanged())
+    this.matchStatus.valueChanges
+      .pipe(distinctUntilChanged(), takeUntil(this.destroy$))
       .subscribe(async (value) => {
-        console.log('MATCH STATUS', value);
-        const matchId = this._matchState.match()?.match.id_match;
+        const matchId = this._matchState.match()?.id_match;
         if (matchId && value)
           this.updateMatch({ status: value as MatchStatus }, matchId);
 
@@ -167,26 +168,47 @@ export class MatchEditComponent implements OnInit, OnDestroy {
         await this.updateVisitorStandings(value);
         this.prevMatchStatus = value;
       });
-    this._subscriptions.add(matchStatusSub);
   }
 
-  ngOnDestroy(): void {
-    this._subscriptions.unsubscribe();
+  updateGoals(localTeamId: number) {
+    this.localGoals = this.goals().filter(
+      (goal) => goal.team_id === localTeamId
+    );
+    this.visitorGoals = this.goals().filter(
+      (goal) => goal.team_id !== localTeamId
+    );
+
+    this.localPlayers = this._updatePlayerGoals(
+      this.localPlayers,
+      this.localGoals
+    );
+    this.visitorPlayers = this._updatePlayerGoals(
+      this.visitorPlayers,
+      this.visitorGoals
+    );
+  }
+
+  private _updatePlayerGoals(
+    players: TeamPlayerDetailsAndGoals[],
+    goals: GoalWithPlayer[]
+  ): TeamPlayerDetailsAndGoals[] {
+    return players.map((player) => ({
+      ...player,
+      goals: goals.filter((goal) => goal.player_id === player.player_id),
+    }));
   }
 
   async updateLocalStandings(value: MatchStatus) {
-    const localTeamId = this._matchState.match()?.match.local_team.id_team;
+    const localTeamId = this._matchState.match()?.local_team.id_team;
     if (!localTeamId) return;
     try {
       const standing = await firstValueFrom(
         this._standingsService.getStandings({
-          competition_id:
-            this._matchState.match()?.match.competition.id_competition,
+          competition_id: this._matchState.match()?.competition.id_competition,
           team_id: localTeamId,
         })
       );
       const localStndings = standing.data.items[0];
-      console.log('STANDINGS', standing);
       const isVictory = this.localGoals.length > localStndings.goals_for;
       const isDraw = this.localGoals.length === localStndings.goals_for;
       const isDefeat = this.localGoals.length < localStndings.goals_for;
@@ -212,13 +234,11 @@ export class MatchEditComponent implements OnInit, OnDestroy {
           losses: isDefeat ? localStndings.losses - 1 : localStndings.losses,
         };
       }
-      console.log('DATA TO UPDATE', dataToUpdate);
       if (!dataToUpdate) return;
       const response = await firstValueFrom(
         this._standingsService.updateStanding(dataToUpdate, localTeamId)
       );
 
-      console.log('STANDINGS', response);
       return response;
     } catch (error) {
       console.error('Error updating standings: ', error);
@@ -227,18 +247,16 @@ export class MatchEditComponent implements OnInit, OnDestroy {
   }
 
   async updateVisitorStandings(value: MatchStatus) {
-    const visitorTeamId = this._matchState.match()?.match.visitor_team.id_team;
+    const visitorTeamId = this._matchState.match()?.visitor_team.id_team;
     if (!visitorTeamId) return;
     try {
       const standing = await firstValueFrom(
         this._standingsService.getStandings({
-          competition_id:
-            this._matchState.match()?.match.competition.id_competition,
+          competition_id: this._matchState.match()?.competition.id_competition,
           team_id: visitorTeamId,
         })
       );
       const visitorStndings = standing.data.items[0];
-      console.log('STANDINGS', standing);
       const isVictory = this.visitorGoals.length > visitorStndings.goals_for;
       const isDraw = this.visitorGoals.length === visitorStndings.goals_for;
       const isDefeat = this.visitorGoals.length < visitorStndings.goals_for;
@@ -268,13 +286,11 @@ export class MatchEditComponent implements OnInit, OnDestroy {
             : visitorStndings.losses,
         };
       }
-      console.log('DATA TO UPDATE', dataToUpdate);
       if (!dataToUpdate) return;
       const response = await firstValueFrom(
         this._standingsService.updateStanding(dataToUpdate, visitorTeamId)
       );
 
-      console.log('STANDINGS', response);
       return response;
     } catch (error) {
       console.error('Error updating standings: ', error);
@@ -309,52 +325,73 @@ export class MatchEditComponent implements OnInit, OnDestroy {
   }
 
   onTogglePlayer(player: TeamPlayerWithDetails) {
+    const isLocalPlayer = true;
     if (this.matchPlayersIds.includes(player.player_id)) {
-      this.deleteMatchPlayer(player);
+      this.deleteMatchPlayer(player, isLocalPlayer);
       return;
     }
-    this.createMatchPlayer(player);
+    this.createMatchPlayer(player, isLocalPlayer);
   }
 
-  private deleteMatchPlayer(player: TeamPlayerWithDetails) {
+  private async deleteMatchPlayer(
+    player: TeamPlayerWithDetails,
+    isLocalPlayer: boolean
+  ) {
     const matchPlayer = this._matchState
       .match()
       ?.matchPlayers.find(
         (matchPlayer) => matchPlayer.player_id === player.player_id
       );
     if (!matchPlayer?.id_match_player) return;
-    const deleteMatchPlayerSub = this._matchPlayerService
-      .deleteMatchPlayer(matchPlayer.id_match_player)
-      .subscribe({
-        next: (res) => {
-          this._matchState.updateMatch({
-            ...this._matchState.match(),
-            matchPlayers: this._matchState
-              .match()
-              ?.matchPlayers.filter(
-                (matchPlayer) => matchPlayer.player_id !== player.player_id
-              ),
-          });
-        },
-        error: (err) => {
-          console.log(err);
-        },
+
+    try {
+      await firstValueFrom(
+        this._matchPlayerService.deleteMatchPlayer(matchPlayer.id_match_player)
+      );
+
+      this._matchState.updateMatch({
+        ...this._matchState.match(),
+        matchPlayers: this._matchState
+          .match()
+          ?.matchPlayers.filter(
+            (matchPlayer) => matchPlayer.player_id !== player.player_id
+          ),
       });
-    this._subscriptions.add(deleteMatchPlayerSub);
+      // this._updateTeamPlayers(isLocalPlayer);
+    } catch (error) {
+      console.error('Error deleting match player: ', error);
+      throw error;
+    }
   }
 
-  private async createMatchPlayer(player: TeamPlayerWithDetails) {
+  // private _updateTeamPlayers(isLocalPlayer: boolean) {
+  //   if (isLocalPlayer) {
+  //     this._matchState.localPlayers.update((prev) => {
+  //       if (!prev) return prev;
+  //       return prev.filter((player) => player.player_id !== player.player_id);
+  //     });
+  //   } else {
+  //     this._matchState.visitorPlayers.update((prev) => {
+  //       if (!prev) return prev;
+  //       return prev.filter((player) => player.player_id !== player.player_id);
+  //     });
+  //   }
+  // }
+
+  private async createMatchPlayer(
+    player: TeamPlayerWithDetails,
+    isLocalPlayer: boolean
+  ) {
+    console.log('CREATE MATCH PLAYER', player);
     try {
       const currentMatch = this._matchState.match();
       if (!currentMatch) return;
 
-      this._spinnerService.setLoading(true);
-
       const newMatchPlayer = {
-        match_id: Number(currentMatch?.match.id_match),
+        match_id: Number(currentMatch?.id_match),
         player_id: player.player_id,
         team_id: player.team_id,
-        user_id: Number(currentMatch?.match.user_id),
+        user_id: Number(currentMatch?.user_id),
         team_player_id: player.id_team_player,
       };
 
@@ -363,6 +400,10 @@ export class MatchEditComponent implements OnInit, OnDestroy {
       );
       if (createMatchPlayerResponse) {
         const matchPlayers = currentMatch.matchPlayers || [];
+        this._matchState.matchPlayers.update((prev) => {
+          if (!prev) return [createMatchPlayerResponse.data];
+          return [...prev, createMatchPlayerResponse.data];
+        });
         this._matchState.updateMatch({
           ...currentMatch,
           matchPlayers: [...matchPlayers, createMatchPlayerResponse.data],
@@ -371,36 +412,35 @@ export class MatchEditComponent implements OnInit, OnDestroy {
     } catch (error) {
       console.error('Error creating match player: ', error);
       throw error;
-    } finally {
-      this._spinnerService.setLoading(false);
     }
   }
 
-  private updateMatch(params: Partial<Match>, matchId: number) {
-    const updateMatchSub = this._matchService
-      .updateMatch(params, matchId)
-      .subscribe({
-        next: (res) => {
-          this._matchState.updateMatch({
-            ...this._matchState.match(),
-            match: {
-              ...this._matchState.match()?.match,
-              ...params,
-            },
-          });
-        },
-        error: (err) => {
-          console.log(err);
-        },
+  private async updateMatch(params: Partial<Match>, matchId: number) {
+    try {
+      const response = await firstValueFrom(
+        this._matchService.updateMatch(params, matchId)
+      );
+      const matchWithDetails = await firstValueFrom(
+        this._matchService.getMatches({ id_match: matchId })
+      );
+
+      const updatedMatch = matchWithDetails.data.items[0];
+
+      this._matchState.match.update((prev) => {
+        if (!prev) return updatedMatch;
+        return { ...prev, ...updatedMatch };
       });
-    this._subscriptions.add(updateMatchSub);
+    } catch (error) {
+      console.error('Error updating match: ', error);
+      throw error;
+    }
   }
 
   updateStateAfterUpdateMatch(match: Match) {
     this._matchState.updateMatch({
       ...this._matchState.match(),
       match: {
-        ...this._matchState.match()?.match,
+        ...this._matchState.match(),
         ...match,
       },
     });
@@ -450,9 +490,9 @@ export class MatchEditComponent implements OnInit, OnDestroy {
   }
 
   updateStateAfterDeleteCard(cardId: number) {
-    this._matchState.updateMatch({
-      ...this._matchState.match(),
-      cards: this.cards.filter((card) => card.id_card !== cardId),
+    this._matchState.cards.update((prev) => {
+      if (!prev) return prev;
+      return prev.filter((card) => card.id_card !== cardId);
     });
   }
 
