@@ -6,6 +6,7 @@ import {
   OnDestroy,
   OnInit,
   signal,
+  WritableSignal,
 } from '@angular/core';
 import { AddGoalComponent } from '../add-goal/add-goal.component';
 import { AddCardComponent } from '../add-card/add-card.component';
@@ -18,14 +19,19 @@ import {
   TeamPlayerDetailsAndGoals,
   TeamPlayerWithDetails,
 } from '@app/models/team-player';
-import { Goal } from '@app/models/goal';
+import { Goal, GoalWithPlayer } from '@app/models/goal';
 import { MatchPlayerService } from '@app/services/api_services/match-player.service';
-import { MatchPlayerWithDetails } from '@app/models/matchPlayer';
+import {
+  MatchPlayerWithDetails,
+  MatchPlayerWithDetailsAndGoals,
+} from '@app/models/matchPlayer';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { Match } from '@app/models/match';
 import { MatchService } from '@app/services/api_services/match.service';
 import { distinctUntilChanged, Subscription } from 'rxjs';
 import { config } from '@app/config/config';
+import { Card, CardWithPlayer } from '@app/models/card';
+import { Foul, FoulWithPlayer } from '@app/models/foul';
 
 type FormType = 'GOAL' | 'CARD' | 'FOUL' | null;
 
@@ -47,55 +53,89 @@ export class MatchViewComponent {
   public whichFormIsActive = signal<FormType>(null);
   public localTeam: Team | null = null;
   public visitorTeam: Team | null = null;
-  public localPlayers: TeamPlayerDetailsAndGoals[] = [];
-  public visitorPlayers: TeamPlayerDetailsAndGoals[] = [];
-  public goals: Goal[] = [];
+  // public localPlayers: TeamPlayerDetailsAndGoals[] = [];
+  // public visitorPlayers: TeamPlayerDetailsAndGoals[] = [];
+  public localPlayers: MatchPlayerWithDetailsAndGoals[] = [];
+  public visitorPlayers: MatchPlayerWithDetailsAndGoals[] = [];
+  public goals: WritableSignal<GoalWithPlayer[]> = signal([]);
+  public cards: WritableSignal<CardWithPlayer[]> = signal([]);
+  public fouls: WritableSignal<FoulWithPlayer[]> = signal([]);
   public localGoals: Goal[] = [];
   public visitorGoals: Goal[] = [];
   public matchPlayers: MatchPlayerWithDetails[] = [];
   public matchPlayersIds: number[] = [];
   public status = '';
 
-  private _matchPlayerService = inject(MatchPlayerService);
-  private _matchService = inject(MatchService);
+  private _isFirstGoalLoad = true;
+
   private _matchState = inject(MatchStateService);
-  private _subscriptions: Subscription = new Subscription();
 
   constructor() {
+    this._setupEffects();
+  }
+
+  private _setupEffects() {
+    effect(() => {
+      const localTeam = this._matchState.localTeam();
+      const visitorTeam = this._matchState.visitorTeam();
+      if (localTeam) this.localTeam = localTeam;
+      if (visitorTeam) this.visitorTeam = visitorTeam;
+    });
+
+    effect(() => {
+      const localTeamId = this._matchState.localTeam()?.id_team;
+      this.goals = this._matchState.goals;
+      if (this.goals().length > 0 && localTeamId && this._isFirstGoalLoad) {
+        this.updateGoals(localTeamId);
+        this._isFirstGoalLoad = false;
+      }
+      if (
+        this.goals().length > 0 &&
+        this.localTeam?.id_team &&
+        !this._isFirstGoalLoad
+      ) {
+        this.updateGoals(this.localTeam.id_team);
+      }
+    });
+    effect(() => {
+      this.cards = this._matchState.cards;
+    });
+    effect(() => {
+      this.fouls = this._matchState.fouls;
+    });
+    effect(() => {
+      const matchPlayers = this._matchState.matchPlayers();
+      if (matchPlayers) {
+        this.matchPlayers = matchPlayers;
+        this.matchPlayersIds = this.matchPlayers.map(
+          (matchPlayer) => matchPlayer.player_id
+        );
+        const localPlayers = matchPlayers.filter(
+          (matchPlayer) => matchPlayer.team_id === this.localTeam?.id_team
+        );
+        this.localPlayers = localPlayers.map((matchPlayer) => ({
+          ...matchPlayer,
+          goals: this.goals().filter(
+            (goal) => goal.player_id === matchPlayer.player_id
+          ),
+        }));
+
+        const visitorPlayers = matchPlayers.filter(
+          (matchPlayer) => matchPlayer.team_id !== this.localTeam?.id_team
+        );
+        this.visitorPlayers = visitorPlayers.map((matchPlayer) => ({
+          ...matchPlayer,
+          goals: this.goals().filter(
+            (goal) => goal.player_id !== matchPlayer.player_id
+          ),
+        }));
+      }
+    });
+
     effect(() => {
       const matchData = this._matchState.match();
       if (matchData) {
-        this.localTeam = matchData.localTeam;
-        this.visitorTeam = matchData.visitorTeam;
-        this.localPlayers = matchData.localPlayers;
-        this.visitorPlayers = matchData.visitorPlayers;
-        this.goals = matchData.goals;
-        if (matchData.goals.length > 0) {
-          this.goals.forEach((goal) => {
-            if (goal.team_id === this.localTeam?.id_team) {
-              this.localGoals.push(goal);
-              this.localPlayers = this.localPlayers.map((player) => {
-                if (player.player_id === goal.player_id)
-                  return { ...player, goals: [goal] };
-                return player;
-              });
-            } else {
-              this.visitorGoals.push(goal);
-              this.visitorPlayers = this.visitorPlayers.map((player) => {
-                if (player.player_id === goal.player_id)
-                  return { ...player, goals: [goal] };
-                return player;
-              });
-            }
-          });
-        }
-        console.log({ locla: this.localPlayers, visitor: this.visitorPlayers });
-        this.matchPlayers = matchData.matchPlayers;
-        this.matchPlayersIds = matchData.matchPlayers.map(
-          (matchPlayer) => matchPlayer.player_id
-        );
-
-        this.status = matchData.match.status;
+        this.status = matchData.status;
       }
     });
   }
@@ -103,6 +143,35 @@ export class MatchViewComponent {
   ngOnInit(): void {}
 
   ngOnDestroy(): void {}
+
+  updateGoals(localTeamId: number) {
+    this.localGoals = this.goals().filter(
+      (goal) => goal.team_id === localTeamId
+    );
+    this.visitorGoals = this.goals().filter(
+      (goal) => goal.team_id !== localTeamId
+    );
+
+    this.localPlayers = this._updatePlayerGoals(
+      this.localPlayers,
+      this.localGoals
+    );
+    console.log('LOCAL PLAYERS', this.localPlayers);
+    this.visitorPlayers = this._updatePlayerGoals(
+      this.visitorPlayers,
+      this.visitorGoals
+    );
+  }
+
+  private _updatePlayerGoals(
+    players: MatchPlayerWithDetailsAndGoals[],
+    goals: GoalWithPlayer[]
+  ): MatchPlayerWithDetailsAndGoals[] {
+    return players.map((player) => ({
+      ...player,
+      goals: goals.filter((goal) => goal.player_id === player.player_id),
+    }));
+  }
 
   setFormType(formType: FormType): string | null {
     if (this.whichFormIsActive() === formType) {
@@ -118,94 +187,5 @@ export class MatchViewComponent {
     }
     this.whichFormIsActive.set(formType);
     return formType;
-  }
-
-  getButtonClasses(type: FormType) {
-    if (this.whichFormIsActive() === type) {
-      return {
-        'bg-primary-900': true,
-        'ring-primary-300': true,
-      };
-    }
-    return {};
-  }
-
-  // onTogglePlayer(player: TeamPlayerWithDetails) {
-  //   if (this.matchPlayersIds.includes(player.player_id)) {
-  //     this.deleteMatchPlayer(player);
-  //     return;
-  //   }
-  //   this.createMatchPlayer(player);
-  // }
-
-  // private deleteMatchPlayer(player: TeamPlayerWithDetails) {
-  //   const matchPlayer = this._matchState
-  //     .match()
-  //     ?.matchPlayers.find(
-  //       (matchPlayer) => matchPlayer.player_id === player.player_id
-  //     );
-  //   if (!matchPlayer?.id_match_player) return;
-  //   const deleteMatchPlayerSub = this._matchPlayerService
-  //     .deleteMatchPlayer(matchPlayer.id_match_player)
-  //     .subscribe({
-  //       next: (res) => {
-  //         this._matchState.updateMatch({
-  //           ...this._matchState.match(),
-  //           matchPlayers: this._matchState
-  //             .match()
-  //             ?.matchPlayers.filter(
-  //               (matchPlayer) => matchPlayer.player_id !== player.player_id
-  //             ),
-  //         });
-  //       },
-  //       error: (err) => {
-  //         console.log(err);
-  //       },
-  //     });
-  //   this._subscriptions.add(deleteMatchPlayerSub);
-  // }
-
-  private createMatchPlayer(player: TeamPlayerWithDetails) {
-    const createMatchPlayerSub = this._matchPlayerService
-      .createMatchPlayer({
-        match_id: Number(this._matchState.match()?.match.id_match),
-        player_id: player.player_id,
-        team_id: player.team_id,
-        user_id: Number(this._matchState.match()?.match.user_id),
-        team_player_id: player.id_team_player,
-      })
-      .subscribe({
-        next: (res) => {
-          const matchPlayers = this._matchState.match()?.matchPlayers || [];
-          this._matchState.updateMatch({
-            ...this._matchState.match(),
-            matchPlayers: [...matchPlayers, res.data],
-          });
-        },
-        error: (err) => {
-          console.log(err);
-        },
-      });
-    this._subscriptions.add(createMatchPlayerSub);
-  }
-
-  private updateMatch(params: Partial<Match>, matchId: number) {
-    const updateMatchSub = this._matchService
-      .updateMatch(params, matchId)
-      .subscribe({
-        next: (res) => {
-          this._matchState.updateMatch({
-            ...this._matchState.match(),
-            match: {
-              ...this._matchState.match()?.match,
-              ...params,
-            },
-          });
-        },
-        error: (err) => {
-          console.log(err);
-        },
-      });
-    this._subscriptions.add(updateMatchSub);
   }
 }
