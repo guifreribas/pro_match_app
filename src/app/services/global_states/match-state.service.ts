@@ -23,7 +23,15 @@ export interface MatchCompletedData {
   providedIn: 'root',
 })
 export class MatchStateService {
-  public readonly match = signal<MatchCompletedData | null>(null);
+  public readonly match = signal<MatchWithDetails | null>(null);
+  public readonly goals = signal<GoalWithPlayer[]>([]);
+  public readonly cards = signal<CardWithPlayer[]>([]);
+  public readonly fouls = signal<FoulWithPlayer[]>([]);
+  public readonly localTeam = signal<Team | null>(null);
+  public readonly visitorTeam = signal<Team | null>(null);
+  public readonly localPlayers = signal<TeamPlayerWithDetails[]>([]);
+  public readonly visitorPlayers = signal<TeamPlayerWithDetails[]>([]);
+  public readonly matchPlayers = signal<MatchPlayerWithDetails[]>([]);
 
   constructor() {}
 
@@ -31,7 +39,19 @@ export class MatchStateService {
     return this.match;
   }
 
-  setMatch(match: any) {
+  setAllMatchData(match: MatchCompletedData) {
+    console.log('MATCH STATE', match);
+    this.match.set(match.match);
+    this.goals.set(match.goals);
+    this.cards.set(match.cards);
+    this.fouls.set(match.fouls);
+    this.localTeam.set(match.localTeam);
+    this.visitorTeam.set(match.visitorTeam);
+    this.localPlayers.set(match.localPlayers);
+    this.visitorPlayers.set(match.visitorPlayers);
+    this.matchPlayers.set(match.matchPlayers);
+  }
+  setMatch(match: MatchWithDetails) {
     this.match.set(match);
   }
 
