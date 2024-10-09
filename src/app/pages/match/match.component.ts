@@ -79,7 +79,7 @@ export class MatchComponent {
     userId: number;
     matchId: number;
   }) {
-    const [match, goals, cards, matchPlayers] = await Promise.all([
+    const [match, goals, cards, fouls, matchPlayers] = await Promise.all([
       firstValueFrom(
         this._matchService.getMatches({ id_match: matchId, user_id: userId })
       ),
@@ -92,6 +92,13 @@ export class MatchComponent {
       ),
       firstValueFrom(
         this._cardService.getCards({
+          match_id: matchId,
+          user_id: userId,
+          limit: 30,
+        })
+      ),
+      firstValueFrom(
+        this._foulService.getFouls({
           match_id: matchId,
           user_id: userId,
           limit: 30,
@@ -135,21 +142,48 @@ export class MatchComponent {
       ),
     ]);
 
+    const players = matchPlayers.data.items;
+
+    const goalsWithPlayers = goals.data.items.map((goal) => {
+      const player = players.find(
+        (player) => player.player_id === goal.player_id
+      );
+      return { ...goal, player: player?.player };
+    });
+
+    console.log('GOALS', goalsWithPlayers);
+
+    const cardsWithPlayers = cards.data.items.map((card) => {
+      const player = players.find(
+        (player) => player.player_id === card.player_id
+      );
+      return { ...card, player: player?.player };
+    });
+
+    const foulsWithPlayers = fouls.data.items.map((foul) => {
+      const player = players.find(
+        (player) => player.player_id === foul.player_id
+      );
+      return { ...foul, player: player?.player };
+    });
+
     this._matchState.setMatch({
       match: match.data.items[0],
-      goals: goals.data.items,
-      cards: cards.data.items,
+      goals: goalsWithPlayers,
+      cards: cardsWithPlayers,
+      fouls: foulsWithPlayers,
       localTeam: localTeam.data.items[0],
       visitorTeam: visitorTeam.data.items[0],
       localPlayers: localPlayers.data.items,
       visitorPlayers: visitorPlayers.data.items,
-      matchPlayers: matchPlayers.data.items,
+      matchPlayers: players,
     });
 
     console.log({
       match: match.data.items[0],
-      goals: goals.data.items,
-      cards: cards.data.items,
+      goals: goalsWithPlayers,
+      cards: cardsWithPlayers,
+      fouls: foulsWithPlayers,
       localTeam: localTeam.data.items[0],
       visitorTeam: visitorTeam.data.items[0],
       localPlayers: localPlayers.data.items,
