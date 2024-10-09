@@ -1,3 +1,5 @@
+import { Player } from './player';
+
 export type GoalPart =
   | 'FIRST_HALF'
   | 'SECOND_HALF'
@@ -16,6 +18,10 @@ export interface Goal {
   competition_id: number;
   created_at?: Date;
   updated_at?: Date;
+}
+
+export interface GoalWithPlayer extends Goal {
+  player: Player;
 }
 
 export interface GetGoalsParams {

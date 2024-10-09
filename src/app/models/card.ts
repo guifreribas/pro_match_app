@@ -1,3 +1,5 @@
+import { Player } from './player';
+
 export type CardType = 'YELLOW' | 'RED' | 'BLUE';
 export type CardPart =
   | 'FIRST_HALF'
@@ -18,4 +20,8 @@ export interface Card {
   user_id: number;
   created_at?: Date;
   updated_at?: Date;
+}
+
+export interface CardWithPlayer extends Card {
+  player: Player;
 }

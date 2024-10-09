@@ -1,3 +1,5 @@
+import { Player } from './player';
+
 export type FoulPart =
   | 'FIRST_HALF'
   | 'SECOND_HALF'
@@ -15,4 +17,8 @@ export interface Foul {
   user_id: number;
   created_at?: Date;
   updated_at?: Date;
+}
+
+export interface FoulWithPlayer extends Foul {
+  player: Player;
 }
