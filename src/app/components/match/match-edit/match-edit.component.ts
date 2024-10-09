@@ -121,31 +121,38 @@ export class MatchEditComponent implements OnInit {
 
     effect(() => {
       const localTeamId = this._matchState.localTeam()?.id_team;
-      this.goals = this._matchState.goals;
-      if (this.goals().length > 0 && localTeamId && this._isFirstGoalLoad) {
-        this.updateGoals(localTeamId);
-        this._isFirstGoalLoad = false;
+      const goals = this._matchState.goals;
+      if (goals) {
+        this.goals = goals;
+        if (this.goals().length > 0 && localTeamId && this._isFirstGoalLoad) {
+          this.updateGoals(localTeamId);
+          this._isFirstGoalLoad = false;
+        }
+        if (
+          this.goals().length > 0 &&
+          this.localTeam?.id_team &&
+          !this._isFirstGoalLoad
+        ) {
+          this.updateGoals(this.localTeam.id_team);
+        }
       }
-      if (
-        this.goals().length > 0 &&
-        this.localTeam?.id_team &&
-        !this._isFirstGoalLoad
-      ) {
-        this.updateGoals(this.localTeam.id_team);
+    });
+    effect(() => {
+      const cards = this._matchState.cards;
+      if (cards) this.cards = cards;
+    });
+    effect(() => {
+      const fouls = this._matchState.fouls;
+      if (fouls) this.fouls = fouls;
+    });
+    effect(() => {
+      const matchPlayers = this._matchState.matchPlayers();
+      if (matchPlayers) {
+        this.matchPlayers = matchPlayers;
+        this.matchPlayersIds = this.matchPlayers.map(
+          (matchPlayer) => matchPlayer.player_id
+        );
       }
-    });
-    effect(() => {
-      this.cards = this._matchState.cards;
-      console.log('CARDS', this.cards());
-    });
-    effect(() => {
-      this.fouls = this._matchState.fouls;
-    });
-    effect(() => {
-      this.matchPlayers = this._matchState.matchPlayers();
-      this.matchPlayersIds = this.matchPlayers.map(
-        (matchPlayer) => matchPlayer.player_id
-      );
     });
     effect(() => {
       const match = this._matchState.match();
@@ -163,9 +170,7 @@ export class MatchEditComponent implements OnInit {
         const matchId = this._matchState.match()?.id_match;
         if (matchId && value)
           this.updateMatch({ status: value as MatchStatus }, matchId);
-
-        await this.updateLocalStandings(value);
-        await this.updateVisitorStandings(value);
+        await this.updateStandings(value);
         this.prevMatchStatus = value;
       });
   }
@@ -198,45 +203,66 @@ export class MatchEditComponent implements OnInit {
     }));
   }
 
-  async updateLocalStandings(value: MatchStatus) {
-    const localTeamId = this._matchState.match()?.local_team.id_team;
-    if (!localTeamId) return;
+  async updateTeamStandings(
+    teamId: number,
+    goalsFor: number,
+    goalsAgainst: number,
+    value: MatchStatus
+  ): Promise<any> {
+    if (!teamId) return;
     try {
       const standing = await firstValueFrom(
         this._standingsService.getStandings({
           competition_id: this._matchState.match()?.competition.id_competition,
-          team_id: localTeamId,
+          team_id: teamId,
         })
       );
-      const localStndings = standing.data.items[0];
-      const isVictory = this.localGoals.length > localStndings.goals_for;
-      const isDraw = this.localGoals.length === localStndings.goals_for;
-      const isDefeat = this.localGoals.length < localStndings.goals_for;
+      const teamStanding = standing.data.items[0];
+
+      const isVictory = goalsFor > goalsAgainst;
+      const isDraw = goalsFor === goalsAgainst;
+      const isDefeat = goalsFor < goalsAgainst;
+
       let dataToUpdate: Partial<Standings> | null = null;
+      const points = () => {
+        if (isVictory) return 3;
+        if (isDraw) return 1;
+        return 0;
+      };
+
       if (value === 'FINISHED' && this.prevMatchStatus !== 'FINISHED') {
         dataToUpdate = {
-          goals_for: localStndings.goals_for + this.localGoals.length,
-          goals_against: localStndings.goals_against + this.visitorGoals.length,
+          goals_for: teamStanding.goals_for + goalsFor,
+          goals_against: teamStanding.goals_against + goalsAgainst,
           victories: isVictory
-            ? localStndings.victories + 1
-            : localStndings.victories,
-          draws: isDraw ? localStndings.draws + 1 : localStndings.draws,
-          losses: isDefeat ? localStndings.losses + 1 : localStndings.losses,
+            ? teamStanding.victories + 1
+            : teamStanding.victories,
+          draws: isDraw ? teamStanding.draws + 1 : teamStanding.draws,
+          losses: isDefeat ? teamStanding.losses + 1 : teamStanding.losses,
+          points: teamStanding.points + points(),
+          matches_played: teamStanding.matches_played + 1,
         };
       } else if (value !== 'FINISHED' && this.prevMatchStatus === 'FINISHED') {
         dataToUpdate = {
-          goals_for: localStndings.goals_for - this.localGoals.length,
-          goals_against: localStndings.goals_against - this.visitorGoals.length,
+          goals_for: teamStanding.goals_for - goalsFor,
+          goals_against: teamStanding.goals_against - goalsAgainst,
           victories: isVictory
-            ? localStndings.victories - 1
-            : localStndings.victories,
-          draws: isDraw ? localStndings.draws - 1 : localStndings.draws,
-          losses: isDefeat ? localStndings.losses - 1 : localStndings.losses,
+            ? teamStanding.victories - 1
+            : teamStanding.victories,
+          draws: isDraw ? teamStanding.draws - 1 : teamStanding.draws,
+          losses: isDefeat ? teamStanding.losses - 1 : teamStanding.losses,
+          points: teamStanding.points - points(),
+          matches_played: teamStanding.matches_played - 1,
         };
       }
+
       if (!dataToUpdate) return;
+
       const response = await firstValueFrom(
-        this._standingsService.updateStanding(dataToUpdate, localTeamId)
+        this._standingsService.updateStanding(
+          dataToUpdate,
+          teamStanding.id_standings
+        )
       );
 
       return response;
@@ -246,55 +272,27 @@ export class MatchEditComponent implements OnInit {
     }
   }
 
-  async updateVisitorStandings(value: MatchStatus) {
+  async updateStandings(value: MatchStatus): Promise<void> {
+    const localTeamId = this._matchState.match()?.local_team.id_team;
     const visitorTeamId = this._matchState.match()?.visitor_team.id_team;
-    if (!visitorTeamId) return;
-    try {
-      const standing = await firstValueFrom(
-        this._standingsService.getStandings({
-          competition_id: this._matchState.match()?.competition.id_competition,
-          team_id: visitorTeamId,
-        })
-      );
-      const visitorStndings = standing.data.items[0];
-      const isVictory = this.visitorGoals.length > visitorStndings.goals_for;
-      const isDraw = this.visitorGoals.length === visitorStndings.goals_for;
-      const isDefeat = this.visitorGoals.length < visitorStndings.goals_for;
-      let dataToUpdate: Partial<Standings> | null = null;
-      if (value === 'FINISHED' && this.prevMatchStatus !== 'FINISHED') {
-        dataToUpdate = {
-          goals_for: visitorStndings.goals_for + this.visitorGoals.length,
-          goals_against: visitorStndings.goals_against + this.localGoals.length,
-          victories: isVictory
-            ? visitorStndings.victories + 1
-            : visitorStndings.victories,
-          draws: isDraw ? visitorStndings.draws + 1 : visitorStndings.draws,
-          losses: isDefeat
-            ? visitorStndings.losses + 1
-            : visitorStndings.losses,
-        };
-      } else if (value !== 'FINISHED' && this.prevMatchStatus === 'FINISHED') {
-        dataToUpdate = {
-          goals_for: visitorStndings.goals_for - this.visitorGoals.length,
-          goals_against: visitorStndings.goals_against - this.localGoals.length,
-          victories: isVictory
-            ? visitorStndings.victories - 1
-            : visitorStndings.victories,
-          draws: isDraw ? visitorStndings.draws - 1 : visitorStndings.draws,
-          losses: isDefeat
-            ? visitorStndings.losses - 1
-            : visitorStndings.losses,
-        };
-      }
-      if (!dataToUpdate) return;
-      const response = await firstValueFrom(
-        this._standingsService.updateStanding(dataToUpdate, visitorTeamId)
-      );
 
-      return response;
-    } catch (error) {
-      console.error('Error updating standings: ', error);
-      return null;
+    // Actualitzar standings de l'equip local
+    if (localTeamId && visitorTeamId) {
+      this.updateGoals(localTeamId);
+      const repsonse = await Promise.all([
+        this.updateTeamStandings(
+          localTeamId,
+          this.localGoals.length,
+          this.visitorGoals.length,
+          value
+        ),
+        this.updateTeamStandings(
+          visitorTeamId,
+          this.visitorGoals.length,
+          this.localGoals.length,
+          value
+        ),
+      ]);
     }
   }
 
@@ -324,13 +322,15 @@ export class MatchEditComponent implements OnInit {
     return {};
   }
 
-  onTogglePlayer(player: TeamPlayerWithDetails) {
+  onTogglePlayer(player: TeamPlayerWithDetails, event: Event) {
+    event.preventDefault();
+    if (this.matchStatus.value === 'FINISHED') return;
     const isLocalPlayer = true;
     if (this.matchPlayersIds.includes(player.player_id)) {
       this.deleteMatchPlayer(player, isLocalPlayer);
-      return;
+    } else {
+      this.createMatchPlayer(player, isLocalPlayer);
     }
-    this.createMatchPlayer(player, isLocalPlayer);
   }
 
   private async deleteMatchPlayer(
@@ -382,7 +382,6 @@ export class MatchEditComponent implements OnInit {
     player: TeamPlayerWithDetails,
     isLocalPlayer: boolean
   ) {
-    console.log('CREATE MATCH PLAYER', player);
     try {
       const currentMatch = this._matchState.match();
       if (!currentMatch) return;
@@ -513,5 +512,12 @@ export class MatchEditComponent implements OnInit {
     if (foul?.id_foul)
       return getMinute({ minute: foul.minute, part: foul.part });
     return '';
+  }
+
+  getGoalName(goal: Goal) {
+    const player = this.matchPlayers.find((player) => {
+      return player.player_id === goal.player_id;
+    });
+    return `${player?.player?.name} ${player?.player?.last_name}`;
   }
 }

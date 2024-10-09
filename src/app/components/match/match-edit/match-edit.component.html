@@ -22,9 +22,9 @@
 
         <div class="w-full">
           <label class="block mb-2 text-sm font-medium text-white opacity-0 dark:text-white">.</label>
-          <button (click)="setFormType('GOAL')"
+          <button (click)="setFormType('GOAL')" disabled
             class="w-full text-white inline-flex items-center bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center transition-colors duration-100"
-            [ngClass]="getButtonClasses('GOAL')">
+            [ngClass]="{'pointer-events-none hover:cursor-not-allowed opacity-40': matchStatus.value === 'FINISHED'}">
             <svg class="mr-1 -ml-1 w-6 h-6" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
               <path fill-rule="evenodd"
                 d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z"
@@ -40,7 +40,7 @@
 
           <button (click)="setFormType('CARD')"
             class="w-full text-white inline-flex items-center bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center transition-colors duration-100"
-            [ngClass]="getButtonClasses('CARD')">
+            [ngClass]="{'pointer-events-none hover:cursor-not-allowed opacity-40': matchStatus.value === 'FINISHED'}">
             <svg class="mr-1 -ml-1 w-6 h-6" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
               <path fill-rule="evenodd"
                 d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z"
@@ -56,7 +56,7 @@
 
           <button (click)="setFormType('FOUL')"
             class="w-full text-white inline-flex items-center bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center transition-colors duration-100"
-            [ngClass]="getButtonClasses('FOUL')">
+            [ngClass]="{'pointer-events-none hover:cursor-not-allowed opacity-40': matchStatus.value === 'FINISHED'}">
             <svg class="mr-1 -ml-1 w-6 h-6" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
               <path fill-rule="evenodd"
                 d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z"
@@ -129,7 +129,7 @@
         <div class="flex flex-col gap-0 items-center justify-start m-auto h-full ">
           <h5 class="font-semibold text-sm mb-1 sm:mb-2">JUGADORES</h5>
           @for(player of localPlayers; track player.player_id){
-          <div (click)="onTogglePlayer(player)"
+          <div (click)="onTogglePlayer(player, $event)"
             class="flex flex-row gap-2 justify-start items-center px-4 py-2 w-full rounded-lg hover:cursor-pointer hover:text-gray-800 hover:bg-gray-100">
             @if(matchPlayersIds.includes(player.player_id)){
             <img @starAnimation src="/assets/icons/star_solid.svg" alt="Star icon" class="size-6 text-yellow-300">
@@ -144,7 +144,7 @@
         <div class="flex flex-col gap-0 items-center justify-start m-auto h-full">
           <h5 class="font-semibold text-sm mb-1 sm:mb-2">JUGADORES</h5>
           @for(player of visitorPlayers; track player.player_id){
-          <div (click)="onTogglePlayer(player)"
+          <div (click)="onTogglePlayer(player, $event)"
             class="flex flex-row gap-2 justify-start items-center px-4 py-2 w-full rounded-lg hover:cursor-pointer hover:text-gray-800 hover:bg-gray-100">
             @if(matchPlayersIds.includes(player.player_id)){
             <img @starAnimation src="/assets/icons/star_solid.svg" alt="Star icon" class="size-6 text-yellow-300">
@@ -172,10 +172,9 @@
       <h3 class="font-bold uppercase place-self-start">Goles:</h3>
       <ul class="flex flex-col gap-2 w-full col-span-5 place-self-start">
         @for(goal of goals(); track goal.id_goal){
-
         <li class="flex flex-row gap-2 justify-between items-center px-4 w-full  border-b">
           <div class="flex flex-row gap-2 justify-start items-center w-fit ">
-            <p class="font-bold text-xs sm:text-sm">- {{goal.player?.name}} {{goal.player?.last_name}}</p>
+            <p class="font-bold text-xs sm:text-sm">- {{getGoalName(goal)}}</p>
             <p class="text-gray-800 text-xs sm:text-sm"> (<span class="font-bold">'{{getMatchMinute({goal})}}</span>)
             </p>
             <img @starAnimation src="/assets/svg/football_ball.svg" alt="Star icon"
