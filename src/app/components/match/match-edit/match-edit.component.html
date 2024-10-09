@@ -85,7 +85,7 @@
     </div>
 
 
-    <article class="flex flex-col gap-8 w-full justify-center my-8">
+    <article class=" py-8 flex flex-col gap-8 w-full justify-center my-8 shadow-md rounded-lg">
 
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 items-center">
 
@@ -164,8 +164,109 @@
 
 
 
-
     </article>
+    <!-- <div class="border-b w-full max-w-2xl mx-auto p-4"> </div> -->
+
+    @if(goals.length > 0){
+    <article class="grid grid-cols-1 md:grid-cols-6 items-center px-4 py-8 w-full max-w-xl mx-auto">
+      <h3 class="font-bold uppercase place-self-start">Goles:</h3>
+      <ul class="flex flex-col gap-2 w-full col-span-5 place-self-start">
+        @for(goal of goals; track goal.id_goal){
+        <li class="flex flex-row gap-2 justify-between items-center px-4 w-full  border-b">
+          <div class="flex flex-row gap-2 justify-start items-center w-fit ">
+            <p class="font-bold text-xs sm:text-sm">- {{goal.player.name}} {{goal.player.last_name}}</p>
+            <p class="text-gray-800 text-xs sm:text-sm"> (<span class="font-bold">'{{getMatchMinute({goal})}}</span>)
+            </p>
+            <img @starAnimation src="/assets/svg/football_ball.svg" alt="Star icon"
+              class="hidden sm:block ize-3 text-yellow-300">
+          </div>
+
+          <div class="hover:scale-125 hover:text-gray-700 hover:cursor-pointer transition-all duration-200">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+              class="size-4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M3 6h18" />
+              <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6" />
+              <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2" />
+              <line x1="10" x2="10" y1="11" y2="17" />
+              <line x1="14" x2="14" y1="11" y2="17" />
+            </svg>
+          </div>
+
+        </li>
+        }
+      </ul>
+    </article>
+    }
+
+    @if(cards.length > 0){
+    <article class="grid grid-cols-1 md:grid-cols-6 items-center px-4 py-8 w-full max-w-xl mx-auto">
+      <h3 class="font-bold uppercase place-self-start">Tarjetas:</h3>
+      <ul class="flex flex-col gap-2 w-full col-span-5 place-self-start">
+        @for(card of cards; track card.id_card){
+        <li class="flex flex-row gap-2 justify-between items-center px-4 w-full  border-b">
+          <div class="flex flex-row gap-2 justify-start items-center w-fit ">
+            <p class="font-bold text-sm">- {{card.player.name}} {{card.player.last_name}}</p>
+            <p class="text-gray-800 text-sm"> (<span class="font-bold">'{{getMatchMinute({card})}}</span>)
+            </p>
+            @if(card.card_type === 'YELLOW'){
+            <div class="w-4 h-6 bg-yellow-200 rounded-sm shadow-sm"></div>
+            }
+            @else if(card.card_type === 'RED'){
+            <div class="w-4 h-6 bg-red-700 rounded-sm shadow-sm"></div>
+            }
+            @else if(card.card_type === 'BLUE'){
+            <div class="w-4 h-6 bg-blue-800 rounded-sm shadow-sm"></div>
+            }
+
+          </div>
+
+          <div class="hover:scale-125 hover:text-gray-700 hover:cursor-pointer transition-all duration-200"
+            (click)="onDeleteCard(card)">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+              class="size-4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M3 6h18" />
+              <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6" />
+              <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2" />
+              <line x1="10" x2="10" y1="11" y2="17" />
+              <line x1="14" x2="14" y1="11" y2="17" />
+            </svg>
+          </div>
+
+        </li>
+        }
+      </ul>
+    </article>
+    }
+
+    @if(fouls.length > 0){
+    <article class="grid grid-cols-1 md:grid-cols-6 items-center px-4 py-8 w-full max-w-xl mx-auto">
+      <h3 class="font-bold uppercase place-self-start">Faltas:</h3>
+      <ul class="flex flex-col gap-2 w-full col-span-5 place-self-start">
+        @for(foul of fouls; track foul.id_foul){
+        <li class="flex flex-row gap-2 justify-between items-center px-4 w-full  border-b">
+          <div class="flex flex-row gap-2 justify-start items-center w-fit ">
+            <p class="font-bold text-sm">- {{foul.player.name}} {{foul.player.last_name}}</p>
+            <p class="text-gray-800 text-sm"> (<span class="font-bold">'{{getMatchMinute({foul})}}</span>)
+            </p>
+
+          </div>
+
+          <div class="hover:scale-125 hover:text-gray-700 hover:cursor-pointer transition-all duration-200">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+              class="size-4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M3 6h18" />
+              <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6" />
+              <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2" />
+              <line x1="10" x2="10" y1="11" y2="17" />
+              <line x1="14" x2="14" y1="11" y2="17" />
+            </svg>
+          </div>
+
+        </li>
+        }
+      </ul>
+    </article>
+    }
 
   </div>
 </div>
