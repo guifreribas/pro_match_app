@@ -3,6 +3,9 @@ import { ActivatedRoute } from '@angular/router';
 import { MatchEditComponent } from '@app/components/match/match-edit/match-edit.component';
 import { MatchViewComponent } from '@app/components/match/match-view/match-view.component';
 import { DashboardPanelLayoutComponent } from '@app/layouts/dashboard-panel-layout/dashboard-panel-layout.component';
+import { CardWithPlayer } from '@app/models/card';
+import { FoulWithPlayer } from '@app/models/foul';
+import { GoalWithPlayer } from '@app/models/goal';
 import { MatchWithDetails } from '@app/models/match';
 import { CardService } from '@app/services/api_services/card.service';
 import { FoulService } from '@app/services/api_services/foul.service';
@@ -11,7 +14,10 @@ import { MatchPlayerService } from '@app/services/api_services/match-player.serv
 import { MatchService } from '@app/services/api_services/match.service';
 import { TeamPlayerService } from '@app/services/api_services/team-player.service';
 import { TeamService } from '@app/services/api_services/team.service';
-import { MatchStateService } from '@app/services/global_states/match-state.service';
+import {
+  MatchCompletedData,
+  MatchStateService,
+} from '@app/services/global_states/match-state.service';
 import { UserStateService } from '@app/services/global_states/user-state.service';
 import { firstValueFrom } from 'rxjs';
 
@@ -112,6 +118,7 @@ export class MatchComponent {
         })
       ),
     ]);
+
     const [localTeam, visitorTeam] = await Promise.all([
       firstValueFrom(
         this._teamService.getTeams({
@@ -148,36 +155,37 @@ export class MatchComponent {
       const player = players.find(
         (player) => player.player_id === goal.player_id
       );
-      return { ...goal, player: player?.player };
+      if (!player) return goal;
+      return { ...goal, player: player.player };
     });
-
-    console.log('GOALS', goalsWithPlayers);
-
     const cardsWithPlayers = cards.data.items.map((card) => {
       const player = players.find(
         (player) => player.player_id === card.player_id
       );
+      if (!player) return card;
       return { ...card, player: player?.player };
     });
-
     const foulsWithPlayers = fouls.data.items.map((foul) => {
       const player = players.find(
         (player) => player.player_id === foul.player_id
       );
-      return { ...foul, player: player?.player };
+      if (!player) return foul;
+      return { ...foul, player: player.player };
     });
 
-    this._matchState.setMatch({
+    const matchCompleteData: MatchCompletedData = {
       match: match.data.items[0],
-      goals: goalsWithPlayers,
-      cards: cardsWithPlayers,
-      fouls: foulsWithPlayers,
+      goals: goalsWithPlayers || [],
+      cards: cardsWithPlayers || [],
+      fouls: foulsWithPlayers || [],
       localTeam: localTeam.data.items[0],
       visitorTeam: visitorTeam.data.items[0],
       localPlayers: localPlayers.data.items,
       visitorPlayers: visitorPlayers.data.items,
       matchPlayers: players,
-    });
+    };
+    console.log('MATCH COMPLETE DATA', matchCompleteData);
+    this._matchState.setAllMatchData(matchCompleteData);
 
     console.log({
       match: match.data.items[0],
