@@ -48,11 +48,11 @@ export class MatchPlayerService {
 
   createMatchPlayer(
     matchPlayer: MatchPlayer
-  ): Observable<postResponse<MatchPlayer>> {
-    return this._genericServices.create<MatchPlayer, postResponse<MatchPlayer>>(
-      this.apiUrl,
-      matchPlayer
-    );
+  ): Observable<postResponse<MatchPlayerWithDetails>> {
+    return this._genericServices.create<
+      MatchPlayer,
+      postResponse<MatchPlayerWithDetails>
+    >(this.apiUrl, matchPlayer);
   }
 
   updateMatchPlayer(matchPlayer: MatchPlayer, id: number) {
