@@ -23,5 +23,5 @@ export interface Card {
 }
 
 export interface CardWithPlayer extends Card {
-  player: Player;
+  player?: Pick<Player, 'id_player' | 'name' | 'last_name' | 'dni' | 'avatar'>;
 }

@@ -1,6 +1,7 @@
 import { TeamPlayer } from './team-player';
 import { Team } from './team';
 import { Player } from './player';
+import { GoalWithPlayer } from './goal';
 
 export interface MatchPlayer {
   id_match_player?: number;
@@ -17,6 +18,10 @@ export interface MatchPlayerWithDetails extends MatchPlayer {
   player: Pick<Player, 'id_player' | 'name' | 'last_name' | 'dni' | 'avatar'>;
   team: Pick<Team, 'id_team' | 'name' | 'avatar'>;
   player_number: Pick<TeamPlayer, 'player_number'>;
+}
+
+export interface MatchPlayerWithDetailsAndGoals extends MatchPlayerWithDetails {
+  goals: GoalWithPlayer[];
 }
 
 export interface MatchPlayersGetResponse {

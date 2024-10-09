@@ -8,7 +8,7 @@ export type GoalPart =
   | 'PENALTIES';
 
 export interface Goal {
-  id_goal: number;
+  id_goal?: number;
   minute: number;
   part: GoalPart;
   player_id: number;
@@ -21,7 +21,7 @@ export interface Goal {
 }
 
 export interface GoalWithPlayer extends Goal {
-  player: Player;
+  player?: Pick<Player, 'id_player' | 'name' | 'last_name' | 'dni' | 'avatar'>;
 }
 
 export interface GetGoalsParams {

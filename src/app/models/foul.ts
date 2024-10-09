@@ -20,5 +20,5 @@ export interface Foul {
 }
 
 export interface FoulWithPlayer extends Foul {
-  player: Player;
+  player?: Pick<Player, 'id_player' | 'name' | 'last_name' | 'dni' | 'avatar'>;
 }
