@@ -14,12 +14,15 @@ import { trigger, transition, style, animate } from '@angular/animations';
 import { CommonModule } from '@angular/common';
 import { MatchStateService } from '@app/services/global_states/match-state.service';
 import { Team } from '@app/models/team';
-import { TeamPlayerWithDetails } from '@app/models/team-player';
+import {
+  TeamPlayerDetailsAndGoals,
+  TeamPlayerWithDetails,
+} from '@app/models/team-player';
 import { Goal } from '@app/models/goal';
 import { MatchPlayerService } from '@app/services/api_services/match-player.service';
 import { MatchPlayerWithDetails } from '@app/models/matchPlayer';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
-import { Match, MatchStatus } from '@app/models/match';
+import { Match } from '@app/models/match';
 import { MatchService } from '@app/services/api_services/match.service';
 import { distinctUntilChanged, Subscription } from 'rxjs';
 import { config } from '@app/config/config';
@@ -44,15 +47,14 @@ export class MatchViewComponent {
   public whichFormIsActive = signal<FormType>(null);
   public localTeam: Team | null = null;
   public visitorTeam: Team | null = null;
-  public localPlayers: TeamPlayerWithDetails[] = [];
-  public visitorPlayers: TeamPlayerWithDetails[] = [];
+  public localPlayers: TeamPlayerDetailsAndGoals[] = [];
+  public visitorPlayers: TeamPlayerDetailsAndGoals[] = [];
   public goals: Goal[] = [];
   public localGoals: Goal[] = [];
   public visitorGoals: Goal[] = [];
   public matchPlayers: MatchPlayerWithDetails[] = [];
   public matchPlayersIds: number[] = [];
-
-  public matchStatus: FormControl = new FormControl(null);
+  public status = '';
 
   private _matchPlayerService = inject(MatchPlayerService);
   private _matchService = inject(MatchService);
@@ -68,39 +70,39 @@ export class MatchViewComponent {
         this.localPlayers = matchData.localPlayers;
         this.visitorPlayers = matchData.visitorPlayers;
         this.goals = matchData.goals;
-        this.localGoals = this.goals.filter(
-          (goal) => goal.team_id === this.localTeam?.id_team
-        );
-        this.visitorGoals = this.goals.filter(
-          (goal) => goal.team_id === this.visitorTeam?.id_team
-        );
+        if (matchData.goals.length > 0) {
+          this.goals.forEach((goal) => {
+            if (goal.team_id === this.localTeam?.id_team) {
+              this.localGoals.push(goal);
+              this.localPlayers = this.localPlayers.map((player) => {
+                if (player.player_id === goal.player_id)
+                  return { ...player, goals: [goal] };
+                return player;
+              });
+            } else {
+              this.visitorGoals.push(goal);
+              this.visitorPlayers = this.visitorPlayers.map((player) => {
+                if (player.player_id === goal.player_id)
+                  return { ...player, goals: [goal] };
+                return player;
+              });
+            }
+          });
+        }
+        console.log({ locla: this.localPlayers, visitor: this.visitorPlayers });
         this.matchPlayers = matchData.matchPlayers;
         this.matchPlayersIds = matchData.matchPlayers.map(
           (matchPlayer) => matchPlayer.player_id
         );
 
-        this.matchStatus.setValue(matchData.match.status, { emitEvent: false });
+        this.status = matchData.match.status;
       }
     });
   }
 
-  ngOnInit(): void {
-    const matchStatusSub = this.matchStatus.valueChanges
-      .pipe(distinctUntilChanged())
-      .subscribe((value) => {
-        const matchId = this._matchState.match()?.match.id_match;
-        if (matchId && value)
-          this.updateMatch({ status: value as MatchStatus }, matchId);
-        if (value === 'GOAL') {
-          console.log('GOAL');
-        }
-      });
-    this._subscriptions.add(matchStatusSub);
-  }
+  ngOnInit(): void {}
 
-  ngOnDestroy(): void {
-    this._subscriptions.unsubscribe();
-  }
+  ngOnDestroy(): void {}
 
   setFormType(formType: FormType): string | null {
     if (this.whichFormIsActive() === formType) {
