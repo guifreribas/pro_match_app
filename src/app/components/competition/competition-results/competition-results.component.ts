@@ -22,7 +22,7 @@ import { MatchWithDetails } from '@app/models/match';
 export class CompetitionResultsComponent {
   @Input() matches!: MatchWithDetails[];
 
-  public match: MatchCompletedData | null = null;
+  public match: MatchWithDetails | null = null;
   public hasFinishedMatches = false;
   private _matchState = inject(MatchStateService);
 
