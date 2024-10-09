@@ -1,3 +1,4 @@
+import { Goal } from './goal';
 import { Player } from './player';
 import { Team } from './team';
 
@@ -47,6 +48,10 @@ type TeamSummary = Pick<Team, 'name'> & {
 export interface TeamPlayerWithDetails extends TeamPlayer {
   player?: PlayerSummary;
   team?: TeamSummary;
+}
+
+export interface TeamPlayerDetailsAndGoals extends TeamPlayerWithDetails {
+  goals?: Goal[] | [];
 }
 
 export interface TeamPlayersGetResponse {
