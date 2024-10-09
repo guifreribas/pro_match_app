@@ -4,7 +4,7 @@ import { GenericApiService } from './generic-api.service';
 import { Observable } from 'rxjs';
 import { getAllResponse, postResponse } from '../../models/api';
 import { urlParser } from '@app/utils/utils';
-import { GetGoalsParams } from '@app/models/goal';
+import { GetGoalsParams, Goal } from '@app/models/goal';
 
 @Injectable({
   providedIn: 'root',
@@ -15,31 +15,34 @@ export class GoalService {
 
   constructor() {}
 
-  getGoals(params?: Partial<GetGoalsParams>): Observable<getAllResponse<any>> {
+  getGoals(params?: Partial<GetGoalsParams>): Observable<getAllResponse<Goal>> {
     const url = urlParser(params, this.apiUrl);
-    return this.genericService.getAll<getAllResponse<any>>(url);
+    return this.genericService.getAll<getAllResponse<Goal>>(url);
   }
 
-  getGoal(id: number): Observable<getAllResponse<any>> {
-    return this.genericService.getOne<getAllResponse<any>>(this.apiUrl, id);
+  getGoal(id: number): Observable<getAllResponse<Goal>> {
+    return this.genericService.getOne<getAllResponse<Goal>>(this.apiUrl, id);
   }
 
-  createGoal(goal: any): Observable<postResponse<any>> {
-    return this.genericService.create<any, postResponse<any>>(
+  createGoal(goal: Goal): Observable<postResponse<Goal>> {
+    return this.genericService.create<Goal, postResponse<Goal>>(
       this.apiUrl,
       goal
     );
   }
 
-  updateGoal(goal: any, id: number): Observable<getAllResponse<any>> {
-    return this.genericService.update<any, getAllResponse<any>>(
+  updateGoal(
+    goal: Partial<Goal>,
+    id: number
+  ): Observable<getAllResponse<Goal>> {
+    return this.genericService.update<Partial<Goal>, getAllResponse<Goal>>(
       this.apiUrl,
       id,
       goal
     );
   }
 
-  deleteGoal(id: number): Observable<getAllResponse<any>> {
-    return this.genericService.delete<getAllResponse<any>>(this.apiUrl, id);
+  deleteGoal(id: number): Observable<getAllResponse<Goal>> {
+    return this.genericService.delete<getAllResponse<Goal>>(this.apiUrl, id);
   }
 }
