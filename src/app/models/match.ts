@@ -29,11 +29,6 @@ export interface Match {
   updated_at?: Date;
 }
 
-// export interface MatchWithDetails
-//   extends Omit<Match, 'local_team' | 'visitor_team'> {
-//   local_team: Pick<Team, 'name' | 'id_team' | 'avatar'>;
-//   visitor_team: Pick<Team, 'name' | 'id_team' | 'avatar'>;
-// }
 export interface MatchWithDetails
   extends Pick<
     Match,
