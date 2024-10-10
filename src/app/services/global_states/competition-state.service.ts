@@ -1,11 +1,17 @@
 import { Injectable, signal } from '@angular/core';
 import { CompetitionWithDetails } from '@app/models/competition';
+import { CompetitionCategory, MatchWithDetails } from '@app/models/match';
 
 @Injectable({
   providedIn: 'root',
 })
 export class CompetitionStateService {
-  readonly competitions = signal<CompetitionWithDetails | null>(null);
+  public readonly competitions = signal<CompetitionWithDetails | null>(null);
+  public readonly match = signal<MatchWithDetails | null>(null);
+  public readonly matches = signal<MatchWithDetails[]>([]);
+  public readonly competitionCategory = signal<CompetitionCategory | null>(
+    null
+  );
 
   constructor() {}
 
