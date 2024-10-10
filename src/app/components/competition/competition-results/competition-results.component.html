@@ -1,12 +1,12 @@
 <div class="grid grid-cols-1 gap-4">
-  @if(hasFinishedMatches){
-  @for(match of matches; track match.id_match){
+  <!-- @if(hasFinishedMatches){ -->
+  @for(match of matchesPlayed(); track match.id_match){
   @if(match.status === 'FINISHED'){
   <app-competition-match-result [match]="match"></app-competition-match-result>
   }
   }
-  }
+  <!-- }
   @else {
   <p class="text-center text-gray-600 text-lg font-bold">Todavía no se han disputado partidos</p>
-  }
+  } -->
 </div>
