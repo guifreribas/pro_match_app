@@ -1,3 +1,4 @@
+import { MatchWithDetails } from './match';
 import { Player } from './player';
 
 export type CardType = 'YELLOW' | 'RED' | 'BLUE';
@@ -24,4 +25,60 @@ export interface Card {
 
 export interface CardWithPlayer extends Card {
   player?: Pick<Player, 'id_player' | 'name' | 'last_name' | 'dni' | 'avatar'>;
+}
+
+// export interface CardsPlayerStats {
+//   player_id: number;
+//   yellowCards: number;
+//   redCards: number;
+//   blueCards: number;
+//   player: {
+//     id_player: number;
+//     name: string;
+//     last_name: string;
+//     avatar?: string;
+//   };
+//   team: {
+//     id_team: number;
+//     name: string;
+//     avatar: string;
+//   };
+// }
+
+export interface GetCardsPlayerStatsResponse {
+  success: boolean;
+  message: string;
+  data: CardsPlayerStats[];
+  timestamp: string;
+}
+
+export interface GetCardsParams {
+  q: string;
+  page: string;
+  user_id: number;
+  limit: number;
+  match_id: number;
+  team_id: number;
+  player_id: number;
+  competition_id: number;
+}
+
+export interface CardsPlayerStats {
+  player_id: number;
+  yellowCards: number;
+  redCards: number;
+  blueCards: number;
+  player: {
+    id_player: number;
+    name: string;
+    last_name: string;
+    avatar?: string;
+  };
+  team: {
+    id_team: number;
+    name: string;
+    avatar: string;
+  };
+  matches_played: number;
+  matches: MatchWithDetails[];
 }
