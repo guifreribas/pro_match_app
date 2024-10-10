@@ -4,7 +4,15 @@ import { GenericApiService } from './generic-api.service';
 import { Observable } from 'rxjs';
 import { getAllResponse, postResponse } from '../../models/api';
 import { urlParser } from '@app/utils/utils';
-import { GetGoalsParams, Goal } from '@app/models/goal';
+import {
+  GetGoalsParams,
+  GetScorersResponse,
+  Goal,
+  GoalWithPlayer,
+  Scorers,
+} from '@app/models/goal';
+import { buildHttpParams } from '@app/utils/http-utils';
+import { HttpClient } from '@angular/common/http';
 
 @Injectable({
   providedIn: 'root',
@@ -12,6 +20,7 @@ import { GetGoalsParams, Goal } from '@app/models/goal';
 export class GoalService {
   private apiUrl = `${config.apiUrl}/goals`;
   private genericService = inject(GenericApiService);
+  private http = inject(HttpClient);
 
   constructor() {}
 
@@ -22,6 +31,14 @@ export class GoalService {
 
   getGoal(id: number): Observable<getAllResponse<Goal>> {
     return this.genericService.getOne<getAllResponse<Goal>>(this.apiUrl, id);
+  }
+
+  getScorers(params?: Partial<GetGoalsParams>): Observable<GetScorersResponse> {
+    const httpParams = buildHttpParams(params);
+    const scorersUrl = this.apiUrl + '/scorers';
+    return this.http.get<GetScorersResponse>(scorersUrl, {
+      params: httpParams,
+    });
   }
 
   createGoal(goal: Goal): Observable<postResponse<Goal>> {
