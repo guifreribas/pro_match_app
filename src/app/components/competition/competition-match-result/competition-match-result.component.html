@@ -9,11 +9,11 @@
 
       <div class="flex items-center">
         @if(match.local_team.avatar){
-        <img class="h-12 w-12 rounded-full shadow-md object-center" src="{{imgUrl + match.local_team.avatar}}"
+        <img class="h-12 w-12 rounded-full shadow-lg object-center" src="{{imgUrl + match.local_team.avatar}}"
           alt="{{match.local_team.name}} logo">
         }
         @else {
-        <img class="h-12 w-12 rounded-full shadow-md" src="assets/icons/team_placeholder1.svg"
+        <img class="h-12 w-12 rounded-full shadow-lg" src="assets/icons/team_placeholder1.svg"
           alt="Logo de l'Equip Local">
         }
         <h3 class="ml-4 text-lg font-medium">{{match.local_team.name}}</h3>
