@@ -61,6 +61,7 @@ import { CompetitionCardsComponent } from '../competition-cards/competition-card
 import { CompetitionPlayerStatsComponent } from '../competition-player-stats/competition-player-stats.component';
 import { CompetitionScorersComponent } from '../competition-scorers/competition-scorers.component';
 import { CompetitionStateService } from '@app/services/global_states/competition-state.service';
+import { routes } from '../../../app.routes';
 
 @Component({
   selector: 'app-competition-view',
@@ -177,25 +178,6 @@ export class CompetitionViewComponent implements OnInit {
         this._hasFetchedStaindings = true;
       }
     });
-
-    // effect(() => {
-    //   const matches = this.matchesResponse()?.data?.items || [];
-    //   const getMatchGoals = matches.map((match) => {
-    //     return firstValueFrom(
-    //       this._goalService.getGoals({
-    //         match_id: match.id_match,
-    //         user_id: this._userState.me()?.id_user,
-    //         limit: 30,
-    //       })
-    //     );
-    //   });
-    //   Promise.all(getMatchGoals).then((goalsResponse) => {
-    //     console.log('GOALS', goalsResponse);
-    //     this.goals.update((prev) => {
-    //       if (!prev) return prev;
-    //       return [...prev,...goalsResponse.data.items];
-    //   });
-    // });
   }
 
   ngOnInit(): void {
@@ -254,19 +236,34 @@ export class CompetitionViewComponent implements OnInit {
     }
   }
 
-  handleEventClick(clickInfo: EventClickArg) {
-    console.log(clickInfo.event);
+  async handleEventClick(clickInfo: EventClickArg) {
     const matchId = clickInfo.event.id;
     if (matchId) {
-      this.router.navigate(['/matches', matchId]);
+      const match = await this._getMatches({ id_match: Number(matchId) });
+      if (match.status === 'FINISHED') {
+        this.router.navigate([`/matches/${matchId}`], {
+          queryParams: { view: true },
+        });
+      } else {
+        this.router.navigate([`/matches/${matchId}`], {
+          queryParams: { edit: true },
+        });
+      }
     }
-    // if (
-    //   confirm(
-    //     `Are you sure you want to delete the event '${clickInfo.event.title}'`
-    //   )
-    // ) {
-    //   clickInfo.event.remove();
-    // }
+  }
+
+  private async _getMatches(
+    params?: Partial<GetMatchesParams>
+  ): Promise<MatchWithDetails> {
+    try {
+      const response = await firstValueFrom(
+        this._matchService.getMatches(params)
+      );
+      return response.data.items[0];
+    } catch (error) {
+      console.error('Error getting matches: ', error);
+      throw error;
+    }
   }
 
   handleEvents(events: EventApi[]) {
@@ -283,12 +280,25 @@ export class CompetitionViewComponent implements OnInit {
         this.matchesEvents.set(
           res.data.items.map((match) => {
             const parsedDate = dayjs(match.date).toISOString();
+            const bgColor = () => {
+              if (match.status === 'FINISHED') return '#b8fac2';
+              if (match.status === 'IN_PROGRESS') return '#c3ddfd';
+              if (match.status === 'CANCELLED') return '#fbd5d5';
+              return '#3d8333';
+            };
+            const textColor = () => {
+              if (match.status === 'FINISHED') return '#000';
+              if (match.status === 'IN_PROGRESS') return '#000';
+              if (match.status === 'CANCELLED') return '#ffffff';
+              return '#ffffff';
+            };
             return {
               id: String(match.id_match),
               title: match.local_team.name + ' vs ' + match.visitor_team.name,
               start: parsedDate.replace(/T.*$/, ''),
               allDay: true,
-              backgroundColor: '#3d8333',
+              backgroundColor: bgColor(),
+              textColor: textColor(),
             };
           })
         );
