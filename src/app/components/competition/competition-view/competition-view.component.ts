@@ -60,6 +60,7 @@ import { Goal } from '@app/models/goal';
 import { CompetitionCardsComponent } from '../competition-cards/competition-cards.component';
 import { CompetitionPlayerStatsComponent } from '../competition-player-stats/competition-player-stats.component';
 import { CompetitionScorersComponent } from '../competition-scorers/competition-scorers.component';
+import { CompetitionStateService } from '@app/services/global_states/competition-state.service';
 
 @Component({
   selector: 'app-competition-view',
@@ -140,6 +141,7 @@ export class CompetitionViewComponent implements OnInit {
   private _goalService = inject(GoalService);
   private _userState = inject(UserStateService);
   private _standingsState = inject(StandingsStateService);
+  private _competitionState = inject(CompetitionStateService);
   private _route = inject(ActivatedRoute);
   private router = inject(Router);
 
@@ -216,6 +218,7 @@ export class CompetitionViewComponent implements OnInit {
     this.competitionCategoryId.set(
       response.data.items[0].competitionCategory.competition_category_id
     );
+    this._competitionState.competitions.set(response.data.items[0]);
     if (response.data.items[0]?.competitionType?.name) {
       this.competitionType.set(
         this.competitionTypeMap[response.data.items[0].competitionType.name]
