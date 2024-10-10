@@ -1,3 +1,4 @@
+import { MatchWithDetails } from './match';
 import { Player } from './player';
 
 export type GoalPart =
@@ -34,4 +35,43 @@ export interface GetGoalsParams {
   competition_id: number;
   id_goal: number;
   limit: number;
+}
+
+export interface Scorers {
+  player_id: number;
+  total_goals: number;
+  player: {
+    id_player: number;
+    name: string;
+    last_name: string;
+    dni: string;
+    avatar?: string;
+  };
+  team: {
+    id_team: number;
+    name: string;
+    avatar: string;
+  };
+  match: {
+    id_match: number;
+    status: string;
+    date: Date;
+  };
+  matches_played: number;
+  matches: MatchWithDetails[];
+}
+
+export interface GetScorersResponse {
+  success: boolean;
+  message: string;
+  data: {
+    currentPage: number;
+    hasNextPage: boolean;
+    hasPreviousPage: boolean;
+    items: Scorers[];
+    pageSize: number;
+    totalGroups: number;
+    totalPages: number;
+  };
+  timestamp: string;
 }
