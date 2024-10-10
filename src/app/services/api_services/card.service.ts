@@ -8,20 +8,16 @@ import {
   postResponse,
   updateResponse,
 } from '../../models/api';
-import { Card } from '../../models/card';
+import {
+  Card,
+  CardsPlayerStats,
+  CardWithPlayer,
+  GetCardsParams,
+  GetCardsPlayerStatsResponse,
+} from '../../models/card';
 import { GenericApiService } from './generic-api.service';
 import { urlParser } from '@app/utils/utils';
-
-interface GetCardsParams {
-  q: string;
-  page: string;
-  user_id: number;
-  limit: number;
-  match_id: number;
-  team_id: number;
-  player_id: number;
-  competition_id: number;
-}
+import { buildHttpParams } from '@app/utils/http-utils';
 
 @Injectable({
   providedIn: 'root',
@@ -41,6 +37,18 @@ export class CardService {
     return this.genericService.getOne<getOneResponse<Card>>(
       CardService.apiUrl,
       id
+    );
+  }
+
+  getPlayerCards(
+    params?: Partial<GetCardsParams>
+  ): Observable<GetCardsPlayerStatsResponse> {
+    const httpParams = buildHttpParams(params);
+    return this.genericService.getAll<GetCardsPlayerStatsResponse>(
+      CardService.apiUrl + '/cards-stats',
+      {
+        params: httpParams,
+      }
     );
   }
 
