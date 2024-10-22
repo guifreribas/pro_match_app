@@ -1,27 +1,73 @@
-# ProMatchApp
+# Pro Match Frontend
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 18.0.3.
+Pro Match is a web application built with Angular 18 for managing and administrating football leagues. This repository contains the frontend of the project. For the backend implementation, please check the backend repository.
 
-## Development server
+## 🚀 Key Features
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The application will automatically reload if you change any of the source files.
+- Complete football league management
+- Modern and responsive interface with Tailwind CSS and Flowbite
+- Interactive calendar with FullCalendar
+- Image management with Cloudinary
+- Efficient tournament and match administration
 
-## Code scaffolding
+## 📋 Prerequisites
 
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
+- Node.js (v20.14.0)
+- npm (version included with Node.js)
+- Angular CLI (latest version compatible with Angular 18)
 
-## Build
+## 🛠️ Installation
 
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory.
+1. Clone the repository:
 
-## Running unit tests
+```bash
+git clone [https://github.com/guifreribas/pro_match_app]
+cd pro-match
+```
 
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
+2. Install dependencies:
 
-## Running end-to-end tests
+```bash
+npm install
+```
 
-Run `ng e2e` to execute the end-to-end tests via a platform of your choice. To use this command, you need to first add a package that implements end-to-end testing capabilities.
+3. Configure environment variables:
+   - Create an `environment.ts` file in `src/environments/` with the following content:
 
-## Further help
+```typescript
+export const environment = {
+  production: false,
+  api_url: "YOUR_API_URL",
+  bucket_images_url: "YOUR_CLOUDINARY_URL",
+};
+```
 
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+## 🚦 Available Scripts
+
+- `npm start`: Starts the development server
+- `npm run build`: Builds the application for production
+- `npm run watch`: Builds the application in watch mode
+- `npm test`: Runs unit tests
+
+## 🧰 Core Technologies
+
+- **Angular 18**: Main framework for building the application
+- **Tailwind CSS**: Utility-first CSS framework for styling
+- **Flowbite**: UI component library for Tailwind CSS
+- **FullCalendar**: Calendar component library
+- **Day.js**: JavaScript library for date manipulation
+- **Cloudinary**: Cloud service for image management
+
+## 🔗 Related Repositories
+
+- Backend Repository: [https://github.com/guifreribas/pro_match_api]
+
+## 💡 Development Notes
+
+- The project follows Angular 18 best practices and conventions
+- Make sure to set up the backend server and update the `api_url` in the environment files
+- Cloudinary credentials are required for image upload functionality
+
+## 📝 License
+
+MIT License
