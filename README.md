@@ -70,4 +70,4 @@ export const environment = {
 
 ## 📝 License
 
-MIT License
+Attribution-NonCommercial 4.0 International
